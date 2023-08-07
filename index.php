@@ -6,7 +6,7 @@ error_reporting(E_ALL);
 
 $balance = 0;
 
-if (isset($_POST["amount"])) {     //Form submitted via POST Method?
+if (isset($_POST["amount"]) && is_numeric($_POST["amount"]) && $_POST["amount"] < 500) {     //Form submitted via POST Method? //Also validate if input is a number
     if ($_POST["amount"] > 0) {
         $date = date('Y-d-m');
         $time = date('H:i:s');
@@ -18,19 +18,22 @@ if (isset($_POST["amount"])) {     //Form submitted via POST Method?
     }
 
     if (file_exists("account.json") === false) {     //First entry in transaction log?
-        $firstTransaction = array($newTransaction);
-        $dataToSave = $firstTransaction;
+        $dataToSave = array($newTransaction);
     } else {
-        $oldTransactions = json_decode(file_get_contents("account.json"));
+        $oldTransactions = json_decode(file_get_contents("account.json"), false);
         $oldTransactions[] = $newTransaction;
         $dataToSave = $oldTransactions;
     }
 
-    if (!file_put_contents("account.json", json_encode($dataToSave, JSON_PRETTY_PRINT), LOCK_EX)) {     //Transaction successfull or failed?
+    if (!file_put_contents("account.json", json_encode($dataToSave, JSON_PRETTY_PRINT), LOCK_EX)) {     //Transaction successful or failed?
         $error = "Fehler! Die Transaktion wurde nicht gespeichert!";
     } else {
         $success = "Die Transaktion wurde erfolgreich gespeichert!";
     }
+} elseif (isset($_POST["amount"]) && $_POST["amount"] > 500) {     //Daily limit exceeded in one transfer
+    echo "Einzahlungslimit von 500€ am Tag überschritten!";
+    echo "<br>";
+    $error = "Fehler! Die Transaktion wurde nicht gespeichert!";
 }
 
 if (file_exists("account.json")) {

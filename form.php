@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><title>Geld hochladen</title></head>
+<head><title>CashApp</title></head>
 
 <?php
 if (isset($success)) {

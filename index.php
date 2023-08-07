@@ -6,7 +6,7 @@ error_reporting(E_ALL);
 
 $balance = 0;
 
-if (isset($_POST["amount"]) && is_numeric($_POST["amount"]) && $_POST["amount"] < 500) {     //Form submitted via POST Method? //Also validate if input is a number
+if (isset($_POST["amount"]) && is_numeric($_POST["amount"]) && $_POST["amount"] < 50 && $_POST["amount"] >= 0.01) {     //Form submitted via POST Method? //Also validate if input is a number //0.01 <= input < 50
     if ($_POST["amount"] > 0) {
         $date = date('Y-d-m');
         $time = date('H:i:s');
@@ -30,8 +30,8 @@ if (isset($_POST["amount"]) && is_numeric($_POST["amount"]) && $_POST["amount"] 
     } else {
         $success = "Die Transaktion wurde erfolgreich gespeichert!";
     }
-} elseif (isset($_POST["amount"]) && $_POST["amount"] > 500) {     //Daily limit exceeded in one transfer
-    echo "Einzahlungslimit von 500€ am Tag überschritten!";
+} elseif (isset($_POST["amount"]) && $_POST["amount"] > 50) {     // limit exceeded for one deposit
+    echo "Einzahlungslimit von 50€ am pro Einzahlung überschritten!";
     echo "<br>";
     $error = "Fehler! Die Transaktion wurde nicht gespeichert!";
 }

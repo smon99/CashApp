@@ -3,8 +3,12 @@
 <head><title>Geld hochladen</title></head>
 
 <?php
-if(isset($success)){echo $success;}
-if(isset($error)){echo $error;}
+if (isset($success)) {
+    echo $success;
+}
+if (isset($error)) {
+    echo $error;
+}
 echo "<br>";
 echo "Kontostand: $balance €";
 ?>

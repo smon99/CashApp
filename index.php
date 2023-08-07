@@ -17,7 +17,7 @@ if (isset($_POST["amount"])) {     //Form submitted via POST Method?
         );
     }
 
-    if (filesize("account.json") === 0) {     //First entry in transaction log?
+    if (file_exists("account.json") === false) {     //First entry in transaction log?
         $firstTransaction = array($newTransaction);
         $dataToSave = $firstTransaction;
     } else {
@@ -33,11 +33,11 @@ if (isset($_POST["amount"])) {     //Form submitted via POST Method?
     }
 }
 
-if (filesize("account.json") > 0) {
+if (file_exists("account.json")) {
     $transactions = json_decode(file_get_contents("account.json"), true);     //Calculate balance
     foreach ($transactions as $transaction) {
         $balance += $transaction["amount"];
     }
 }
 
-include 'form.html';
+include 'form.php';

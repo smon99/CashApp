@@ -9,14 +9,18 @@ $dailyDeposit = 0;
 $hourDeposit = 0;
 $date = 0;
 
-if (isset($_POST["amount"]) && is_numeric($_POST["amount"]) && $_POST["amount"] < 50 && $_POST["amount"] >= 0.01) {     //Form submitted via POST Method? //Also validate if input is a number //0.01 <= input < 50
+if (isset($_POST["amount"])) {
+    $correctInput = str_replace(array('.', ','), array('', '.'), $_POST["amount"]);     //Convert all formats to normal php float
+}
+
+if (isset($correctInput) && is_numeric($correctInput) && $correctInput < 50 && $correctInput >= 0.01) {     //Form submitted via POST Method? //Also validate if input is a number //0.01 <= input < 50
     $date = date('Y-d-m');
     $time = date('H:i:s');
     $timestampCurrent = strtotime($time);
-    $hourDeposit = $_POST["amount"];
-    $dailyDeposit = $_POST["amount"];
+    $hourDeposit = $correctInput;
+    $dailyDeposit = $correctInput;
     $newTransaction = array(
-        "amount" => $_POST["amount"],
+        "amount" => $correctInput,
         "date" => $date,
         "time" => $time
     );
@@ -39,7 +43,7 @@ if (isset($_POST["amount"]) && is_numeric($_POST["amount"]) && $_POST["amount"] 
 
     if (file_exists("account.json") === false) {     //First entry in transaction log?
         $dataToSave = array($newTransaction);
-        $dailyDeposit = $_POST["amount"];
+        $dailyDeposit = $correctInput;
     } elseif ($dailyDeposit <= 500 && $hourDeposit <= 100) {                                            //daily limit of 500 and hour limit of 100 not exceeded
         $oldTransactions = json_decode(file_get_contents("account.json"), false);
         $oldTransactions[] = $newTransaction;
@@ -60,10 +64,12 @@ if (isset($_POST["amount"]) && is_numeric($_POST["amount"]) && $_POST["amount"] 
         $success = "Die Transaktion wurde erfolgreich gespeichert!";
     }
 
-} elseif (isset($_POST["amount"]) && $_POST["amount"] > 50) {     // limit exceeded for one deposit
+} elseif (isset($correctInput) && $correctInput > 50 && is_numeric($correctInput)) {     // limit exceeded for one deposit
     echo "Einzahlungslimit von 50€ pro Einzahlung überschritten!";
     echo "<br>";
     $error = "Fehler! Die Transaktion wurde nicht gespeichert!";
+} elseif (isset($correctInput) && is_numeric($correctInput) === false) {
+    echo "Eingabe ist keine Zahl!";
 }
 
 if (file_exists("account.json")) {

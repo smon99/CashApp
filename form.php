@@ -18,7 +18,7 @@ echo "Kontostand: $balance €";
 </h1>
 
 <form action='index.php' method='POST'>
-    Betrag: <input type='number' name='amount' step='0.01'>
+    Betrag: <input type='text' name='amount'>
     <input type='submit' value='Hochladen'>
 </form>
 

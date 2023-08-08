@@ -5,20 +5,30 @@ ini_set('display_startup_errors', '1');
 error_reporting(E_ALL);
 
 $balance = 0;
+$dailyDeposit = 0;
+$date = 0;
 
 if (isset($_POST["amount"]) && is_numeric($_POST["amount"]) && $_POST["amount"] < 50 && $_POST["amount"] >= 0.01) {     //Form submitted via POST Method? //Also validate if input is a number //0.01 <= input < 50
-    if ($_POST["amount"] > 0) {
-        $date = date('Y-d-m');
-        $time = date('H:i:s');
-        $newTransaction = array(
-            "amount" => $_POST["amount"],
-            "date" => $date,
-            "time" => $time
-        );
+    $date = date('Y-d-m');
+    $time = date('H:i:s');
+    $newTransaction = array(
+        "amount" => $_POST["amount"],
+        "date" => $date,
+        "time" => $time
+    );
+
+    if (file_exists("account.json")) {
+        $deposits = json_decode(file_get_contents("account.json"), true);     //Sum up daily deposit to check limit //Add hour sum here later as well
+        foreach ($deposits as $deposit) {
+            if ($deposit["date"] === $date) {
+                $dailyDeposit = $deposit["amount"] + $_POST["amount"];
+            }
+        }
     }
 
     if (file_exists("account.json") === false) {     //First entry in transaction log?
         $dataToSave = array($newTransaction);
+        $dailyDeposit = $_POST["amount"];
     } else {
         $oldTransactions = json_decode(file_get_contents("account.json"), false);
         $oldTransactions[] = $newTransaction;

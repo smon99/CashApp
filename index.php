@@ -20,7 +20,8 @@ if (isset($_POST["amount"])) {
     $correctInput = str_replace(['.', ','], ['', '.'], $_POST["amount"]);     //Convert all formats to normal php float
 }
 
-if (isset($correctInput) && is_numeric($correctInput) && $correctInput < 50 && $correctInput >= 0.01) {     //Validate if input is a number //0.01 <= input < 50
+if (isset($correctInput) && is_numeric($correctInput) && $correctInput <= 50 && $correctInput >= 0.01) {     //Validate if input is a number //0.01 <= input < 50
+
     $date = date('Y-d-m');
     $time = date('H:i:s');
     $timestampCurrent = strtotime($time);
@@ -53,9 +54,12 @@ if (isset($correctInput) && is_numeric($correctInput) && $correctInput < 50 && $
         $error = "Stündliches Einzahlungslimit von 100€ überschritten!";
     }
 
-    if (file_put_contents("account.json", json_encode($transaction, JSON_PRETTY_PRINT), LOCK_EX)) {     //Transaction successful
-        if ($error === null) {
-            $success = "Die Transaktion wurde erfolgreich gespeichert!";
+    if ($error === null) {
+        if (file_put_contents("account.json", json_encode($transaction, JSON_PRETTY_PRINT), LOCK_EX)) {     //Transaction successful
+            echo 'Ich habe die DATEI geschpeichert';
+            if ($error === null) {
+                $success = "Die Transaktion wurde erfolgreich gespeichert!";
+            }
         }
     } else {
         $error = "Fehler! Die Transaktion wurde nicht gespeichert!";

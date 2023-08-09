@@ -5,6 +5,7 @@ ini_set('display_startup_errors', '1');
 error_reporting(E_ALL);
 
 $error = null;
+$passwordCheck = null;
 
 if (!file_exists("user.json")) {
     file_put_contents("user.json", json_encode([]));
@@ -12,22 +13,21 @@ if (!file_exists("user.json")) {
 
 $user = json_decode(file_get_contents("user.json"), true);
 
-function validatePassword($password): bool
+function validatePassword($passwordCheck): bool
 {
-    $uppercase = preg_match('@[A-Z]@', $password);
-    $lowercase = preg_match('@[a-z]@', $password);
-    $number = preg_match('@[0-9]@', $password);
-    $specialChar = preg_match('@[^\w]@', $password);
-
+    $uppercase = preg_match('@[A-Z]@', $passwordCheck);
+    $lowercase = preg_match('@[a-z]@', $passwordCheck);
+    $number = preg_match('@[0-9]@', $passwordCheck);
+    $specialChar = preg_match('@[^\w]@', $passwordCheck);
     $minLength = 6;
 
-    return $uppercase && $lowercase && $number && $specialChar && strlen($password) >= $minLength;
+    return $uppercase && $lowercase && $number && $specialChar && strlen($passwordCheck) >= $minLength;
 }
 
 if (isset($_POST["username"], $_POST["mail"], $_POST["password"])) {
     $userName = $_POST["username"];
     $eMailCheck = $_POST["mail"];
-    $password = $_POST["password"];
+    $passwordCheck = $_POST["password"];
 
     if (!empty($user)) {
         foreach ($user as $userData) {
@@ -42,12 +42,12 @@ if (isset($_POST["username"], $_POST["mail"], $_POST["password"])) {
         $eMail = $eMailCheck;
     }
 
-    if (validatePassword($password) === true) {
+    if (validatePassword($passwordCheck) === true) {
         if (!isset($error)) {
             $newUser = [
                 "user" => $userName,
                 "eMail" => $eMail,
-                "password" => $password,
+                "password" => $passwordCheck,
             ];
 
             $user[] = $newUser;
@@ -57,8 +57,9 @@ if (isset($_POST["username"], $_POST["mail"], $_POST["password"])) {
     }
 }
 
-if (!isset($error) && file_put_contents("user.json", json_encode($user, JSON_PRETTY_PRINT), LOCK_EX)) {
-    echo "yes";
+if (!isset($error) ) {
+    file_put_contents("user.json", json_encode($user, JSON_PRETTY_PRINT));
+    echo 'Yeah';
 }else{
     echo $error;
 }

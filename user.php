@@ -24,7 +24,20 @@ function validatePassword($passwordCheck): bool
     return $uppercase && $lowercase && $number && $specialChar && strlen($passwordCheck) >= $minLength;
 }
 
+if($_SERVER['REQUEST_METHOD'] === 'POST'){     //No empty forms!
+    if (empty($_POST["username"])){
+        $error = "Gib Username ein!";
+    }
+    if (empty($_POST["mail"])){
+        $error = "Gib Mail ein!";
+    }
+    if (empty($_POST["password"])){
+        $error = "Gib Passwort ein!";
+    }
+}
+
 if (isset($_POST["username"], $_POST["mail"], $_POST["password"])) {
+
     $userName = $_POST["username"];
     $eMailCheck = $_POST["mail"];
     $passwordCheck = $_POST["password"];
@@ -43,11 +56,14 @@ if (isset($_POST["username"], $_POST["mail"], $_POST["password"])) {
     }
 
     if (validatePassword($passwordCheck) === true) {
+
+        $password = password_hash($passwordCheck, PASSWORD_DEFAULT);
+
         if (!isset($error)) {
             $newUser = [
                 "user" => $userName,
                 "eMail" => $eMail,
-                "password" => $passwordCheck,
+                "password" => $password,
             ];
 
             $user[] = $newUser;
@@ -57,10 +73,10 @@ if (isset($_POST["username"], $_POST["mail"], $_POST["password"])) {
     }
 }
 
-if (!isset($error) ) {
+if (!isset($error)) {
     file_put_contents("user.json", json_encode($user, JSON_PRETTY_PRINT));
     echo 'Yeah';
-}else{
+} else {
     echo $error;
 }
 

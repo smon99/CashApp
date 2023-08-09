@@ -8,16 +8,19 @@ $balance = 0;
 $dailyDeposit = 0;
 $hourDeposit = 0;
 $date = 0;
+$error = null;
 
 if (!file_exists("account.json")) {
     file_put_contents("account.json", json_encode([]));
 }
 
+$transaction = json_decode(file_get_contents("account.json"), true);
+
 if (isset($_POST["amount"])) {
     $correctInput = str_replace(['.', ','], ['', '.'], $_POST["amount"]);     //Convert all formats to normal php float
 }
 
-if (isset($correctInput) && is_numeric($correctInput) && $correctInput < 50 && $correctInput >= 0.01) {     //Also validate if input is a number //0.01 <= input < 50
+if (isset($correctInput) && is_numeric($correctInput) && $correctInput < 50 && $correctInput >= 0.01) {     //Validate if input is a number //0.01 <= input < 50
     $date = date('Y-d-m');
     $time = date('H:i:s');
     $timestampCurrent = strtotime($time);
@@ -29,9 +32,8 @@ if (isset($correctInput) && is_numeric($correctInput) && $correctInput < 50 && $
         "time" => $time,
     ];
 
-    if (file_exists("account.json")) {
-        $deposits = json_decode(file_get_contents("account.json"), true);     //Sum up deposit per day & hour to check limit
-        foreach ($deposits as $deposit) {
+    if (!empty($transaction)) {
+        foreach ($transaction as $deposit) {
             if ($deposit["date"] === $date) {
                 $dailyDeposit += $deposit["amount"];
                 $timestampHistory = strtotime($deposit["time"]);
@@ -42,30 +44,29 @@ if (isset($correctInput) && is_numeric($correctInput) && $correctInput < 50 && $
         }
     }
 
-    if ($dailyDeposit <= 500 && $hourDeposit <= 100) {                                                                                            //daily limit of 500 and hour limit of 100 not exceeded
-        $transactionData = file_exists("account.json") ? json_decode(file_get_contents("account.json"), true) : [];
-        $transactionData[] = $newTransaction;
+    if ($dailyDeposit <= 500 && $hourDeposit <= 100) {     //daily limit of 500 and hour limit of 100 not exceeded
+        $transaction[] = $newTransaction;
+        $dataToSave = $transaction;
+    } elseif ($dailyDeposit > 500) {
+        $error = "Tägliches Einzahlungslimit von 500€ überschritten!";
+    } else {
+        $error = "Stündliches Einzahlungslimit von 100€ überschritten!";
+    }
 
-        if (!file_put_contents("account.json", json_encode($transactionData, JSON_PRETTY_PRINT), LOCK_EX)) {     //Transaction failed?
-            $error = "Fehler! Die Transaktion wurde nicht gespeichert!";
-        } else {
+    if (file_put_contents("account.json", json_encode($transaction, JSON_PRETTY_PRINT), LOCK_EX)) {     //Transaction successful
+        if ($error === null) {
             $success = "Die Transaktion wurde erfolgreich gespeichert!";
         }
-    } elseif ($dailyDeposit > 500 || $hourDeposit > 100) {
-        $error = ($dailyDeposit > 500) ? "Tägliches Einzahlungslimit von 500€ überschritten!" : "Stündliches Einzahlungslimit von 100€ überschritten!";
+    } else {
+        $error = "Fehler! Die Transaktion wurde nicht gespeichert!";
     }
 
 } elseif (isset($correctInput) && $correctInput > 50 && is_numeric($correctInput)) {     // limit exceeded for one deposit
-    echo "Einzahlungslimit von 50€ pro Einzahlung überschritten!";
-    echo "<br>";
-    $error = "Fehler! Die Transaktion wurde nicht gespeichert!";
+    $error = "Einzahlungslimit von 50€ pro Einzahlung überschritten!";
 } elseif (isset($correctInput) && is_numeric($correctInput) === false) {
-    echo "Eingabe ist keine Zahl!";
+    $error = "Eingabe ist keine Zahl!";
 }
 
-$transactions = file_exists("account.json") ? json_decode(file_get_contents("account.json"), true) : [];
-foreach ($transactions as $transaction) {
-    $balance += $transaction["amount"];
-}
+$balance = array_sum(array_column($transaction, "amount"));
 
 include 'form.php';

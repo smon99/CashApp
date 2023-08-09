@@ -56,10 +56,8 @@ if (isset($correctInput) && is_numeric($correctInput) && $correctInput <= 50 && 
 
     if ($error === null) {
         if (file_put_contents("account.json", json_encode($transaction, JSON_PRETTY_PRINT), LOCK_EX)) {     //Transaction successful
-            echo 'Ich habe die DATEI geschpeichert';
-            if ($error === null) {
-                $success = "Die Transaktion wurde erfolgreich gespeichert!";
-            }
+            echo 'Ich habe die DATEI gespeichert';
+            $success = "Die Transaktion wurde erfolgreich gespeichert!";
         }
     } else {
         $error = "Fehler! Die Transaktion wurde nicht gespeichert!";

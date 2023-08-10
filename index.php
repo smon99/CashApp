@@ -71,4 +71,4 @@ if (isset($correctInput) && is_numeric($correctInput) && $correctInput <= 50 && 
 
 $balance = array_sum(array_column($transaction, "amount"));
 
-include 'form.php';
+include 'indexView.php';

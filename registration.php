@@ -7,9 +7,9 @@
 </h1>
 
 <form action='user.php' method='POST'>
-    Name: <input type='text' name='username'> <br>
-    Email: <input type='text' name='mail'> <br>
-    Passwort: <input type='text' name='password'> <br>
+    Name: <input type='text' name='username' value="<?php if(isset($tempUserName)){echo $tempUserName;} ?>" > <br>
+    Email: <input type='text' name='mail' value="<?php if(isset($tempMail)){echo $tempMail;} ?>" > <br>
+    Passwort: <input type='text' name='password' value="<?php if(isset($tempPassword)){echo $tempPassword;} ?>" > <br>
     <input type='submit' value='Hochladen'>
 </form>
 

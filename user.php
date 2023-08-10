@@ -13,7 +13,7 @@ if (!file_exists("user.json")) {
 
 $user = json_decode(file_get_contents("user.json"), true);
 
-function validatePassword($passwordCheck): bool
+function validatePassword($passwordCheck): bool     //validate if password criteria is met
 {
     $uppercase = preg_match('@[A-Z]@', $passwordCheck);
     $lowercase = preg_match('@[a-z]@', $passwordCheck);
@@ -24,19 +24,20 @@ function validatePassword($passwordCheck): bool
     return $uppercase && $lowercase && $number && $specialChar && strlen($passwordCheck) >= $minLength;
 }
 
-if($_SERVER['REQUEST_METHOD'] === 'POST'){     //No empty forms!
-    if (empty($_POST["username"])){
-        $error = "Gib Username ein!";
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (empty($_POST["username"]) || empty($_POST["mail"]) || empty($_POST["password"])) {
+        $error = "Alle Felder müssen ausgefüllt sein!";
+        if (isset($_POST["username"])) {
+            $tempUserName = $_POST["username"];
+        }
+        if (isset($_POST["mail"])) {
+            $tempMail = $_POST["mail"];
+        }
+        if (isset($_POST["password"])) {
+            $tempPassword = $_POST["password"];
+        }
     }
-    if (empty($_POST["mail"])){
-        $error = "Gib Mail ein!";
-    }
-    if (empty($_POST["password"])){
-        $error = "Gib Passwort ein!";
-    }
-}
-
-if (isset($_POST["username"], $_POST["mail"], $_POST["password"])) {
+} elseif (isset($_POST["username"], $_POST["mail"], $_POST["password"])) {
 
     $userName = $_POST["username"];
     $eMailCheck = $_POST["mail"];

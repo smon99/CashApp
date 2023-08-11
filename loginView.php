@@ -15,7 +15,8 @@
 <?php
 
 if (isset($loginStatus)){
-    echo "<a href='http://0.0.0.0:8000/index.php'><button>index</button></a>";
+    header("Location: http://0.0.0.0:8000/index.php");
+    exit();
 }
 
 ?>

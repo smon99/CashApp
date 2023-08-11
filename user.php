@@ -80,6 +80,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!isset($error)) {
         echo "yeah";
         file_put_contents("user.json", json_encode($user, JSON_PRETTY_PRINT));
+        header("Location: http://0.0.0.0:8000/login.php");
+        exit();
     } else {
         echo $error;
     }

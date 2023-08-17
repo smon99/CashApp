@@ -20,15 +20,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 if ($passwordVerify = password_verify($password, $passwordCheck)) {
                     $_SESSION["username"] = $userCheck["user"];
-                    $loginStatus = true;
+                    $_SESSION["loginStatus"] = true;
                     echo "logged in as ", $userCheck["user"];
 
                 } else {
+                    $_SESSION["loginStatus"] = false;
                     echo "nice try";
                 }
             }
         }
     }
+    if ($_SESSION["loginStatus"] === true) {
+        header("Location: http://0.0.0.0:8000/deposit.php");
+        exit();
+    }
 }
 
-include 'loginView.php';
+include __DIR__ . '/View/loginView.twig';

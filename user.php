@@ -4,8 +4,19 @@ ini_set('display_errors', '1');
 ini_set('display_startup_errors', '1');
 error_reporting(E_ALL);
 
+require_once __DIR__ . '/vendor/autoload.php';
+
+use Twig\Environment;
+use Twig\Loader\FilesystemLoader;
+
+$loader = new FilesystemLoader(__DIR__ . '/View');
+$twig = new Environment($loader);
+
 $error = null;
 $passwordCheck = null;
+$tempUserName = null;
+$tempMail = null;
+$tempPassword = null;
 
 if (!file_exists("user.json")) {
     file_put_contents("user.json", json_encode([]));
@@ -37,6 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (isset($_POST["password"])) {
             $tempPassword = $_POST["password"];
         }
+
     } elseif (isset($_POST["username"], $_POST["mail"], $_POST["password"])) {
 
         $userName = $_POST["username"];
@@ -78,7 +90,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (!isset($error)) {
-        echo "yeah";
         file_put_contents("user.json", json_encode($user, JSON_PRETTY_PRINT));
         header("Location: http://0.0.0.0:8000/login.php");
         exit();
@@ -86,4 +97,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo $error;
     }
 }
-include 'userView.php';
+echo $twig->render('userView.twig', ['tempUserName' => $tempUserName, 'tempMail' => $tempMail, 'tempPassword' => $tempPassword]);

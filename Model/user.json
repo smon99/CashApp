@@ -1,0 +1,47 @@
+[
+    {
+        "user": "Fabian",
+        "eMail": "Fabian@Fabian.de",
+        "password": "$2y$10$TRa74TUIPHrth8t3qUVe6.c6gwpxMw.MVumeQNTkQ2GnyxwtfXU\/i"
+    },
+    {
+        "user": "Nico",
+        "eMail": "Nico@Nico.de",
+        "password": "$2y$10$UbOt6vYQMZnU8hkA8NK3ceQNsLQwZTD\/QVLRNmRcl9sZ.iW9Idqzm"
+    },
+    {
+        "user": "Simon",
+        "eMail": "Simon@Simon.de",
+        "password": "$2y$10$udEWNWphd2ADEBrIP0Q5L.ctsQzLYAiSxxi21W2HkNkyAruCigNvK"
+    },
+    {
+        "user": "Rafal",
+        "eMail": "Rafal@Rafal.de",
+        "password": "$2y$10$wz49FtPuiCNT7sJoNt3be.KkyA52.9aA9rXu2Px2I1PE4\/kyDt6M2"
+    },
+    {
+        "user": "Harun",
+        "eMail": "Harun@Harun.de",
+        "password": "$2y$10$opWiyGqMZ3K9wmynheHxSO8uEheF4O6opMrOFOWWBvBlSvmCibG8W"
+    },
+    {
+        "user": "Flip",
+        "eMail": "Flip@Flip.de",
+        "password": "$2y$10$6YP4IpxFYJM2P0w\/\/f3W1.OMWeyxmwqbdIGkNuJeyY4zR\/YcbizUS"
+    },
+    {
+        "user": "Yusuf",
+        "eMail": "Yusuf@Yusuf.de",
+        "password": "$2y$10$8wPV47Sp0dy\/\/A\/TC5NGr.7IG9tfE4G9QcNTXIwQUV6TnbLBs5gJq"
+    },
+    {
+        "user": "Tim",
+        "eMail": "Tim@Tim.de",
+        "password": "$2y$10$JidCMIhZoWZ56KxASIJ41e1a9mwTbXHmv80Kb8wrGkyinWtBjJCJu"
+    },
+    {
+        "user": "Ode",
+        "eMail": "Ode@Ode.de",
+        "password": "$2y$10$Ruk1g2OE4xb.b1W12cIg5uUiOnIKSQ4r7CRJQ8k0X8dvqdDqKLwSq"
+    }
+]

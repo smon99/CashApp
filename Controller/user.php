@@ -4,12 +4,12 @@ ini_set('display_errors', '1');
 ini_set('display_startup_errors', '1');
 error_reporting(E_ALL);
 
-require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
-$loader = new FilesystemLoader(__DIR__ . '/View');
+$loader = new FilesystemLoader(__DIR__ . '/../View');
 $twig = new Environment($loader);
 
 $error = null;
@@ -18,11 +18,11 @@ $tempUserName = null;
 $tempMail = null;
 $tempPassword = null;
 
-if (!file_exists("user.json")) {
-    file_put_contents("user.json", json_encode([]));
+if (!file_exists(__DIR__ . '/../Model/user.json')) {
+    file_put_contents(__DIR__ . '/../Model/user.json', json_encode([]));
 }
 
-$user = json_decode(file_get_contents("user.json"), true);
+$user = json_decode(file_get_contents(__DIR__ . '/../Model/user.json'), true);
 
 function validatePassword($passwordCheck): bool
 {
@@ -90,11 +90,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (!isset($error)) {
-        file_put_contents("user.json", json_encode($user, JSON_PRETTY_PRINT));
-        header("Location: http://0.0.0.0:8000/login.php");
+        file_put_contents(__DIR__ . '/../Model/user.json', json_encode($user, JSON_PRETTY_PRINT));
+        header("Location: http://0.0.0.0:8000/Controller/login.php");
         exit();
     } else {
         echo $error;
     }
 }
-echo $twig->render('userView.twig', ['tempUserName' => $tempUserName, 'tempMail' => $tempMail, 'tempPassword' => $tempPassword]);
+echo $twig->render('user.twig', ['tempUserName' => $tempUserName, 'tempMail' => $tempMail, 'tempPassword' => $tempPassword]);

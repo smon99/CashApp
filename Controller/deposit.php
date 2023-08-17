@@ -1,12 +1,14 @@
 <?php declare(strict_types=1);
 
-require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
-$loader = new FilesystemLoader(__DIR__ . '/View');
+$loader = new FilesystemLoader(__DIR__ . '/../View');
 $twig = new Environment($loader);
+
+$activeUser = null;
 
 session_start();
 
@@ -29,11 +31,11 @@ $date = 0;
 $error = null;
 $success = null;
 
-if (!file_exists("account.json")) {
-    file_put_contents("account.json", json_encode([]));
+if (!file_exists(__DIR__ . '/../Model/account.json')) {
+    file_put_contents(__DIR__ . '/../Model/account.json', json_encode([]));
 }
 
-$transaction = json_decode(file_get_contents("account.json"), true);
+$transaction = json_decode(file_get_contents(__DIR__ . '/../Model/account.json'), true);
 
 if (isset($_POST["amount"])) {
     $correctInput = str_replace(['.', ','], ['', '.'], $_POST["amount"]);     //Convert all formats to normal php float
@@ -74,7 +76,7 @@ if (isset($correctInput) && is_numeric($correctInput) && $correctInput <= 50 && 
     }
 
     if ($error === null) {
-        if (file_put_contents("account.json", json_encode($transaction, JSON_PRETTY_PRINT), LOCK_EX)) {     //Transaction successful
+        if (file_put_contents(__DIR__ . '/../Model/account.json', json_encode($transaction, JSON_PRETTY_PRINT), LOCK_EX)) {     //Transaction successful
             $success = "Die Transaktion wurde erfolgreich gespeichert!";
         }
     }
@@ -93,4 +95,4 @@ if (isset($_POST["logout"])) {
     header("Refresh:0");
 }
 
-echo $twig->render('depositView.twig', ['balance' => $balance, 'loginStatus' => $loginStatus, 'activeUser' => $activeUser, 'error' => $error, 'success' => $success]);
+echo $twig->render('deposit.twig', ['balance' => $balance, 'loginStatus' => $loginStatus, 'activeUser' => $activeUser, 'error' => $error, 'success' => $success]);

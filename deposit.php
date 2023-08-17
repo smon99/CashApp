@@ -1,6 +1,22 @@
 <?php declare(strict_types=1);
 
+require_once __DIR__ . '/vendor/autoload.php';
+
+use Twig\Environment;
+use Twig\Loader\FilesystemLoader;
+
 session_start();
+
+$loader = new FilesystemLoader(__DIR__ . '/View');
+$twig = new Environment($loader);
+
+if (!isset($_SESSION["loginStatus"])) {     //define locals here so no session var in view
+    $_SESSION["loginStatus"] = false;
+    $loginStatus = $_SESSION["loginStatus"];
+} else {
+    $loginStatus = $_SESSION["loginStatus"];
+    $activeUser = $_SESSION["username"];
+}
 
 ini_set('display_errors', '1');
 ini_set('display_startup_errors', '1');
@@ -70,4 +86,10 @@ if (isset($correctInput) && is_numeric($correctInput) && $correctInput <= 50 && 
 
 $balance = array_sum(array_column($transaction, "amount"));
 
-include 'indexView.php';
+if (isset($_POST["logout"])) {
+    $_SESSION["loginStatus"] = false;
+    session_unset();
+    header("Refresh:0");
+}
+
+include __DIR__ . '/View/depositView.php';

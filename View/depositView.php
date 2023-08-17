@@ -4,15 +4,11 @@
 
 <?php
 
-if (isset($_SESSION["username"])) {
-    echo "angemeldet als: ", $_SESSION["username"];
-    echo " <form method='post' action='index.php'>
+if ($loginStatus === true) {
+    echo "angemeldet als: ", $activeUser;
+    echo " <form method='post' action='../deposit.php'>
            <button type='submit' name='logout'>abmelden</button>
            </form>";
-    if (isset($_POST["logout"])) {
-        session_unset();
-        header("Refresh:0");
-    }
 } else {
     echo "<a href=http://0.0.0.0:8000/login.php><button>anmelden</button></a>";
     echo "<a href=http://0.0.0.0:8000/user.php><button>registrieren</button></a> <br>";
@@ -33,7 +29,7 @@ echo "Kontostand: $balance €";
     Geld hochladen
 </h1>
 
-<form action='index.php' method='POST'>
+<form action='../deposit.php' method='POST'>
     Betrag: <input type='text' name='amount'>
     <input type='submit' value='Hochladen'>
 </form>

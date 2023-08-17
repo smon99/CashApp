@@ -1,5 +1,11 @@
 {
   "require": {
-    "ext-json": "*"
+    "ext-json": "*",
+    "twig/twig": "^3.7"
+  },
+  "autoload": {
+    "psr-4": {
+      "Controller\\": "Controller"
+    }
   }
 }

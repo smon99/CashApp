@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><title>CashApp</title></head>
+
+{% if loginStatus is same as(true) %}
+    Angemeldet als: {{ activeUser }}
+    <form method="post" action="../deposit.php">
+        <button type="submit" name="logout">Abmelden</button>
+    </form>
+{% else %}
+    <a href="http://0.0.0.0:8000/login.php"><button>Anmelden</button></a>
+    <a href="http://0.0.0.0:8000/user.php"><button>Registrieren</button></a> <br>
+{% endif %}
+
+{% if success is defined %}
+    {{ success }}
+{% endif %}
+{% if error is defined and error is not empty %}
+    <br>{{ error }}
+    Fehler! Die Transaktion wurde nicht gespeichert!<br>
+{% endif %}
+<br>
+Kontostand: {{ balance }} €
+
+<h1>
+    Geld hochladen
+</h1>
+
+<form action="../deposit.php" method="POST">
+    Betrag: <input type="text" name="amount">
+    <input type="submit" value="Hochladen">
+</form>
+
+</html>

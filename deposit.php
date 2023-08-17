@@ -5,10 +5,10 @@ require_once __DIR__ . '/vendor/autoload.php';
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
-session_start();
-
 $loader = new FilesystemLoader(__DIR__ . '/View');
 $twig = new Environment($loader);
+
+session_start();
 
 if (!isset($_SESSION["loginStatus"])) {     //define locals here so no session var in view
     $_SESSION["loginStatus"] = false;
@@ -27,6 +27,7 @@ $dailyDeposit = 0;
 $hourDeposit = 0;
 $date = 0;
 $error = null;
+$success = null;
 
 if (!file_exists("account.json")) {
     file_put_contents("account.json", json_encode([]));
@@ -92,4 +93,4 @@ if (isset($_POST["logout"])) {
     header("Refresh:0");
 }
 
-include __DIR__ . '/View/depositView.php';
+echo $twig->render('depositView.twig', ['balance' => $balance, 'loginStatus' => $loginStatus, 'activeUser' => $activeUser, 'error' => $error, 'success' => $success]);

@@ -2,12 +2,10 @@
 
 namespace Controller;
 
-require_once __DIR__ . '/../vendor/autoload.php';
-
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
-class TestDepositController
+class DepositController
 {
     private $twig;
     private $transaction;
@@ -18,8 +16,6 @@ class TestDepositController
     {
         $loader = new FilesystemLoader(__DIR__ . '/../View');
         $this->twig = new Environment($loader);
-
-        session_start();
 
         $this->transaction = json_decode(file_get_contents(__DIR__ . '/../Model/account.json'), true);
         if (!$this->transaction) {
@@ -134,6 +130,3 @@ class TestDepositController
         return array_sum(array_column($this->transaction, "amount"));
     }
 }
-
-$testDepositController = new TestDepositController();
-$testDepositController->processDeposit();

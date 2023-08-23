@@ -2,12 +2,10 @@
 
 namespace Controller;
 
-require_once __DIR__ . '/../vendor/autoload.php';
-
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
-class TestLoginController
+class LoginController
 {
     private $twig;
 
@@ -16,7 +14,6 @@ class TestLoginController
         $loader = new FilesystemLoader(__DIR__ . '/../View');
         $this->twig = new Environment($loader);
 
-        session_start();
     }
 
     public function userSearch()
@@ -33,7 +30,7 @@ class TestLoginController
                     if ($userCheck["eMail"] === $mail) {
                         $passwordCheck = $userCheck["password"];
 
-                        if ($passwordVerify = password_verify($password, $passwordCheck)) {
+                        if (password_verify($password, $passwordCheck)) {
                             $_SESSION["username"] = $userCheck["user"];
                             $_SESSION["loginStatus"] = true;
                             echo "logged in as ", $userCheck["user"];
@@ -46,13 +43,10 @@ class TestLoginController
                 }
             }
             if ($_SESSION["loginStatus"] === true) {
-                header("Location: http://0.0.0.0:8000/Controller/TestDepositController.php");
+                header("Location: http://0.0.0.0:8000/?input=deposit");
                 exit();
             }
         }
         echo $this->twig->render('login.twig');
     }
 }
-
-$testLoginController = new TestLoginController();
-$testLoginController->userSearch();

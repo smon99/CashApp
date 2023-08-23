@@ -2,12 +2,10 @@
 
 namespace Controller;
 
-require_once __DIR__ . '/../vendor/autoload.php';
-
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
-class TestUserController
+class UserController
 {
     private $loader;
     private $twig;
@@ -79,6 +77,10 @@ class TestUserController
                             $error = "Fehler eMail bereits vergeben";
                             break;
                         }
+                        if ($userData["user"] === $userName) {
+                            $error = "Fehler Name bereits vergeben";
+                            break;
+                        }
                     }
                 }
 
@@ -120,6 +122,3 @@ class TestUserController
         ]);
     }
 }
-
-$testUserController = new TestUserController();
-$testUserController->handleRegistration();

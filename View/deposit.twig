@@ -4,12 +4,13 @@
 
 {% if loginStatus is same as(true) %}
     Angemeldet als: {{ activeUser }}
-    <form method="post" action="../Controller/TestDepositController.php">
+    <form method="post" action="?input=deposit">
         <button type="submit" name="logout">Abmelden</button>
     </form>
 {% else %}
-    <a href="http://0.0.0.0:8000/Controller/TestLoginController.php"><button>Anmelden</button></a>
-    <a href="http://0.0.0.0:8000/Controller/TestUserController.php"><button>Registrieren</button></a> <br>
+    <a href="http://0.0.0.0:8000/?input=login"><button>Anmelden</button></a>
+    <a href="http://0.0.0.0:8000/?input=user"><button>Registrieren</button></a>
+    <a href="http://0.0.0.0:8000/?input="><button>Index</button></a> <br>
 {% endif %}
 
 {% if success is defined %}
@@ -26,7 +27,7 @@ Kontostand: {{ balance }} €
     Geld hochladen
 </h1>
 
-<form action="../Controller/TestDepositController.php" method="POST">
+<form action="?input=deposit" method="POST">
     Betrag: <input type="text" name="amount">
     <input type="submit" value="Hochladen">
 </form>

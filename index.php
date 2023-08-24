@@ -15,10 +15,11 @@ if ($input === 'deposit') {
     $depositController->processDeposit();
 } elseif ($input === 'login') {
     $loginController = new \Controller\LoginController();
-    $loginController->userSearch();
+    $loginController->userLogin();
 } elseif ($input === 'user') {
     $userController = new \Controller\UserController();
-    $userController->handleRegistration();
+    //$userController->handleRegistration();
+    $userController->registration();
 } else {
     include 'View/index.twig';
 }

@@ -2,6 +2,7 @@
 
 namespace Controller;
 
+use Model\UserRepository;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
@@ -16,35 +17,31 @@ class LoginController
 
     }
 
-    public function userSearch()
+    public function userLogin(): void
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-            $mail = $_POST["mail"];
+            $mailCheck = $_POST["mail"];
             $password = $_POST["password"];
 
-            $user = json_decode(file_get_contents(__DIR__ . '/../Model/user.json'), true);
+            $userRepository = new UserRepository();
+            $request = $userRepository->findByMail($mailCheck);
 
-            if (!empty($user)) {
-                foreach ($user as $userCheck) {
-                    if ($userCheck["eMail"] === $mail) {
-                        $passwordCheck = $userCheck["password"];
-
-                        if (password_verify($password, $passwordCheck)) {
-                            $_SESSION["username"] = $userCheck["user"];
-                            $_SESSION["loginStatus"] = true;
-                            echo "logged in as ", $userCheck["user"];
-
-                        } else {
-                            $_SESSION["loginStatus"] = false;
-                            echo "nice try";
-                        }
+            if ($request["eMail"] === $mailCheck) {
+                if ($request !== null) {
+                    $passwordCheck = $request["password"];
+                    if (password_verify($password, $passwordCheck)) {
+                        $_SESSION["username"] = $request["user"];
+                        $_SESSION["loginStatus"] = true;
+                        echo "logged in as ", $request["user"];
+                    } else {
+                        $_SESSION["loginStatus"] = false;
+                        echo "nice try";
                     }
                 }
-            }
-            if ($_SESSION["loginStatus"] === true) {
-                header("Location: http://0.0.0.0:8000/?input=deposit");
-                exit();
+                if ($_SESSION["loginStatus"] === true) {
+                    header("Location: http://0.0.0.0:8000/?input=deposit");
+                    exit();
+                }
             }
         }
         echo $this->twig->render('login.twig');

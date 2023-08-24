@@ -2,6 +2,8 @@
 
 namespace Controller;
 
+use Model\UserEntityManager;
+use Model\UserRepository;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
@@ -15,12 +17,6 @@ class UserController
     {
         $this->loader = new FilesystemLoader(__DIR__ . '/../View');
         $this->twig = new Environment($this->loader);
-
-        if (!file_exists(__DIR__ . '/../Model/user.json')) {
-            file_put_contents(__DIR__ . '/../Model/user.json', json_encode([]));
-        }
-
-        $this->user = json_decode(file_get_contents(__DIR__ . '/../Model/user.json'), true);
     }
 
     private function validatePassword($passwordCheck): bool
@@ -34,19 +30,12 @@ class UserController
         return $uppercase && $lowercase && $number && $specialChar && strlen($passwordCheck) >= $minLength;
     }
 
-    private function showError($error)
+    private function showError($error): void
     {
         echo $error;
     }
 
-    private function redirectToLogin()
-    {
-        file_put_contents(__DIR__ . '/../Model/user.json', json_encode($this->user, JSON_PRETTY_PRINT));
-        header("Location: http://0.0.0.0:8000/Controller/TestLoginController.php");
-        exit();
-    }
-
-    public function handleRegistration()
+    public function registration(): ?array
     {
         $error = null;
         $tempUserName = null;
@@ -67,25 +56,24 @@ class UserController
                     $tempPassword = $_POST["password"];
                 }
             } elseif (isset($_POST["username"], $_POST["mail"], $_POST["password"])) {
-                $userName = $_POST["username"];
-                $eMailCheck = $_POST["mail"];
+                $userCheck = $_POST["username"];
+                $mailCheck = $_POST["mail"];
                 $passwordCheck = $_POST["password"];
 
-                if (!empty($this->user)) {
-                    foreach ($this->user as $userData) {
-                        if ($userData["eMail"] === $eMailCheck) {
-                            $error = "Fehler eMail bereits vergeben";
-                            break;
-                        }
-                        if ($userData["user"] === $userName) {
-                            $error = "Fehler Name bereits vergeben";
-                            break;
-                        }
-                    }
+                $userRepository = new UserRepository();
+                $mailRequest = $userRepository->findByMail($mailCheck);
+                $userRequest = $userRepository->findByUsername($userCheck);
+
+                if ($mailRequest !== null) {
+                    $error = "Fehler eMail bereits vergeben";
                 }
 
-                if (filter_var($eMailCheck, FILTER_VALIDATE_EMAIL)) {
-                    $eMail = $eMailCheck;
+                if ($userRequest !== null) {
+                    $error = "Fehler Name bereits vergeben";
+                }
+
+                if (filter_var($mailCheck, FILTER_VALIDATE_EMAIL)) {
+                    $eMail = $mailCheck;
                 }
                 if (!isset($eMail)) {
                     $error = "Bitte gültige eMail eingeben!";
@@ -95,30 +83,30 @@ class UserController
                     $password = password_hash($passwordCheck, PASSWORD_DEFAULT);
 
                     if (!isset($error)) {
-                        $newUser = [
-                            "user" => $userName,
-                            "eMail" => $eMail,
+                        $user = [
+                            "user" => $userCheck,
+                            "eMail" => $mailCheck,
                             "password" => $password,
                         ];
 
-                        $this->user[] = $newUser;
+                        $userEntityManager = new UserEntityManager();
+                        $save = $userEntityManager->save($user);
+                        return $user;
                     }
                 } else {
                     $error = "Passwort Anforderungen nicht erfüllt (find out yourself)";
                 }
             }
-
-            if (!isset($error)) {
-                $this->redirectToLogin();
-            } else {
-                $this->showError($error);
-            }
         }
-
+        if (isset($error)) {
+            $this->showError($error);
+        }
         echo $this->twig->render('user.twig', [
             'tempUserName' => $tempUserName,
             'tempMail' => $tempMail,
             'tempPassword' => $tempPassword,
         ]);
+        return null;
     }
+
 }

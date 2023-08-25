@@ -11,7 +11,6 @@ class UserController
 {
     private $loader;
     private $twig;
-    private $user;
 
     public function __construct()
     {
@@ -89,6 +88,8 @@ class UserController
                             "password" => $password,
                         ];
 
+                        echo $this->twig->render('user.twig');
+
                         $userEntityManager = new UserEntityManager();
                         $save = $userEntityManager->save($user);
                         return $user;
@@ -101,12 +102,13 @@ class UserController
         if (isset($error)) {
             $this->showError($error);
         }
-        echo $this->twig->render('user.twig', [
-            'tempUserName' => $tempUserName,
-            'tempMail' => $tempMail,
-            'tempPassword' => $tempPassword,
-        ]);
+        if (null !== ($tempUserName && $tempMail && $tempPassword)) {
+            echo $this->twig->render('user.twig', [
+                'tempUserName' => $tempUserName,
+                'tempMail' => $tempMail,
+                'tempPassword' => $tempPassword,
+            ]);
+        }
         return null;
     }
-
 }

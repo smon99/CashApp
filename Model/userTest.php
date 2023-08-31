@@ -16,16 +16,28 @@
     <input type='submit' value='check'>
 </form>
 
+<form action='http://0.0.0.0:8000/Model/userTest.php' method='POST'>
+    amount: <label>
+        <input type='text' name='amount'>
+    </label>
+    <input type='submit' value='check'>
+</form>
+
 <?php
 
 require __DIR__ . '/UserRepository.php';
+require __DIR__ . '/AccountRepository.php';
 
 use Model\UserRepository;
+use Model\AccountRepository;
 
 $userCheck = $_POST['name'];
 $mailCheck = $_POST['mail'];
 
+$correctInput = $_POST_['amount'];
+
 $userRepository = new UserRepository();
+$accountRepository = new AccountRepository();
 
 if (isset($_POST['name'])) {
     if ($userRepository->findByUsername($userCheck) === null) {
@@ -45,4 +57,9 @@ if (isset($_POST['mail'])) {
     } else {
         print_r($userRepository->findByMail($mailCheck));
     }
+}
+
+if (isset($_POST['amount'])){
+    $output = $accountRepository->calculateTimeBalance($correctInput);
+    print_r($output);
 }

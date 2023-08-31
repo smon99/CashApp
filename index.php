@@ -11,7 +11,9 @@ session_start();
 $input = $_GET['input'];
 
 if ($input === 'deposit') {
-    $depositController = new \Controller\DepositController();
+    $repository = new \Model\AccountRepository();
+    $entityManager = new \Model\AccountEntityManager();
+    $depositController = new \Controller\DepositController($repository, $entityManager);
     $depositController->processDeposit();
 } elseif ($input === 'login') {
     $loginController = new \Controller\LoginController();

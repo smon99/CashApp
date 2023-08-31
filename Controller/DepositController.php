@@ -2,26 +2,25 @@
 
 namespace Controller;
 
+use Model\AccountRepository;
+use Model\AccountEntityManager;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
 class DepositController
 {
     private $twig;
-    private $transaction;
+    private $repository;
+    private $entityManager;
     private $error;
     private $success;
 
-    public function __construct()
+    public function __construct(AccountRepository $repository, AccountEntityManager $entityManager)
     {
         $loader = new FilesystemLoader(__DIR__ . '/../View');
         $this->twig = new Environment($loader);
-
-        $this->transaction = json_decode(file_get_contents(__DIR__ . '/../Model/account.json'), true);
-        if (!$this->transaction) {
-            file_put_contents(__DIR__ . '/../Model/account.json', json_encode([]));
-            $this->transaction = [];
-        }
+        $this->repository = $repository;
+        $this->entityManager = $entityManager;
     }
 
     public function processDeposit()
@@ -32,11 +31,17 @@ class DepositController
             $this->validateDeposit($correctInput);
 
             if ($this->error === null) {
-                $this->saveTransaction();
+                $this->entityManager->saveDeposit([
+                    "amount" => $correctInput,
+                    "date" => date('Y-d-m'),
+                    "time" => date('H:i:s'),
+                ]);
+                $this->success = "Die Transaktion wurde erfolgreich gespeichert!";
             }
         }
 
-        $balance = $this->calculateBalance();
+        $balanceData = $this->repository->calculateTimeBalance($correctInput);
+        $balance = $balanceData["balance"];
 
         if (isset($_POST["logout"])) {
             $_SESSION["loginStatus"] = false;
@@ -71,44 +76,39 @@ class DepositController
             'error' => $error,
             'success' => $success,
         ]);
-
     }
 
     private function getCorrectInput()
     {
         if (isset($_POST["amount"])) {
-            return str_replace(['.', ','], ['', '.'], $_POST["amount"]);
+            $input = str_replace(['.', ','], ['', '.'], $_POST["amount"]);
+
+            if (empty($input)) {
+                $this->error = "Bitte einen Betrag eingeben!";
+                return null;
+            }
+
+            return $input;
         }
+
         return null;
     }
 
     private function validateDeposit($correctInput)
     {
-        if (is_numeric($correctInput) && $correctInput >= 0.01 && $correctInput <= 50) {
-            $date = date('Y-d-m');
-            $time = date('H:i:s');
-            $timestampCurrent = strtotime($time);
-            $hourDeposit = $correctInput;
-            $dailyDeposit = $correctInput;
+        if ($correctInput === null || $correctInput === '') {
+            $this->error = "Bitte einen Betrag eingeben!";
+            return;
+        }
 
-            if (!empty($this->transaction)) {
-                foreach ($this->transaction as $deposit) {
-                    if ($deposit["date"] === $date) {
-                        $dailyDeposit += $deposit["amount"];
-                        $timestampHistory = strtotime($deposit["time"]);
-                        if ($timestampHistory >= $timestampCurrent - (60 * 60)) {
-                            $hourDeposit += $deposit["amount"];
-                        }
-                    }
-                }
-            }
+        $correctInput = (float)$correctInput;
+
+        if (is_numeric($correctInput) && $correctInput >= 0.01 && $correctInput <= 50) {
+            $balanceData = $this->repository->calculateTimeBalance($correctInput);
+            $dailyDeposit = $balanceData["day"];
+            $hourDeposit = $balanceData["hour"];
 
             if ($dailyDeposit <= 500 && $hourDeposit <= 100) {
-                $this->transaction[] = [
-                    "amount" => $correctInput,
-                    "date" => $date,
-                    "time" => $time,
-                ];
                 $this->success = "Die Transaktion wurde erfolgreich gespeichert!";
             } elseif ($dailyDeposit > 500) {
                 $this->error = "Tägliches Einzahlungslimit von 500€ überschritten!";
@@ -120,13 +120,4 @@ class DepositController
         }
     }
 
-    private function saveTransaction()
-    {
-        file_put_contents(__DIR__ . '/../Model/account.json', json_encode($this->transaction, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE), LOCK_EX);
-    }
-
-    private function calculateBalance()
-    {
-        return array_sum(array_column($this->transaction, "amount"));
-    }
 }

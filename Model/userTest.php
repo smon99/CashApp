@@ -1,4 +1,4 @@
-<a href="http://0.0.0.0:8000/index.php">
+<a href="http://0.0.0.0:8000/?input=index">
     <button>index</button>
 </a> <br><br>
 

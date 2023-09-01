@@ -15,10 +15,13 @@ class DepositController
     private $error;
     private $success;
 
-    public function __construct(AccountRepository $repository, AccountEntityManager $entityManager)
+    public function __construct()
     {
         $loader = new FilesystemLoader(__DIR__ . '/../View');
         $this->twig = new Environment($loader);
+
+        $repository = new \Model\AccountRepository();
+        $entityManager = new \Model\AccountEntityManager();
         $this->repository = $repository;
         $this->entityManager = $entityManager;
     }

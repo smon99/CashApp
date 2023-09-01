@@ -11,17 +11,20 @@ session_start();
 $input = $_GET['input'];
 
 if ($input === 'deposit') {
-    $repository = new \Model\AccountRepository();
-    $entityManager = new \Model\AccountEntityManager();
-    $depositController = new \Controller\DepositController($repository, $entityManager);
+    $depositController = new \Controller\DepositController();
     $depositController->processDeposit();
-} elseif ($input === 'login') {
+}
+
+if ($input === 'login') {
     $loginController = new \Controller\LoginController();
     $loginController->userLogin();
-} elseif ($input === 'user') {
+}
+
+if ($input === 'user') {
     $userController = new \Controller\UserController();
-    //$userController->handleRegistration();
     $userController->registration();
-} else {
+}
+
+if ($input === 'index') {
     include 'View/index.twig';
 }

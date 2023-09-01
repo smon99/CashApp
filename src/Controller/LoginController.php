@@ -39,7 +39,7 @@ class LoginController
                     }
                 }
                 if ($_SESSION["loginStatus"] === true) {
-                    header("Location: http://0.0.0.0:8000/?input=deposit");
+                    header("Location: http://0.0.0.0:8000/src/?input=deposit");
                     exit();
                 }
             }

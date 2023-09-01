@@ -43,5 +43,10 @@
         "user": "Tim",
         "eMail": "Tim@Tim.de",
         "password": "$2y$10$ygYqwfjFSUg0ewKjUlmK8uOetwmRm70wuIdzwYFCi9JgnYpdyL5Eu"
+    },
+    {
+        "user": "Hauke",
+        "eMail": "Hauke@Hauke.de",
+        "password": "$2y$10$uY\/Sj0vgCtcwRVz6Do7zp.8W8IMTIQmDDUOVtumrJkCsmq9A53vRC"
     }
 ]

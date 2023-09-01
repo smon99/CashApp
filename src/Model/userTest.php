@@ -1,22 +1,22 @@
-<a href="http://0.0.0.0:8000/?input=index">
+<a href="http://0.0.0.0:8000/src/?input=index">
     <button>index</button>
 </a> <br><br>
 
-<form action='http://0.0.0.0:8000/Model/userTest.php' method='POST'>
+<form action='http://0.0.0.0:8000/src/Model/userTest.php' method='POST'>
     user: <label>
         <input type='text' name='name'>
     </label>
     <input type='submit' value='check'>
 </form>
 
-<form action='http://0.0.0.0:8000/Model/userTest.php' method='POST'>
+<form action='http://0.0.0.0:8000/src/Model/userTest.php' method='POST'>
     mail: <label>
         <input type='text' name='mail'>
     </label>
     <input type='submit' value='check'>
 </form>
 
-<form action='http://0.0.0.0:8000/Model/userTest.php' method='POST'>
+<form action='http://0.0.0.0:8000/src/Model/userTest.php' method='POST'>
     amount: <label>
         <input type='text' name='amount'>
     </label>

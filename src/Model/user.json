@@ -48,5 +48,10 @@
         "user": "Hauke",
         "eMail": "Hauke@Hauke.de",
         "password": "$2y$10$uY\/Sj0vgCtcwRVz6Do7zp.8W8IMTIQmDDUOVtumrJkCsmq9A53vRC"
+    },
+    {
+        "user": "TestUser",
+        "eMail": "TestUser@TestUser.de",
+        "password": "$2y$10$mUhklPZSOKe6ywT7pl0KnO44vUlBwYYUUQxltAdbUL5R44MJDJgkq"
     }
 ]

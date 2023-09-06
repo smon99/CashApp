@@ -8,7 +8,7 @@ error_reporting(E_ALL);
 
 session_start();
 
-$input = $_GET['input'];
+$input = $_GET['input'] ?? '';
 
 if ($input === 'deposit') {
     $depositController = new \Controller\DepositController();

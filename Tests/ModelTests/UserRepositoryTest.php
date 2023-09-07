@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Test;
+namespace Test\ModelTests;
 
 use Model\UserRepository;
 use PHPUnit\Framework\TestCase;

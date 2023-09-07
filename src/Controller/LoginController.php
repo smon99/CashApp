@@ -2,19 +2,16 @@
 
 namespace Controller;
 
+use Core\ViewInterface;
 use Model\UserRepository;
-use Twig\Environment;
-use Twig\Loader\FilesystemLoader;
 
 class LoginController
 {
-    private $twig;
+    private $view;
 
-    public function __construct()
+    public function __construct(ViewInterface $view)
     {
-        $loader = new FilesystemLoader(__DIR__ . '/../View');
-        $this->twig = new Environment($loader);
-
+        $this->view = $view;
     }
 
     public function userLogin(): void
@@ -39,11 +36,14 @@ class LoginController
                     }
                 }
                 if ($_SESSION["loginStatus"] === true) {
-                    header("Location: http://0.0.0.0:8000/src/?input=deposit");
+                    header("Location: http://0.0.0.0:8000/?input=deposit");
                     exit();
                 }
             }
         }
-        echo $this->twig->render('login.twig');
+
+        $this->view->addParameter('pageTitle', 'Login Page');
+
+        $this->view->display('login.twig');
     }
 }

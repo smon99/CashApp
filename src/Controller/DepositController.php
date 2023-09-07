@@ -4,21 +4,19 @@ namespace Controller;
 
 use Model\AccountRepository;
 use Model\AccountEntityManager;
-use Twig\Environment;
-use Twig\Loader\FilesystemLoader;
+use Core\ViewInterface;
 
 class DepositController
 {
-    private $twig;
+    private $view;
     private $repository;
     private $entityManager;
     private $error;
     private $success;
 
-    public function __construct()
+    public function __construct(ViewInterface $view)
     {
-        $loader = new FilesystemLoader(__DIR__ . '/../View');
-        $this->twig = new Environment($loader);
+        $this->view = $view;
 
         $repository = new \Model\AccountRepository();
         $entityManager = new \Model\AccountEntityManager();
@@ -72,16 +70,16 @@ class DepositController
             $success = $this->success;
         }
 
-        echo $this->twig->render('deposit.twig', [
-            'balance' => $balance,
-            'loginStatus' => $loginStatus,
-            'activeUser' => $activeUser,
-            'error' => $error,
-            'success' => $success,
-        ]);
+        $this->view->addParameter('balance', $balance);
+        $this->view->addParameter('loginStatus', $loginStatus);
+        $this->view->addParameter('activeUser', $activeUser);
+        $this->view->addParameter('error', $error);
+        $this->view->addParameter('success', $success);
+
+        $this->view->display('deposit.twig');
     }
 
-    private function getCorrectInput()
+    private function getCorrectInput(): array|string|null
     {
         if (isset($_POST["amount"])) {
             $input = str_replace(['.', ','], ['', '.'], $_POST["amount"]);

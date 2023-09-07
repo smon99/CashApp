@@ -2,21 +2,17 @@
 
 namespace Controller;
 
+use Core\ViewInterface;
 use Model\UserEntityManager;
 use Model\UserRepository;
 
-use Twig\Environment;
-use Twig\Loader\FilesystemLoader;
-
 class UserController
 {
-    private $loader;
-    private $twig;
+    private $view;
 
-    public function __construct()
+    public function __construct(ViewInterface $view)
     {
-        $this->loader = new FilesystemLoader(__DIR__ . '/../View');
-        $this->twig = new Environment($this->loader);
+        $this->view = $view;
     }
 
     private function validatePassword($passwordCheck): bool
@@ -28,11 +24,6 @@ class UserController
         $minLength = 6;
 
         return $uppercase && $lowercase && $number && $specialChar && strlen($passwordCheck) >= $minLength;
-    }
-
-    private function showError($error): void
-    {
-        echo $error;
     }
 
     public function registration(): ?array
@@ -89,10 +80,11 @@ class UserController
                             "password" => $password,
                         ];
 
-                        echo $this->twig->render('user.twig');
+                        $this->view->display('user.twig');
 
+                        $path = '/../Model/user.json';
                         $userEntityManager = new UserEntityManager();
-                        $save = $userEntityManager->save($user);
+                        $save = $userEntityManager->save($user, $path);
                         return $user;
                     }
                 } else {
@@ -101,15 +93,15 @@ class UserController
             }
         }
         if (isset($error)) {
-            $this->showError($error);
+            $this->view->addParameter('error', $error);
         }
         if (null !== ($tempUserName && $tempMail && $tempPassword)) {
-            echo $this->twig->render('user.twig', [
-                'tempUserName' => $tempUserName,
-                'tempMail' => $tempMail,
-                'tempPassword' => $tempPassword,
-            ]);
+            $this->view->addParameter('tempUserName', $tempUserName);
+            $this->view->addParameter('tempMail', $tempMail);
+            $this->view->addParameter('tempPassword', $tempPassword);
         }
+        $this->view->display('user.twig');
+
         return null;
     }
 }

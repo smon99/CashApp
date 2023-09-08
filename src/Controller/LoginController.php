@@ -1,9 +1,9 @@
 <?php declare(strict_types=1);
 
-namespace Controller;
+namespace App\Controller;
 
-use Core\ViewInterface;
-use Model\UserRepository;
+use App\Core\ViewInterface;
+use App\Model\UserRepository;
 
 class LoginController
 {

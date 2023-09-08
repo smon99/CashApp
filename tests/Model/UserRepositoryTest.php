@@ -1,15 +1,15 @@
 <?php declare(strict_types=1);
 
-namespace Test\ModelTests;
+namespace Test\Model;
 
-use Model\UserRepository;
+use App\Model\UserRepository;
 use PHPUnit\Framework\TestCase;
 
 class UserRepositoryTest extends TestCase
 {
     public function testFindByUsername(): void
     {
-        $testFindByUsername = new UserRepository();
+        $testFindByUsername = new UserRepository(null);
         $usernameTestDataset = $testFindByUsername->findByUsername('TestUser');
 
         self::assertSame('TestUser', $usernameTestDataset['user']);
@@ -19,7 +19,7 @@ class UserRepositoryTest extends TestCase
 
     public function testFindByUsernameNull(): void
     {
-        $testFindByUsernameNull = new UserRepository();
+        $testFindByUsernameNull = new UserRepository(null);
         $usernameNullTestDataset = $testFindByUsernameNull->findByUsername('Non Existing');
 
         self::assertNull($usernameNullTestDataset);
@@ -27,7 +27,7 @@ class UserRepositoryTest extends TestCase
 
     public function testFindByMail(): void
     {
-        $testFindByMail = new UserRepository();
+        $testFindByMail = new UserRepository(null);
         $mailTestDataset = $testFindByMail->findByMail('TestUser@TestUser.de');
 
         self::assertSame('TestUser', $mailTestDataset['user']);
@@ -37,7 +37,7 @@ class UserRepositoryTest extends TestCase
 
     public function testFindByMailNull(): void
     {
-        $testFindByMailNull = new UserRepository();
+        $testFindByMailNull = new UserRepository(null);
         $mailNullTestDataset = $testFindByMailNull->findByMail('Non Existing');
 
         self::assertNull($mailNullTestDataset);

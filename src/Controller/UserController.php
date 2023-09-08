@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace Controller;
+namespace App\Controller;
 
-use Core\ViewInterface;
-use Model\UserEntityManager;
-use Model\UserRepository;
+use App\Core\ViewInterface;
+use App\Model\UserEntityManager;
+use App\Model\UserRepository;
 
 class UserController
 {
@@ -26,7 +26,7 @@ class UserController
         return $uppercase && $lowercase && $number && $specialChar && strlen($passwordCheck) >= $minLength;
     }
 
-    public function registration(): ?array
+    public function registration(): void
     {
         $error = null;
         $tempUserName = null;
@@ -51,7 +51,7 @@ class UserController
                 $mailCheck = $_POST["mail"];
                 $passwordCheck = $_POST["password"];
 
-                $userRepository = new UserRepository();
+                $userRepository = new UserRepository(null);
                 $mailRequest = $userRepository->findByMail($mailCheck);
                 $userRequest = $userRepository->findByUsername($userCheck);
 
@@ -80,12 +80,9 @@ class UserController
                             "password" => $password,
                         ];
 
-                        $this->view->display('user.twig');
-
-                        $path = '/../Model/user.json';
-                        $userEntityManager = new UserEntityManager();
-                        $save = $userEntityManager->save($user, $path);
-                        return $user;
+                        $userEntityManager = new UserEntityManager(null);
+                        $userEntityManager->save($user, null);
+                        header("Location: http://0.0.0.0:8000/?input=login");
                     }
                 } else {
                     $error = "Passwort Anforderungen nicht erfüllt (find out yourself)";
@@ -101,7 +98,5 @@ class UserController
             $this->view->addParameter('tempPassword', $tempPassword);
         }
         $this->view->display('user.twig');
-
-        return null;
     }
 }

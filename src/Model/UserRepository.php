@@ -1,12 +1,25 @@
 <?php declare(strict_types=1);
 
-namespace Model;
+namespace App\Model;
 
 class UserRepository
 {
+    public const USER_DEFAULT_PATH = __DIR__ . '/user.json';
+
+    private string $path;
+
+    public function __construct(?string $path = null)
+    {
+        if ($path === null) {
+            $this->path = self::USER_DEFAULT_PATH;
+        } else {
+            $this->path = $path;
+        }
+    }
+
     public function findByUsername(string $userCheck): ?array
     {
-        $user = json_decode(file_get_contents(__DIR__ . '/../Model/user.json'), true);
+        $user = json_decode(file_get_contents($this->path), true);
 
         foreach ($user as $userRun) {
             if ($userRun["user"] === $userCheck) {
@@ -21,7 +34,7 @@ class UserRepository
 
     public function findByMail(string $mailCheck): ?array
     {
-        $user = json_decode(file_get_contents(__DIR__ . '/../Model/user.json'), true);
+        $user = json_decode(file_get_contents($this->path), true);
 
         foreach ($user as $userRun) {
             if ($userRun["eMail"] === $mailCheck) {

@@ -8,22 +8,22 @@ error_reporting(E_ALL);
 
 session_start();
 
-$view = new \Core\View(__DIR__ . '/src/View');
+$view = new App\Core\View(__DIR__ . '/src/View');
 
 $input = $_GET['input'] ?? '';
 
 if ($input === 'deposit') {
-    $depositController = new \Controller\DepositController($view);
+    $depositController = new App\Controller\DepositController($view);
     $depositController->processDeposit();
 }
 
 if ($input === 'login') {
-    $loginController = new \Controller\LoginController($view);
+    $loginController = new App\Controller\LoginController($view);
     $loginController->userLogin();
 }
 
 if ($input === 'user') {
-    $userController = new \Controller\UserController($view);
+    $userController = new App\Controller\UserController($view);
     $userController->registration();
 }
 

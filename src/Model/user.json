@@ -53,5 +53,25 @@
         "user": "TestUser",
         "eMail": "TestUser@TestUser.de",
         "password": "$2y$10$mUhklPZSOKe6ywT7pl0KnO44vUlBwYYUUQxltAdbUL5R44MJDJgkq"
+    },
+    {
+        "user": "Meike",
+        "eMail": "Meike@Meike.de",
+        "password": "$2y$10$hOUuW7TUUaVDNoaP7aWNkennHnoij8JrGxRbO.BHiRWq36Xyw7jsK"
+    },
+    {
+        "user": "Melanie",
+        "eMail": "Melanie@Melanie.de",
+        "password": "$2y$10$HhSCzGhQALvBJGWhykT4H.EOHXjd5Aa8hUWgZ30kk2GRv\/bm6Y2LO"
+    },
+    {
+        "user": "Uwe",
+        "eMail": "Uwe@Uwe.de",
+        "password": "$2y$10$gLWqLROf831YjCSlKTW48efOz6UeGFAJNhhenuNxFgx.GY9N57som"
+    },
+    {
+        "user": "Patrick",
+        "eMail": "Patrick@Patrick.de",
+        "password": "$2y$10$0PpMatEUOvfawyi5sLyEruRbQLKJhfIqu0ZisbqxqLuYxe3c44iUW"
     }
 ]

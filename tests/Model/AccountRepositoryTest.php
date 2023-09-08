@@ -1,9 +1,9 @@
 <?php declare(strict_types=1);
 
-namespace Test\ModelTests;
+namespace Test\Model;
 
 use PHPUnit\Framework\TestCase;
-use Model\AccountRepository;
+use App\Model\AccountRepository;
 
 class AccountRepositoryTest extends TestCase
 {

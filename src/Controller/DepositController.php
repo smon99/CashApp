@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace Controller;
+namespace App\Controller;
 
-use Model\AccountRepository;
-use Model\AccountEntityManager;
-use Core\ViewInterface;
+use App\Model\AccountRepository;
+use App\Model\AccountEntityManager;
+use App\Core\ViewInterface;
 
 class DepositController
 {
@@ -18,8 +18,8 @@ class DepositController
     {
         $this->view = $view;
 
-        $repository = new \Model\AccountRepository();
-        $entityManager = new \Model\AccountEntityManager();
+        $repository = new AccountRepository();
+        $entityManager = new AccountEntityManager();
         $this->repository = $repository;
         $this->entityManager = $entityManager;
     }
@@ -32,11 +32,13 @@ class DepositController
             $this->validateDeposit($correctInput);
 
             if ($this->error === null) {
+
+                $path = '/../Model/account.json';
                 $this->entityManager->saveDeposit([
                     "amount" => $correctInput,
                     "date" => date('Y-d-m'),
                     "time" => date('H:i:s'),
-                ]);
+                ], $path);
                 $this->success = "Die Transaktion wurde erfolgreich gespeichert!";
             }
         }

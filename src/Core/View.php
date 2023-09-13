@@ -8,6 +8,7 @@ use Twig\Loader\FilesystemLoader;
 class View implements ViewInterface
 {
     private $twig;
+    private string  $template;
 
     public function __construct(string $templatePath)
     {
@@ -22,7 +23,13 @@ class View implements ViewInterface
 
     public function display(string $template)
     {
+        $this->template = $template;
         $parameters = array_merge($this->parameters);
         echo $this->twig->render($template, $parameters);
+    }
+
+    public function getTemplate(): string
+    {
+        return $this->template;
     }
 }

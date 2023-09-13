@@ -9,7 +9,7 @@ class UserRepositoryTest extends TestCase
 {
     public function testFindByUsername(): void
     {
-        $testFindByUsername = new UserRepository(null);
+        $testFindByUsername = new UserRepository();
         $usernameTestDataset = $testFindByUsername->findByUsername('TestUser');
 
         self::assertSame('TestUser', $usernameTestDataset['user']);
@@ -19,7 +19,7 @@ class UserRepositoryTest extends TestCase
 
     public function testFindByUsernameNull(): void
     {
-        $testFindByUsernameNull = new UserRepository(null);
+        $testFindByUsernameNull = new UserRepository();
         $usernameNullTestDataset = $testFindByUsernameNull->findByUsername('Non Existing');
 
         self::assertNull($usernameNullTestDataset);
@@ -27,7 +27,7 @@ class UserRepositoryTest extends TestCase
 
     public function testFindByMail(): void
     {
-        $testFindByMail = new UserRepository(null);
+        $testFindByMail = new UserRepository();
         $mailTestDataset = $testFindByMail->findByMail('TestUser@TestUser.de');
 
         self::assertSame('TestUser', $mailTestDataset['user']);
@@ -37,9 +37,10 @@ class UserRepositoryTest extends TestCase
 
     public function testFindByMailNull(): void
     {
-        $testFindByMailNull = new UserRepository(null);
+        $testFindByMailNull = new UserRepository();
         $mailNullTestDataset = $testFindByMailNull->findByMail('Non Existing');
 
         self::assertNull($mailNullTestDataset);
     }
+
 }

@@ -4,17 +4,18 @@ namespace App\Model;
 
 class UserRepository
 {
-    public const USER_DEFAULT_PATH = __DIR__ . '/user.json';
 
-    private string $path;
 
-    public function __construct(?string $path = null)
-    {
+    //private string $path;
+
+    public function __construct(private string $path = __DIR__ . '/user.json') {
+        /*
         if ($path === null) {
             $this->path = self::USER_DEFAULT_PATH;
         } else {
             $this->path = $path;
         }
+        */
     }
 
     public function findByUsername(string $userCheck): ?array

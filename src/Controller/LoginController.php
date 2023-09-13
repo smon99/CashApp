@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Core\Redirect;
 use App\Core\ViewInterface;
 use App\Model\UserRepository;
 
@@ -9,14 +10,14 @@ class LoginController
 {
     private $view;
 
-    public function __construct(ViewInterface $view)
+    public function __construct(ViewInterface $view, private Redirect $redirect)
     {
         $this->view = $view;
     }
 
     public function userLogin(): void
     {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (isset($_POST['login'])) {
             $mailCheck = $_POST["mail"];
             $password = $_POST["password"];
 
@@ -36,8 +37,7 @@ class LoginController
                     }
                 }
                 if ($_SESSION["loginStatus"] === true) {
-                    header("Location: http://0.0.0.0:8000/?input=deposit");
-                    exit();
+                    $this->redirect->redirectTo('http://0.0.0.0:8000/?input=deposit');
                 }
             }
         }

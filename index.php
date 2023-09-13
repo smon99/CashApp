@@ -18,7 +18,7 @@ if ($input === 'deposit') {
 }
 
 if ($input === 'login') {
-    $loginController = new App\Controller\LoginController($view);
+    $loginController = new App\Controller\LoginController($view, new \App\Core\Redirect());
     $loginController->userLogin();
 }
 

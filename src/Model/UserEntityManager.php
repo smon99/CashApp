@@ -4,15 +4,17 @@ namespace App\Model;
 
 class UserEntityManager
 {
-    private string $path;
+    //private string $path;
 
-    public function __construct(?string $path = null)
+    public function __construct(private string $path = __DIR__ . '/user.json')
     {
+        /*
         if ($path === null) {
             $path = UserRepository::USER_DEFAULT_PATH;
         }
 
         $this->path = $path;
+        */
     }
 
     public function save(array $user): void

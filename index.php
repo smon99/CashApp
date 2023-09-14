@@ -9,11 +9,12 @@ error_reporting(E_ALL);
 session_start();
 
 $view = new App\Core\View(__DIR__ . '/src/View');
+$accountMapper = new \App\Model\AccountMapper();
 
 $input = $_GET['input'] ?? '';
 
 if ($input === 'deposit') {
-    $depositController = new App\Controller\DepositController($view);
+    $depositController = new App\Controller\DepositController($view, $accountMapper);
     $depositController->processDeposit();
 }
 
@@ -23,7 +24,7 @@ if ($input === 'login') {
 }
 
 if ($input === 'user') {
-    $userController = new App\Controller\UserController($view);
+    $userController = new App\Controller\UserController($view, new \App\Core\Redirect());
     $userController->registration();
 }
 

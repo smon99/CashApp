@@ -73,5 +73,15 @@
         "user": "Patrick",
         "eMail": "Patrick@Patrick.de",
         "password": "$2y$10$0PpMatEUOvfawyi5sLyEruRbQLKJhfIqu0ZisbqxqLuYxe3c44iUW"
+    },
+    {
+        "user": "Steve",
+        "eMail": "Steve@Steve.de",
+        "password": "$2y$10$kxdEok1oD41JegPsFCpRWuFHPjdhiLF1Z5AEHNICQBtB6cmK\/4HQy"
+    },
+    {
+        "user": "Test",
+        "eMail": "Test@Test.de",
+        "password": "$2y$10$v5cZV8GShi6DOrk.Pp0aB.lxCzeMM8JuSwxSNeuw6CxNoScVk2WM2"
     }
 ]

@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Core\Redirect;
 use App\Core\ViewInterface;
 use App\Model\UserEntityManager;
 use App\Model\UserRepository;
@@ -10,12 +11,12 @@ class UserController
 {
     private $view;
 
-    public function __construct(ViewInterface $view)
+    public function __construct(ViewInterface $view, private Redirect $redirect)
     {
         $this->view = $view;
     }
 
-    private function validatePassword($passwordCheck): bool
+    public function validatePassword($passwordCheck): bool
     {
         $uppercase = preg_match('@[A-Z]@', $passwordCheck);
         $lowercase = preg_match('@[a-z]@', $passwordCheck);
@@ -33,7 +34,7 @@ class UserController
         $tempMail = null;
         $tempPassword = null;
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (isset($_POST['register'])) {
             if (empty($_POST["username"]) || empty($_POST["mail"]) || empty($_POST["password"])) {
                 $error = "Alle Felder müssen ausgefüllt sein!";
 
@@ -51,7 +52,7 @@ class UserController
                 $mailCheck = $_POST["mail"];
                 $passwordCheck = $_POST["password"];
 
-                $userRepository = new UserRepository(null);
+                $userRepository = new UserRepository();
                 $mailRequest = $userRepository->findByMail($mailCheck);
                 $userRequest = $userRepository->findByUsername($userCheck);
 
@@ -80,9 +81,9 @@ class UserController
                             "password" => $password,
                         ];
 
-                        $userEntityManager = new UserEntityManager(null);
-                        $userEntityManager->save($user, null);
-                        header("Location: http://0.0.0.0:8000/?input=login");
+                        $userEntityManager = new UserEntityManager();
+                        $userEntityManager->save($user);
+                        $this->redirect->redirectTo('http://0.0.0.0:8000/?input=login');
                     }
                 } else {
                     $error = "Passwort Anforderungen nicht erfüllt (find out yourself)";

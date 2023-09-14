@@ -5,7 +5,6 @@ namespace App\Model;
 class UserRepository
 {
 
-
     //private string $path;
 
     public function __construct(private string $path = __DIR__ . '/user.json') {

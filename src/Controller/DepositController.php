@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Model\AccountRepository;
 use App\Model\AccountEntityManager;
 use App\Core\ViewInterface;
+use App\Model\AccountMapper;
 
 class DepositController
 {
@@ -14,15 +15,13 @@ class DepositController
     private $error;
     private $success;
 
-    public function __construct(ViewInterface $view)
+    public function __construct(ViewInterface $view, AccountMapper $accountMapper)
     {
         $this->view = $view;
-
-        $repository = new AccountRepository();
-        $entityManager = new AccountEntityManager();
-        $this->repository = $repository;
-        $this->entityManager = $entityManager;
+        $this->repository = new AccountRepository(null, $accountMapper);
+        $this->entityManager = new AccountEntityManager();
     }
+
 
     public function processDeposit()
     {

@@ -2,48 +2,58 @@
 
 namespace App\Controller;
 
+use App\Model\AccountDTO;
 use App\Model\AccountRepository;
-use App\Model\AccountEntityManager;
 use App\Core\ViewInterface;
-use App\Model\AccountMapper;
+use App\Core\AccountValidation;
+use App\Model\AccountEntityManager;
 
 class DepositController
 {
-    private $view;
-    private $repository;
-    private $entityManager;
+    private AccountValidation $validator;
+    private ViewInterface $view;
+    private AccountRepository $repository;
+    private AccountEntityManager $entityManager;
     private $error;
     private $success;
 
-    public function __construct(ViewInterface $view, AccountMapper $accountMapper)
+    public function __construct(
+        ViewInterface        $view,
+        AccountRepository    $repository,
+        AccountEntityManager $entityManager,
+        AccountValidation    $validator
+    )
     {
         $this->view = $view;
-        $this->repository = new AccountRepository(null, $accountMapper);
-        $this->entityManager = new AccountEntityManager();
+        $this->repository = $repository;
+        $this->entityManager = $entityManager;
+        $this->validator = $validator;
     }
 
-
-    public function processDeposit()
+    public function processDeposit(): void
     {
-        $correctInput = $this->getCorrectInput();
+        $input = $_POST["amount"] ?? null;
 
-        if ($correctInput !== null) {
-            $this->validateDeposit($correctInput);
+        if ($input !== null) {
+            $validAmount = $this->validator->validateAllCriteria($input);
 
-            if ($this->error === null) {
-
-                $path = '/../Model/account.json';
-                $this->entityManager->saveDeposit([
-                    "amount" => $correctInput,
-                    "date" => date('Y-d-m'),
-                    "time" => date('H:i:s'),
-                ], $path);
+            if (is_float($validAmount)) {
+                $date = date('Y-m-d');
+                $time = date('H:i:s');
+                $saveData = new AccountDTO();
+                $saveData->amount = $validAmount;
+                $saveData->date = $date;
+                $saveData->time = $time;
+                $this->entityManager->saveDeposit($saveData);
                 $this->success = "Die Transaktion wurde erfolgreich gespeichert!";
+            } else {
+                $this->error = $validAmount;
             }
+        } else {
+            $this->error = "Bitte einen Betrag eingeben!";
         }
 
-        $balanceData = $this->repository->calculateTimeBalance($correctInput);
-        $balance = $balanceData["balance"];
+        $balance = $this->repository->calculateBalance();
 
         if (isset($_POST["logout"])) {
             $_SESSION["loginStatus"] = false;
@@ -61,65 +71,12 @@ class DepositController
             $activeUser = $_SESSION["username"];
         }
 
-        $error = null;
-        if (isset($this->error)) {
-            $error = $this->error;
-        }
-
-        $success = null;
-        if (isset($this->success)) {
-            $success = $this->success;
-        }
-
         $this->view->addParameter('balance', $balance);
         $this->view->addParameter('loginStatus', $loginStatus);
         $this->view->addParameter('activeUser', $activeUser);
-        $this->view->addParameter('error', $error);
-        $this->view->addParameter('success', $success);
+        $this->view->addParameter('error', $this->error);
+        $this->view->addParameter('success', $this->success);
 
         $this->view->display('deposit.twig');
     }
-
-    private function getCorrectInput(): array|string|null
-    {
-        if (isset($_POST["amount"])) {
-            $input = str_replace(['.', ','], ['', '.'], $_POST["amount"]);
-
-            if (empty($input)) {
-                $this->error = "Bitte einen Betrag eingeben!";
-                return null;
-            }
-
-            return $input;
-        }
-
-        return null;
-    }
-
-    private function validateDeposit($correctInput)
-    {
-        if ($correctInput === null || $correctInput === '') {
-            $this->error = "Bitte einen Betrag eingeben!";
-            return;
-        }
-
-        $correctInput = (float)$correctInput;
-
-        if (is_numeric($correctInput) && $correctInput >= 0.01 && $correctInput <= 50) {
-            $balanceData = $this->repository->calculateTimeBalance($correctInput);
-            $dailyDeposit = $balanceData["day"];
-            $hourDeposit = $balanceData["hour"];
-
-            if ($dailyDeposit <= 500 && $hourDeposit <= 100) {
-                $this->success = "Die Transaktion wurde erfolgreich gespeichert!";
-            } elseif ($dailyDeposit > 500) {
-                $this->error = "Tägliches Einzahlungslimit von 500€ überschritten!";
-            } else {
-                $this->error = "Stündliches Einzahlungslimit von 100€ überschritten!";
-            }
-        } else {
-            $this->error = "Bitte einen Betrag von mindestens 0.01€ und maximal 50€ eingeben!";
-        }
-    }
-
 }

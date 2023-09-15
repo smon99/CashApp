@@ -15,18 +15,18 @@ class AccountEntityManager
         $this->path = $path;
     }
 
-    public function saveDeposit($deposit): void
+    public function saveDeposit(AccountDTO $deposit): void
     {
-        if (!file_exists($this->path)) {
-            $firstDeposit = [$deposit];
-            $saveDeposit = $firstDeposit;
-            file_put_contents($this->path, json_encode([]));
-        } else {
-            $oldDeposit = json_decode(file_get_contents($this->path));
-            $oldDeposit[] = $deposit;
-            $saveDeposit = $oldDeposit;
-        }
-        $deposit_data = json_encode($saveDeposit, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT);
-        file_put_contents($this->path, $deposit_data, LOCK_EX);
+        $accountMapper = new AccountMapper();
+
+        $jsonString = file_get_contents($this->path);
+
+        $accountDTOList = $accountMapper->jsonToDTO($jsonString);
+
+        $accountDTOList[] = $deposit;
+
+        $jsonString = $accountMapper->jsonFromDTO($accountDTOList);
+        file_put_contents($this->path, $jsonString);
     }
+
 }

@@ -1,17 +1,32 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Core;
 
-use App\Model\AccountRepository;
-
 class AccountValidation
 {
-    public function singleDepositLimit(float $amount): bool
+    public function getCorrectAmount($input): float
     {
-        if ($amount > 50) {
+        $amount = str_replace(['.', ','], ['', '.'], $input);
+        return (float)$amount;
+    }
+
+    public function existsIsNumeric(float $amount): bool
+    {
+        if ($amount === null || $amount === '') {
+            return false;
+        }
+        if (!is_numeric($amount)) {
             return false;
         }
         return true;
+    }
+
+    public function singleDepositLimit(float $amount): bool
+    {
+        if ($amount >= 0.01 && $amount <= 50) {
+            return true;
+        }
+        return false;
     }
 
     public function hourDepositLimit(float $amount): bool
@@ -49,9 +64,39 @@ class AccountValidation
             }
         }
 
-        if ($amount >= 500.00) {
+        if ($amount >= 500.0) {
             return false;
         }
         return true;
+    }
+
+    public function validateAllCriteria(string $input): float|string
+    {
+        $amount = $this->getCorrectAmount($input);
+
+        $numeric = $this->existsIsNumeric($amount);
+        $single = $this->singleDepositLimit($amount);
+        $hour = $this->hourDepositLimit($amount);
+        $day = $this->dayDepositLimit($amount);
+
+        $error = 'Ein Fehler ist aufgetreten Einzahlung wurde nicht durchgeführt';
+
+        if ($numeric === false) {
+            $error = 'Bitte einen Betrag eingeben!';
+        }
+        if ($single === false) {
+            $error = 'Bitte einen Betrag von mindestens 0.01€ und maximal 50€ eingeben!';
+        }
+        if ($hour === false) {
+            $error = 'Stündliches Einzahlungslimit von 100€ überschritten!';
+        }
+        if ($day === false) {
+            $error = 'Tägliches Einzahlungslimit von 500€ überschritten!';
+        }
+
+        if ($numeric && $single && $hour && $day === true) {
+            return $amount;
+        }
+        return $error;
     }
 }

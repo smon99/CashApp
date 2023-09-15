@@ -9,7 +9,7 @@ class AccountRepository
     private string $path;
     private AccountMapper $accountMapper;
 
-    public function __construct(?string $path = null, AccountMapper $accountMapper)
+    public function __construct(AccountMapper $accountMapper, ?string $path = null)
     {
         if ($path === null) {
             $this->path = self::ACCOUNT_DEFAULT_PATH;
@@ -19,37 +19,17 @@ class AccountRepository
         $this->accountMapper = $accountMapper;
     }
 
-    public function calculateTimeBalance($correctInput): ?array
+    public function calculateBalance(): float
     {
-        // Use the AccountMapper to get an array of AccountDTO objects
-        $accountDTOList = $this->accountMapper->JsonToDTO($this->path);
+        $jsonString = file_get_contents($this->path);
+        $accountDTOList = $this->accountMapper->jsonToDTO($jsonString);
 
-        $date = date('Y-d-m');
-        $time = date('H:i:s');
-        $timestampCurrent = strtotime($time);
+        $balance = 0.0;
 
-        $hourDeposit = $correctInput;
-        $dailyDeposit = $correctInput;
-
-        $balance = 0.00;
-
-        foreach ($accountDTOList as $accountDTO) {
-            $balance += $accountDTO->amount;
-
-            if ($accountDTO->date === $date) {
-                $dailyDeposit += $accountDTO->amount;
-                $timestampHistory = strtotime($accountDTO->time);
-                if ($timestampHistory >= $timestampCurrent - (60 * 60)) {
-                    $hourDeposit += $accountDTO->amount;
-                }
-            }
+        foreach ($accountDTOList as $entry) {
+            $balance += $entry->amount;
         }
 
-        $balanceData = [
-            "balance" => $balance,
-            "day" => $dailyDeposit,
-            "hour" => $hourDeposit,
-        ];
-        return $balanceData;
+        return $balance;
     }
 }

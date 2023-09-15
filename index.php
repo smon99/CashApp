@@ -10,11 +10,14 @@ session_start();
 
 $view = new App\Core\View(__DIR__ . '/src/View');
 $accountMapper = new \App\Model\AccountMapper();
+$validator = new App\Core\AccountValidation();
+$repository = new \App\Model\AccountRepository($accountMapper);
+$entityManager = new \App\Model\AccountEntityManager();
 
 $input = $_GET['input'] ?? '';
 
 if ($input === 'deposit') {
-    $depositController = new App\Controller\DepositController($view, $accountMapper);
+    $depositController = new App\Controller\DepositController($view, $repository, $entityManager, $validator);
     $depositController->processDeposit();
 }
 

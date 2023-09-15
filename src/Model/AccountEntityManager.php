@@ -19,7 +19,7 @@ class AccountEntityManager
     {
         $accountMapper = new AccountMapper();
 
-        $jsonString = file_get_contents($this->path);
+        $jsonString = file_get_contents($this->path);                                  // das soll früher passieren
 
         $accountDTOList = $accountMapper->jsonToDTO($jsonString);
 

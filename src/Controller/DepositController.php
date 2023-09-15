@@ -49,8 +49,6 @@ class DepositController
             } else {
                 $this->error = $validAmount;
             }
-        } else {
-            $this->error = "Bitte einen Betrag eingeben!";
         }
 
         $balance = $this->repository->calculateBalance();

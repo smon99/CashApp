@@ -2,36 +2,54 @@
 
 namespace Test\Model;
 
+use App\Model\AccountRepository;
 use PHPUnit\Framework\TestCase;
 use App\Model\AccountEntityManager;
+use App\Model\AccountDTO;
 
 class AccountEntityManagerTest extends TestCase
 {
-    private $testFilePath = __DIR__ . '/../../tests/Model/account.json';
+    private $tempJsonFile;
 
-    public function testSaveDeposit(): void
+    protected function setUp(): void
     {
-        $initialData = [
-            ["amount" => "100.00"],
-            ["amount" => "200.00"],
-        ];
+        $this->tempJsonFile = tempnam(sys_get_temp_dir(), 'test');
+        file_put_contents($this->tempJsonFile, '[]');
+    }
 
-        $testData = json_encode($initialData, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT);
-        file_put_contents($this->testFilePath, $testData);
+    public function testSaveDeposit()
+    {
+        $jsonFilePath = $this->tempJsonFile;
 
-        $newDeposit = [
-            "amount" => "50.00",
-            "date" => "2023-09-08",
-            "time" => "14:30:00",
-        ];
+        $entityManager = new AccountEntityManager($jsonFilePath);
 
-        $accountEntityManager = new AccountEntityManager($this->testFilePath);
-        $accountEntityManager->saveDeposit($newDeposit);
+        $deposit = new AccountDTO();
+        $deposit->amount = 100.0;
+        $deposit->date = '2023-09-20';
+        $deposit->time = '10:00:00';
 
-        $updatedData = json_decode(file_get_contents($this->testFilePath), true, JSON_THROW_ON_ERROR);
+        $entityManager->saveDeposit($deposit);
 
-        self::assertSame($updatedData[count($updatedData) - 1]['amount'], '50.00');
+        $jsonContents = file_get_contents($jsonFilePath);
 
-        unlink(__DIR__ . '/account.json');
+        $decodedData = json_decode($jsonContents, true);
+
+        $this->assertIsArray($decodedData);
+        $this->assertCount(1, $decodedData);
+        $this->assertSame(100, $decodedData[0]['amount']);
+        $this->assertSame('2023-09-20', $decodedData[0]['date']);
+        $this->assertSame('10:00:00', $decodedData[0]['time']);
+    }
+
+    public function testConstructor(): void
+    {
+        $entityManager = new AccountEntityManager();
+
+        self::assertSame($entityManager, $entityManager);
+    }
+
+    protected function tearDown(): void
+    {
+        unlink($this->tempJsonFile);
     }
 }

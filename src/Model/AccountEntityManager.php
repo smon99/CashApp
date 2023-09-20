@@ -5,6 +5,7 @@ namespace App\Model;
 class AccountEntityManager
 {
     private string $path;
+    private string $jsonString;
 
     public function __construct(?string $path = null)
     {
@@ -13,20 +14,18 @@ class AccountEntityManager
         }
 
         $this->path = $path;
+        $this->jsonString = file_get_contents($path);
     }
 
     public function saveDeposit(AccountDTO $deposit): void
     {
         $accountMapper = new AccountMapper();
 
-        $jsonString = file_get_contents($this->path);                                  // das soll früher passieren
-
-        $accountDTOList = $accountMapper->jsonToDTO($jsonString);
+        $accountDTOList = $accountMapper->jsonToDTO($this->jsonString);
 
         $accountDTOList[] = $deposit;
 
-        $jsonString = $accountMapper->jsonFromDTO($accountDTOList);
-        file_put_contents($this->path, $jsonString);
+        $this->jsonString = $accountMapper->jsonFromDTO($accountDTOList);
+        file_put_contents($this->path, $this->jsonString);
     }
-
 }

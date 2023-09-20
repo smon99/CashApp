@@ -3,20 +3,71 @@
 namespace Test\Model;
 
 use PHPUnit\Framework\TestCase;
+use App\Model\AccountEntityManager;
 use App\Model\AccountRepository;
+use App\Model\AccountMapper;
+use App\Model\AccountDTO;
 
 class AccountRepositoryTest extends TestCase
 {
-    public function testCalculateTimeBalance(): void
+    private $tempJsonFile;
+
+    protected function setUp(): void
     {
-        $correctInput = null;
+        $this->tempJsonFile = tempnam(sys_get_temp_dir(), 'test');
+        file_put_contents($this->tempJsonFile, '[]');
+    }
 
-        $testCalculateTimeBalance = new AccountRepository();
-        $depositTestDataset = $testCalculateTimeBalance->calculateTimeBalance($correctInput);
+    public function testCalculateBalanceWithEmptyFile(): void
+    {
+        $jsonFilePath = $this->tempJsonFile;
 
-        $data = json_decode(file_get_contents(__DIR__ . '/../../src/Model/account.json'), true);
-        $balance = array_sum(array_column($data, "amount"));
+        $accountMapper = new AccountMapper();
+        $repository = new AccountRepository($accountMapper, $jsonFilePath);
 
-        self::assertSame($balance, $depositTestDataset["balance"]);
+        $balance = $repository->calculateBalance();
+
+        $this->assertSame(0.0, $balance);
+    }
+
+    public function testCalculateBalanceWithNonEmptyFile(): void
+    {
+        $jsonFilePath = $this->tempJsonFile;
+
+        $accountMapper = new AccountMapper();
+        $repository = new AccountRepository($accountMapper, $jsonFilePath);
+
+        $deposit1 = new AccountDTO();
+        $deposit1->amount = 100.0;
+        $deposit1->date = '2023-09-20';
+        $deposit1->time = '10:00:00';
+
+        $deposit2 = new AccountDTO();
+        $deposit2->amount = 200.0;
+        $deposit2->date = '2023-09-21';
+        $deposit2->time = '11:00:00';
+
+        $entityManager = new AccountEntityManager($jsonFilePath);
+
+        $entityManager->saveDeposit($deposit1);
+        $entityManager->saveDeposit($deposit2);
+
+        $balance = $repository->calculateBalance();
+
+        $this->assertSame(300.0, $balance);
+    }
+
+    public function testConstructor(): void
+    {
+        $accountMapper = new AccountMapper();
+        $accountRepository = new AccountRepository($accountMapper);
+        $balance = $accountRepository->calculateBalance();
+
+        self::assertSame($accountRepository->calculateBalance(), $balance);
+    }
+
+    protected function tearDown(): void
+    {
+        unlink($this->tempJsonFile);
     }
 }

@@ -29,6 +29,15 @@ class AccountValidationTest extends TestCase
         self::assertTrue($validator->existsIsNumeric($acceptableInput));
     }
 
+    public function testExistsIsNumericFalse(): void
+    {
+        $stringInput = 'hey';
+
+        $validator = new AccountValidation();
+
+        self::assertFalse($validator->existsIsNumeric($stringInput));
+    }
+
     public function testSingleDepositLimit(): void
     {
         $random = random_int(1, 50);

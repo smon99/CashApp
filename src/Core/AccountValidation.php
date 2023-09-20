@@ -4,17 +4,14 @@ namespace App\Core;
 
 class AccountValidation
 {
-    public function getCorrectAmount($input): float
+    public function getCorrectAmount(string $input): float
     {
         $amount = str_replace(['.', ','], ['', '.'], $input);
         return (float)$amount;
     }
 
-    public function existsIsNumeric(float $amount): bool
+    public function existsIsNumeric($amount): bool
     {
-        if ($amount === null || $amount === '') {
-            return false;
-        }
         if (!is_numeric($amount)) {
             return false;
         }
@@ -23,10 +20,7 @@ class AccountValidation
 
     public function singleDepositLimit(float $amount): bool
     {
-        if ($amount >= 0.01 && $amount <= 50) {
-            return true;
-        }
-        return false;
+        return $amount >= 0.01 && $amount <= 50;
     }
 
     public function hourDepositLimit(float $amount): bool
@@ -46,10 +40,7 @@ class AccountValidation
             }
         }
 
-        if ($amount >= 100.00) {
-            return false;
-        }
-        return true;
+        return $amount < 100.00;
     }
 
     public function dayDepositLimit(float $amount): bool

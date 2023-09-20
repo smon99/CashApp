@@ -4,6 +4,8 @@ namespace Test\Model;
 
 use PHPUnit\Framework\TestCase;
 use App\Model\UserEntityManager;
+use App\Model\UserDTO;
+use App\Model\UserMapper;
 
 class UserEntityManagerTest extends TestCase
 {
@@ -11,30 +13,28 @@ class UserEntityManagerTest extends TestCase
 
     public function testSaveFileTrue(): void
     {
-        $userTest = [
-            "user" => 'Tester',
-            "eMail" => 'Tester@Tester.de',
-            "password" => 'Test123#',
-        ];
+        $userDTO = new UserDTO();
+        $userDTO->user = 'Tester';
+        $userDTO->eMail = 'Tester@Tester.de';
+        $userDTO->password = 'Test123#';
 
-        $userSave = new UserEntityManager($this->testFilePath);
-        $userSave->save($userTest);
+        $userEntityManager = new UserEntityManager(new UserMapper(), $this->testFilePath);
+        $userEntityManager->save($userDTO);
 
-        $userTestReal = [
-            "user" => 'TesterReal',
-            "eMail" => 'Tester@TesterReal.de',
-            "password" => 'TesterReal123#',
-        ];
+        $userDTOReal = new UserDTO();
+        $userDTOReal->user = 'TesterReal';
+        $userDTOReal->eMail = 'Tester@TesterReal.de';
+        $userDTOReal->password = 'TesterReal123#';
 
-        $userSaveTest = new UserEntityManager($this->testFilePath);
-        $userSaveTest->save($userTestReal);
+        $userEntityManagerTest = new UserEntityManager(new UserMapper(), $this->testFilePath);
+        $userEntityManagerTest->save($userDTOReal);
 
         $user = json_decode(file_get_contents($this->testFilePath), true);
         $test = false;
 
         foreach ($user as $key => $userRun) {
             if ($userRun["user"] === "TesterReal") {
-                unlink(__DIR__ . '/user.json');
+                unlink($this->testFilePath);
                 $test = true;
                 break;
             }
@@ -45,30 +45,37 @@ class UserEntityManagerTest extends TestCase
 
     public function testSaveFileFalse(): void
     {
-        if (file_exists(__DIR__ . '/user.json')) {
-            unlink(__DIR__ . '/user.json');
+        if (file_exists($this->testFilePath)) {
+            unlink($this->testFilePath);
         }
 
-        $userTest = [
-            "user" => 'Tester',
-            "eMail" => 'Tester@Tester.de',
-            "password" => 'Test123#',
-        ];
+        $userDTO = new UserDTO();
+        $userDTO->user = 'Tester';
+        $userDTO->eMail = 'Tester@Tester.de';
+        $userDTO->password = 'Test123#';
 
-        $userSaveTest = new UserEntityManager($this->testFilePath);
-        $userSaveTest->save($userTest);
+        $userEntityManager = new UserEntityManager(new UserMapper(), $this->testFilePath);
+        $userEntityManager->save($userDTO);
 
         $user = json_decode(file_get_contents($this->testFilePath), true);
         $test = false;
 
         foreach ($user as $userRun) {
             if ($userRun["user"] === "Tester") {
-                unlink(__DIR__ . '/user.json');
+                unlink($this->testFilePath);
                 $test = true;
                 break;
             }
         }
 
         self::assertTrue($test);
+    }
+
+    public function testConstructor(): void
+    {
+        $userMapper = new UserMapper();
+        $entityManager = new UserEntityManager($userMapper);
+
+        self::assertSame($entityManager, $entityManager);
     }
 }

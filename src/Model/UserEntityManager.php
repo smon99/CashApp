@@ -4,32 +4,39 @@ namespace App\Model;
 
 class UserEntityManager
 {
-    //private string $path;
+    private UserMapper $userMapper;
+    private string $path;
 
-    public function __construct(private string $path = __DIR__ . '/user.json')
+    public function __construct(UserMapper $userMapper, ?string $path = null)
     {
-        /*
+        $this->userMapper = $userMapper;
+
         if ($path === null) {
-            $path = UserRepository::USER_DEFAULT_PATH;
+            $path = __DIR__ . '/user.json';
         }
 
         $this->path = $path;
-        */
     }
 
-    public function save(array $user): void
+    public function save(UserDTO $userDTO): void
+    {
+        $userDTOList = $this->getUserDTOList();
+
+        $userDTOList[] = $userDTO;
+
+        $user_data = $this->userMapper->jsonFromDTO($userDTOList);
+
+        file_put_contents($this->path, $user_data, LOCK_EX);
+    }
+
+    private function getUserDTOList(): array
     {
         if (!file_exists($this->path)) {
-            $firstUser = [$user];
-            $saveUser = $firstUser;
-            file_put_contents($this->path, json_encode([]));
-        } else {
-            $oldUser = json_decode(file_get_contents($this->path));
-            $oldUser[] = $user;
-            $saveUser = $oldUser;
+            return [];
         }
 
-        $user_data = json_encode($saveUser, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT);
-        file_put_contents($this->path, $user_data, LOCK_EX);
+        $jsonString = file_get_contents($this->path);
+
+        return $this->userMapper->jsonToDTO($jsonString);
     }
 }

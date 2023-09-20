@@ -4,19 +4,27 @@ namespace App\Controller;
 
 use App\Core\Redirect;
 use App\Core\ViewInterface;
+use App\Model\UserDTO;
 use App\Model\UserEntityManager;
 use App\Model\UserRepository;
+use App\Model\UserMapper;
 
 class UserController
 {
     private $view;
 
-    public function __construct(ViewInterface $view, private Redirect $redirect)
+    public function __construct(
+        ViewInterface             $view,
+        private Redirect          $redirect,
+        private UserRepository    $userRepository,
+        private UserEntityManager $userEntityManager,
+        private UserMapper        $userMapper
+    )
     {
         $this->view = $view;
     }
 
-    public function validatePassword($passwordCheck): bool
+    public function validatePassword(string $passwordCheck): bool
     {
         $uppercase = preg_match('@[A-Z]@', $passwordCheck);
         $lowercase = preg_match('@[a-z]@', $passwordCheck);
@@ -35,26 +43,19 @@ class UserController
         $tempPassword = null;
 
         if (isset($_POST['register'])) {
-            if (empty($_POST["username"]) || empty($_POST["mail"]) || empty($_POST["password"])) {
+            $userCheck = $_POST["username"];
+            $mailCheck = $_POST["mail"];
+            $passwordCheck = $_POST["password"];
+
+            if (empty($userCheck) || empty($mailCheck) || empty($passwordCheck)) {
                 $error = "Alle Felder müssen ausgefüllt sein!";
 
-                if (isset($_POST["username"])) {
-                    $tempUserName = $_POST["username"];
-                }
-                if (isset($_POST["mail"])) {
-                    $tempMail = $_POST["mail"];
-                }
-                if (isset($_POST["password"])) {
-                    $tempPassword = $_POST["password"];
-                }
-            } elseif (isset($_POST["username"], $_POST["mail"], $_POST["password"])) {
-                $userCheck = $_POST["username"];
-                $mailCheck = $_POST["mail"];
-                $passwordCheck = $_POST["password"];
-
-                $userRepository = new UserRepository();
-                $mailRequest = $userRepository->findByMail($mailCheck);
-                $userRequest = $userRepository->findByUsername($userCheck);
+                $tempUserName = $userCheck;
+                $tempMail = $mailCheck;
+                $tempPassword = $passwordCheck;
+            } else {
+                $mailRequest = $this->userRepository->findByMail($mailCheck);
+                $userRequest = $this->userRepository->findByUsername($userCheck);
 
                 if ($mailRequest !== null) {
                     $error = "Fehler eMail bereits vergeben";
@@ -64,10 +65,7 @@ class UserController
                     $error = "Fehler Name bereits vergeben";
                 }
 
-                if (filter_var($mailCheck, FILTER_VALIDATE_EMAIL)) {
-                    $eMail = $mailCheck;
-                }
-                if (!isset($eMail)) {
+                if (!filter_var($mailCheck, FILTER_VALIDATE_EMAIL)) {
                     $error = "Bitte gültige eMail eingeben!";
                 }
 
@@ -75,29 +73,31 @@ class UserController
                     $password = password_hash($passwordCheck, PASSWORD_DEFAULT);
 
                     if (!isset($error)) {
-                        $user = [
-                            "user" => $userCheck,
-                            "eMail" => $mailCheck,
-                            "password" => $password,
-                        ];
+                        $userDTO = new UserDTO();
+                        $userDTO->user = $userCheck;
+                        $userDTO->eMail = $mailCheck;
+                        $userDTO->password = $password;
 
-                        $userEntityManager = new UserEntityManager();
-                        $userEntityManager->save($user);
+                        $this->userEntityManager->save($userDTO);
+
                         $this->redirect->redirectTo('http://0.0.0.0:8000/?input=login');
                     }
                 } else {
-                    $error = "Passwort Anforderungen nicht erfüllt (find out yourself)";
+                    $error = "Passwort Anforderungen nicht erfüllt";
                 }
             }
         }
+
         if (isset($error)) {
             $this->view->addParameter('error', $error);
         }
-        if (null !== ($tempUserName && $tempMail && $tempPassword)) {
+
+        if ($tempUserName !== null && $tempMail !== null && $tempPassword !== null) {
             $this->view->addParameter('tempUserName', $tempUserName);
             $this->view->addParameter('tempMail', $tempMail);
             $this->view->addParameter('tempPassword', $tempPassword);
         }
+
         $this->view->display('user.twig');
     }
 }

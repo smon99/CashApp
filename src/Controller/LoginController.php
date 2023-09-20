@@ -10,7 +10,7 @@ class LoginController
 {
     private $view;
 
-    public function __construct(ViewInterface $view, private Redirect $redirect)
+    public function __construct(ViewInterface $view, private Redirect $redirect, private UserRepository $userRepository)
     {
         $this->view = $view;
     }
@@ -21,24 +21,22 @@ class LoginController
             $mailCheck = $_POST["mail"];
             $password = $_POST["password"];
 
-            $userRepository = new UserRepository();
-            $request = $userRepository->findByMail($mailCheck);
+            $userDTO = $this->userRepository->findByMail($mailCheck);
 
-            if ($request["eMail"] === $mailCheck) {
-                if ($request !== null) {
-                    $passwordCheck = $request["password"];
-                    if (password_verify($password, $passwordCheck)) {
-                        $_SESSION["username"] = $request["user"];
-                        $_SESSION["loginStatus"] = true;
-                        echo "logged in as ", $request["user"];
-                    } else {
-                        $_SESSION["loginStatus"] = false;
-                        echo "nice try";
-                    }
+            if ($userDTO !== null) {
+                $passwordCheck = $userDTO->password;
+                if (password_verify($password, $passwordCheck)) {
+                    $_SESSION["username"] = $userDTO->user;
+                    $_SESSION["loginStatus"] = true;
+                    echo "Logged in as ", $userDTO->user;
+                } else {
+                    $_SESSION["loginStatus"] = false;
+                    echo "Nice try";
                 }
-                if ($_SESSION["loginStatus"] === true) {
-                    $this->redirect->redirectTo('http://0.0.0.0:8000/?input=deposit');
-                }
+            }
+
+            if ($_SESSION["loginStatus"] === true) {
+                $this->redirect->redirectTo('http://0.0.0.0:8000/?input=deposit');
             }
         }
 

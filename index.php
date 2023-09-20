@@ -13,6 +13,9 @@ $accountMapper = new \App\Model\AccountMapper();
 $validator = new App\Core\AccountValidation();
 $repository = new \App\Model\AccountRepository($accountMapper);
 $entityManager = new \App\Model\AccountEntityManager();
+$userMapper = new \App\Model\UserMapper();
+$userRepository = new \App\Model\UserRepository($userMapper);
+$userEntityManager = new \App\Model\UserEntityManager($userMapper);
 
 $input = $_GET['input'] ?? '';
 
@@ -22,12 +25,12 @@ if ($input === 'deposit') {
 }
 
 if ($input === 'login') {
-    $loginController = new App\Controller\LoginController($view, new \App\Core\Redirect());
+    $loginController = new App\Controller\LoginController($view, new \App\Core\Redirect(), $userRepository);
     $loginController->userLogin();
 }
 
 if ($input === 'user') {
-    $userController = new App\Controller\UserController($view, new \App\Core\Redirect());
+    $userController = new App\Controller\UserController($view, new \App\Core\Redirect(), $userRepository, $userEntityManager, $userMapper);
     $userController->registration();
 }
 

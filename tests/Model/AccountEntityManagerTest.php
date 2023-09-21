@@ -2,7 +2,6 @@
 
 namespace Test\Model;
 
-use App\Model\AccountRepository;
 use PHPUnit\Framework\TestCase;
 use App\Model\AccountEntityManager;
 use App\Model\AccountDTO;
@@ -45,7 +44,7 @@ class AccountEntityManagerTest extends TestCase
     {
         $entityManager = new AccountEntityManager();
 
-        self::assertSame($entityManager, $entityManager);
+        self::assertInstanceOf(AccountEntityManager::class, $entityManager);
     }
 
     protected function tearDown(): void

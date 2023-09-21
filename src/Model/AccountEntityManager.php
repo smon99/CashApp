@@ -7,12 +7,8 @@ class AccountEntityManager
     private string $path;
     private string $jsonString;
 
-    public function __construct(?string $path = null)
+    public function __construct(?string $path = AccountRepository::ACCOUNT_DEFAULT_PATH)
     {
-        if ($path === null) {
-            $path = AccountRepository::ACCOUNT_DEFAULT_PATH;
-        }
-
         $this->path = $path;
         $this->jsonString = file_get_contents($path);
     }

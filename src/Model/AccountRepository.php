@@ -9,12 +9,8 @@ class AccountRepository
     private string $path;
     private AccountMapper $accountMapper;
 
-    public function __construct(AccountMapper $accountMapper, ?string $path = null)
+    public function __construct(AccountMapper $accountMapper, ?string $path = self::ACCOUNT_DEFAULT_PATH)
     {
-        if ($path === null) {
-            $path = self::ACCOUNT_DEFAULT_PATH;
-        }
-
         $this->path = $path;
 
         $this->accountMapper = $accountMapper;

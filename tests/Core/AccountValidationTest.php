@@ -2,62 +2,14 @@
 
 namespace Test\Core;
 
+use App\Core\Account\DayValidator;
+use App\Core\Account\HourValidator;
+use App\Core\Account\SingleValidator;
 use PHPUnit\Framework\TestCase;
 use App\Core\AccountValidation;
 
 class AccountValidationTest extends TestCase
 {
-    public function testGetCorrectAmount(): void
-    {
-        $acceptableInput1 = '1.000,00';
-        $acceptableInput2 = '1.000';
-        $acceptableInput3 = '1000';
-
-        $validator = new AccountValidation();
-
-        self::assertSame(1000.00, $validator->getCorrectAmount($acceptableInput1));
-        self::assertSame(1000.00, $validator->getCorrectAmount($acceptableInput2));
-        self::assertSame(1000.00, $validator->getCorrectAmount($acceptableInput3));
-    }
-
-    public function testExistsIsNumeric(): void
-    {
-        $acceptableInput = 1000.0;
-
-        $validator = new AccountValidation();
-
-        self::assertTrue($validator->existsIsNumeric($acceptableInput));
-    }
-
-    public function testExistsIsNumericFalse(): void
-    {
-        $stringInput = 'hey';
-
-        $validator = new AccountValidation();
-
-        self::assertFalse($validator->existsIsNumeric($stringInput));
-    }
-
-    public function testSingleDepositLimit(): void
-    {
-        $random = random_int(1, 50);
-        $amount = (float)$random;
-
-        $validator = new AccountValidation();
-
-        self::assertTrue($validator->singleDepositLimit($amount));
-    }
-
-    public function testHourDepositLimit(): void
-    {
-        $random = random_int(1, 50);
-        $amount = (float)$random;
-
-        $validator = new AccountValidation();
-
-        self::assertTrue($validator->hourDepositLimit($amount));
-    }
-
     public function testDayDepositLimit(): void
     {
         $random = random_int(1, 50);
@@ -65,19 +17,23 @@ class AccountValidationTest extends TestCase
 
         $validator = new AccountValidation();
 
-        self::assertTrue($validator->dayDepositLimit($amount));
+        self::assertTrue($validator->collectErrors($amount));
     }
 
-    public function testValidateAllCriteria(): void
+    public function testCollectErrorsNotNumeric(): void
     {
-        $acceptableInput1 = '30,00';
-        $acceptableInput2 = '0.030,00';
-        $acceptableInput3 = '30';
-
         $validator = new AccountValidation();
+        $amount = 'hi';
 
-        self::assertSame(30.0, $validator->validateAllCriteria($acceptableInput1));
-        self::assertSame(30.0, $validator->validateAllCriteria($acceptableInput2));
-        self::assertSame(30.0, $validator->validateAllCriteria($acceptableInput3));
+        self::assertSame($validator->collectErrors($amount), 'Bitte einen Betrag eingeben!');
+    }
+
+    public function testCollectErrorsNotTrue(): void
+    {
+        $validator = new AccountValidation(new DayValidator(), new HourValidator(), new SingleValidator());
+        $amount = 510;
+        $errors = $validator->collectErrors($amount);
+
+        self::assertSame($errors, 'Tägliches Einzahlungslimit von 500€ überschritten!');
     }
 }

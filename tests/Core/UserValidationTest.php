@@ -2,6 +2,7 @@
 
 namespace Test\Core;
 
+use App\Core\User\EmptyFieldValidator;
 use PHPUnit\Framework\TestCase;
 use App\Core\UserValidation;
 use App\Core\User\EMailValidator;
@@ -94,5 +95,22 @@ class UserValidationTest extends TestCase
         $validation = new UserValidation(new UserDuplicationValidator(), new PasswordValidator(), new EMailValidator());
 
         self::assertSame('Passwort Anforderungen nicht erfüllt', $validation->collectErrors($userDTO));
+    }
+
+    public function testValidationEmptyFieldTrue(): void
+    {
+        $userDTO = new UserDTO();
+
+        $user = '';
+        $eMail = '';
+        $password = '';
+
+        $userDTO->user = $user;
+        $userDTO->eMail = $eMail;
+        $userDTO->password = $password;
+
+        $validation = new UserValidation(new EmptyFieldValidator());
+
+        self::assertSame('Alle Felder müssen ausgefüllt sein!', $validation->collectErrors($userDTO));
     }
 }

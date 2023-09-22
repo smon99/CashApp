@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Core\Redirect;
 use App\Core\User\EMailValidator;
+use App\Core\User\EmptyFieldValidator;
 use App\Core\User\PasswordValidator;
 use App\Core\User\UserDuplicationValidator;
 use App\Core\UserValidation;
@@ -26,56 +27,45 @@ class UserController
 
     public function registration(): void
     {
-        $error = null;
-        $tempUserName = null;
-        $tempMail = null;
-        $tempPassword = null;
+        $errors = null;
+        $userCheck = null;
+        $mailCheck = null;
+        $passwordCheck = null;
 
         if (isset($_POST['register'])) {
             $userCheck = $_POST["username"];
             $mailCheck = $_POST["mail"];
             $passwordCheck = $_POST["password"];
 
-            if (empty($userCheck) || empty($mailCheck) || empty($passwordCheck)) {
-                $error = "Alle Felder müssen ausgefüllt sein!";
+            $validatorDTO = new UserDTO();
+            $validatorDTO->user = $userCheck;
+            $validatorDTO->eMail = $mailCheck;
+            $validatorDTO->password = $passwordCheck;
 
-                $tempUserName = $userCheck;
-                $tempMail = $mailCheck;
-                $tempPassword = $passwordCheck;
-            }
+            $validation = new UserValidation(new EmptyFieldValidator(), new UserDuplicationValidator(), new PasswordValidator(), new EMailValidator());
+            $errors = $validation->collectErrors($validatorDTO);
 
-            if (!empty($userCheck) || !empty($mailCheck) || !empty($passwordCheck)) {
-                $validatorDTO = new UserDTO();
-                $validatorDTO->user = $userCheck;
-                $validatorDTO->eMail = $mailCheck;
-                $validatorDTO->password = $passwordCheck;
+            if ($errors === true) {
+                $password = password_hash($passwordCheck, PASSWORD_DEFAULT);
 
-                $validation = new UserValidation(new UserDuplicationValidator(), new PasswordValidator(), new EMailValidator());
-                $errors = $validation->collectErrors($validatorDTO);
+                $userDTO = new UserDTO();
+                $userDTO->user = $userCheck;
+                $userDTO->eMail = $mailCheck;
+                $userDTO->password = $password;
 
-                if ($errors === true) {
-                    $password = password_hash($passwordCheck, PASSWORD_DEFAULT);
-
-                    $userDTO = new UserDTO();
-                    $userDTO->user = $userCheck;
-                    $userDTO->eMail = $mailCheck;
-                    $userDTO->password = $password;
-
-                    $this->userEntityManager->save($userDTO);
-
-                    $this->redirect->redirectTo('http://0.0.0.0:8000/?input=login');
-                }
+                $this->userEntityManager->save($userDTO);
+                $this->redirect->redirectTo('http://0.0.0.0:8000/?input=login');
             }
         }
 
-        if (isset($error)) {
-            $this->view->addParameter('error', $error);
+        if (is_string($errors)) {
+            $this->view->addParameter('error', $errors);
         }
 
-        if ($tempUserName !== null && $tempMail !== null && $tempPassword !== null) {
-            $this->view->addParameter('tempUserName', $tempUserName);
-            $this->view->addParameter('tempMail', $tempMail);
-            $this->view->addParameter('tempPassword', $tempPassword);
+        if ($userCheck !== null && $mailCheck !== null && $passwordCheck !== null) {
+            $this->view->addParameter('tempUserName', $userCheck);
+            $this->view->addParameter('tempMail', $mailCheck);
+            $this->view->addParameter('tempPassword', $passwordCheck);
         }
 
         $this->view->display('user.twig');

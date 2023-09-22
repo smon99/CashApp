@@ -39,9 +39,7 @@ class LoginController
                 $this->redirect->redirectTo('http://0.0.0.0:8000/?input=deposit');
             }
         }
-
         $this->view->addParameter('pageTitle', 'Login Page');
-
         $this->view->display('login.twig');
     }
 }

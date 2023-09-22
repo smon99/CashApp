@@ -6,9 +6,6 @@ use App\Core\Account\AccountValidationInterface;
 
 class AccountValidation
 {
-    /**
-     * @var AccountValidationInterface[]
-     */
     private array $validationCollection;
 
     public function __construct(

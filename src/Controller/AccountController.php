@@ -35,13 +35,6 @@ class AccountController
 
         if ($input !== null) {
 
-            $error = '';
-            try {
-
-            } catch (\Exception $e) {
-                $error = $e->getMessage();
-            }
-
             $validateThis = $this->getCorrectAmount($input);
 
             $errors = $this->validator->collectErrors($validateThis);

@@ -36,4 +36,34 @@ class AccountValidationTest extends TestCase
 
         self::assertSame($errors, 'Tägliches Einzahlungslimit von 500€ überschritten!');
     }
+
+    public function testCollectErrorsTrue(): void
+    {
+        $validator = new AccountValidation(new DayValidator(), new HourValidator(), new SingleValidator());
+
+        $amount = 20;
+        $errors = $validator->collectErrors($amount);
+
+        self::assertTrue($errors);
+    }
+
+    public function testSingleValidatorError(): void
+    {
+        $validator = new AccountValidation(new SingleValidator());
+
+        $amount = 51;
+        $errors = $validator->collectErrors($amount);
+
+        self::assertSame($errors, 'Bitte einen Betrag von mindestens 0.01€ und maximal 50€ eingeben!');
+    }
+
+    public function testHourValidatorError(): void
+    {
+        $validator = new AccountValidation(new HourValidator());
+
+        $amount = 101;
+        $errors = $validator->collectErrors($amount);
+
+        self::assertSame($errors, 'Stündliches Einzahlungslimit von 100€ überschritten!');
+    }
 }

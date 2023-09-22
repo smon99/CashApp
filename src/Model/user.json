@@ -83,5 +83,10 @@
         "user": "Test",
         "eMail": "Test@Test.de",
         "password": "$2y$10$v5cZV8GShi6DOrk.Pp0aB.lxCzeMM8JuSwxSNeuw6CxNoScVk2WM2"
+    },
+    {
+        "user": "Anna",
+        "eMail": "Anna@Anna.de",
+        "password": "$2y$10$A0wMq9M46eF26UI6Hjvhx.q\/RNR8cm7.bRVa45xB8qJfy9LRy3mL6"
     }
 ]

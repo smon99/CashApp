@@ -3,11 +3,13 @@
 namespace App\Controller;
 
 use App\Core\Redirect;
+use App\Core\User\EMailValidator;
+use App\Core\User\PasswordValidator;
+use App\Core\User\UserDuplicationValidator;
+use App\Core\UserValidation;
 use App\Core\ViewInterface;
 use App\Model\UserDTO;
 use App\Model\UserEntityManager;
-use App\Model\UserRepository;
-use App\Model\UserMapper;
 
 class UserController
 {
@@ -16,23 +18,10 @@ class UserController
     public function __construct(
         ViewInterface             $view,
         private Redirect          $redirect,
-        private UserRepository    $userRepository,
         private UserEntityManager $userEntityManager,
-        private UserMapper        $userMapper
     )
     {
         $this->view = $view;
-    }
-
-    public function validatePassword(string $passwordCheck): bool
-    {
-        $uppercase = preg_match('@[A-Z]@', $passwordCheck);
-        $lowercase = preg_match('@[a-z]@', $passwordCheck);
-        $number = preg_match('@[0-9]@', $passwordCheck);
-        $specialChar = preg_match('@[^\w]@', $passwordCheck);
-        $minLength = 6;
-
-        return $uppercase && $lowercase && $number && $specialChar && strlen($passwordCheck) >= $minLength;
     }
 
     public function registration(): void
@@ -53,37 +42,28 @@ class UserController
                 $tempUserName = $userCheck;
                 $tempMail = $mailCheck;
                 $tempPassword = $passwordCheck;
-            } else {
-                $mailRequest = $this->userRepository->findByMail($mailCheck);
-                $userRequest = $this->userRepository->findByUsername($userCheck);
+            }
 
-                if ($mailRequest !== null) {
-                    $error = "Fehler eMail bereits vergeben";
-                }
+            if (!empty($userCheck) || !empty($mailCheck) || !empty($passwordCheck)) {
+                $validatorDTO = new UserDTO();
+                $validatorDTO->user = $userCheck;
+                $validatorDTO->eMail = $mailCheck;
+                $validatorDTO->password = $passwordCheck;
 
-                if ($userRequest !== null) {
-                    $error = "Fehler Name bereits vergeben";
-                }
+                $validation = new UserValidation(new UserDuplicationValidator(), new PasswordValidator(), new EMailValidator());
+                $errors = $validation->collectErrors($validatorDTO);
 
-                if (!filter_var($mailCheck, FILTER_VALIDATE_EMAIL)) {
-                    $error = "Bitte gültige eMail eingeben!";
-                }
-
-                if ($this->validatePassword($passwordCheck)) {
+                if ($errors === true) {
                     $password = password_hash($passwordCheck, PASSWORD_DEFAULT);
 
-                    if (!isset($error)) {
-                        $userDTO = new UserDTO();
-                        $userDTO->user = $userCheck;
-                        $userDTO->eMail = $mailCheck;
-                        $userDTO->password = $password;
+                    $userDTO = new UserDTO();
+                    $userDTO->user = $userCheck;
+                    $userDTO->eMail = $mailCheck;
+                    $userDTO->password = $password;
 
-                        $this->userEntityManager->save($userDTO);
+                    $this->userEntityManager->save($userDTO);
 
-                        $this->redirect->redirectTo('http://0.0.0.0:8000/?input=login');
-                    }
-                } else {
-                    $error = "Passwort Anforderungen nicht erfüllt";
+                    $this->redirect->redirectTo('http://0.0.0.0:8000/?input=login');
                 }
             }
         }

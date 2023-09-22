@@ -34,7 +34,7 @@ if ($input === 'login') {
 }
 
 if ($input === 'user') {
-    $userController = new App\Controller\UserController($view, new \App\Core\Redirect(), $userRepository, $userEntityManager, $userMapper);
+    $userController = new App\Controller\UserController($view, new \App\Core\Redirect(), $userEntityManager);
     $userController->registration();
 }
 

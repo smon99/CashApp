@@ -1,0 +1,1 @@
+{"version":1,"defects":{"Test\\Core\\ViewTest::testDisplay":8,"Test\\Core\\RedierectTest::testRedirect":7},"times":{"Test\\Core\\ViewTest::testDisplay":0.009,"Test\\Core\\RedierectTest::testRedirect":0.004}}

@@ -15,7 +15,7 @@ class View implements ViewInterface
         $loader = new FilesystemLoader($templatePath);
         $this->twig = new Environment($loader);
 
-        $this->parameters = []; //maybe breaks stuff remove later if its causing problems
+        $this->parameters = [];
     }
 
     public function addParameter($key, $value): void
@@ -26,13 +26,13 @@ class View implements ViewInterface
     public function display(string $template)
     {
         $this->template = $template;
-        //$parameters = array_merge($this->parameters);
-        //echo $this->twig->render($template, $parameters);
         echo $this->twig->render($template, $this->parameters);
     }
 
+    /*
     public function getTemplate(): string
     {
         return $this->template;
     }
+    */
 }

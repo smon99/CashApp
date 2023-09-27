@@ -43,7 +43,7 @@ class LoginControllerTest extends TestCase
         $_POST['password'] = 'Test123#';
 
         $LoginController = $this->loginController;
-        $userLogin = $LoginController->userLogin();
+        $userLogin = $LoginController->action();
 
         self::assertTrue($userLogin);
     }
@@ -55,7 +55,7 @@ class LoginControllerTest extends TestCase
         $_POST['password'] = 'invalidPassword';
 
         $LoginController = $this->loginController;
-        $userLogin = $LoginController->userLogin();
+        $userLogin = $LoginController->action();
 
         self::assertFalse($userLogin);
         self::assertFalse($_SESSION["loginStatus"]);

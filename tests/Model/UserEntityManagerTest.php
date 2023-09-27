@@ -2,6 +2,7 @@
 
 namespace Test\Model;
 
+use App\Model\UserRepository;
 use PHPUnit\Framework\TestCase;
 use App\Model\UserEntityManager;
 use App\Model\UserDTO;
@@ -29,17 +30,15 @@ class UserEntityManagerTest extends TestCase
         $userEntityManagerTest = new UserEntityManager(new UserMapper(), $this->testFilePath);
         $userEntityManagerTest->save($userDTOReal);
 
-        $user = json_decode(file_get_contents($this->testFilePath), true);
         $test = false;
 
-        foreach ($user as $key => $userRun) {
-            if ($userRun["user"] === "TesterReal") {
-                unlink($this->testFilePath);
-                $test = true;
-                break;
-            }
-        }
+        $userRepository = new UserRepository(new UserMapper(), $this->testFilePath);
+        $match = $userRepository->findByUsername('TesterReal');
 
+        if ($match !== null) {
+            unlink($this->testFilePath);
+            $test = true;
+        }
         self::assertTrue($test);
     }
 
@@ -57,17 +56,15 @@ class UserEntityManagerTest extends TestCase
         $userEntityManager = new UserEntityManager(new UserMapper(), $this->testFilePath);
         $userEntityManager->save($userDTO);
 
-        $user = json_decode(file_get_contents($this->testFilePath), true);
         $test = false;
 
-        foreach ($user as $userRun) {
-            if ($userRun["user"] === "Tester") {
-                unlink($this->testFilePath);
-                $test = true;
-                break;
-            }
-        }
+        $userRepository = new UserRepository(new UserMapper(), $this->testFilePath);
+        $match = $userRepository->findByUsername('Tester');
 
+        if ($match !== null) {
+            unlink($this->testFilePath);
+            $test = true;
+        }
         self::assertTrue($test);
     }
 

@@ -18,7 +18,7 @@ class View implements ViewInterface
         $this->parameters = [];
     }
 
-    public function addParameter($key, $value): void
+    public function addParameter(string $key,mixed $value): void
     {
         $this->parameters[$key] = $value;
     }

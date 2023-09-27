@@ -15,7 +15,7 @@ class AccountValidation
         $this->validationCollection = $validations;
     }
 
-    public function collectErrors($amount): string|bool
+    public function collectErrors(float $amount): string|bool
     {
         if (!is_numeric($amount)) {
             return 'Bitte einen Betrag eingeben!';

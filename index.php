@@ -25,17 +25,17 @@ $input = $_GET['input'] ?? '';
 
 if ($input === 'deposit') {
     $accountController = new App\Controller\AccountController($view, $repository, $entityManager, $accountValidator);
-    $accountController->processDeposit();
+    $accountController->action();
 }
 
 if ($input === 'login') {
     $loginController = new App\Controller\LoginController($view, new \App\Core\Redirect(), $userRepository);
-    $loginController->userLogin();
+    $loginController->action();
 }
 
 if ($input === 'user') {
     $userController = new App\Controller\UserController($view, new \App\Core\Redirect(), $userEntityManager);
-    $userController->registration();
+    $userController->action();
 }
 
 if ($input === 'index') {

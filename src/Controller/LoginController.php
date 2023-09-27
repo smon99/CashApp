@@ -25,7 +25,7 @@ class LoginController
         return null;
     }
 
-    public function userLogin(): bool
+    public function action(): void
     {
         $credentials = $this->formInput();
         if ($credentials !== null) {
@@ -41,15 +41,11 @@ class LoginController
                     $_SESSION["loginStatus"] = true;
                     echo "Logged in as ", $userDTO->user;
                     $this->redirect->redirectTo('http://0.0.0.0:8000/?input=deposit');
-                    return true;
                 }
-                $_SESSION["loginStatus"] = false;
                 echo "Nice try";
             }
         }
         $this->view->addParameter('pageTitle', 'Login Page');
         $this->view->display('login.twig');
-
-        return false;
     }
 }

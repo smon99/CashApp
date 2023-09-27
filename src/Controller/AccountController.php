@@ -8,7 +8,7 @@ use App\Core\ViewInterface;
 use App\Core\AccountValidation;
 use App\Model\AccountEntityManager;
 
-class AccountController
+class AccountController implements ControllerInterface
 {
     private AccountValidation $validator;
     private ViewInterface $view;
@@ -29,7 +29,7 @@ class AccountController
         $this->validator = $validator;
     }
 
-    public function processDeposit(): bool|string
+    public function action(): void
     {
         $input = $_POST["amount"] ?? null;
 
@@ -76,7 +76,6 @@ class AccountController
         $this->view->addParameter('success', $this->success);
 
         $this->view->display('deposit.twig');
-        return $errors;
     }
 
     public function getCorrectAmount(string $input): float

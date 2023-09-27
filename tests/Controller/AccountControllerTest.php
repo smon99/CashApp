@@ -31,7 +31,7 @@ class AccountControllerTest extends TestCase
     {
         $_POST["amount"] = '1';
         $accountController = new AccountController($this->view, $this->repository, $this->entityManager, $this->validator);
-        $processDeposit = $accountController->processDeposit();
+        $processDeposit = $accountController->action();
 
         self::assertTrue($processDeposit);
     }
@@ -40,7 +40,7 @@ class AccountControllerTest extends TestCase
     {
         $_POST["amount"] = 'hi';
         $accountController = new AccountController($this->view, $this->repository, $this->entityManager, $this->validator);
-        $processDeposit = $accountController->processDeposit();
+        $processDeposit = $accountController->action();
 
         self::assertIsString($processDeposit);
     }
@@ -57,7 +57,7 @@ class AccountControllerTest extends TestCase
         $_POST["logout"] = true;
 
         $controller = new AccountController($this->view, $this->repository, $this->entityManager, $this->validator);
-        $controller->processDeposit();
+        $controller->action();
 
         $this->assertEquals(PHP_SESSION_NONE, session_status());
     }

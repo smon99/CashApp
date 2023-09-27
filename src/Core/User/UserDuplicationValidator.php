@@ -2,12 +2,13 @@
 
 namespace App\Core\User;
 
+use App\Model\UserDTO;
 use App\Model\UserRepository;
 use App\Model\UserMapper;
 
 class UserDuplicationValidator implements UserValidationInterface
 {
-    public function validate($userDTO): string|bool
+    public function validate(UserDTO $userDTO): string|bool
     {
         $mapper = new UserMapper();
         $repository = new UserRepository($mapper);

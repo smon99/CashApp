@@ -16,11 +16,12 @@ class UserValidation
         $this->validationCollection = $validations;
     }
 
-    public function collectErrors($userDTO): string|bool
+    public function collectErrors(UserDTO $userDTO): string|bool
     {
-        foreach ($this->validationCollection as $validator) {
-            if ($validator->validate($userDTO) !== true) {
-                return $validator->validate($userDTO);
+        foreach ($this->validationCollection as $validator) {     //array mit allen Fehlern soll gesammelt werden, alle Fehler sollen ausgegeben werden
+            $validatorResult = $validator->validate($userDTO);
+            if ($validatorResult !== true) {
+                return $validatorResult;
             }
         }
         return true;

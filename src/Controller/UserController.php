@@ -25,7 +25,7 @@ class UserController
         $this->view = $view;
     }
 
-    public function registration(): void
+    public function action(): void
     {
         $errors = null;
         $userCheck = null;

@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 class UserRepositoryTest extends TestCase
 {
-    private $testFilePath = __DIR__ . '/../../tests/Model/user.json';
+    private string $testFilePath = __DIR__ . '/../../tests/Model/user.json';
 
     public function setUp(): void
     {

@@ -2,7 +2,9 @@
 
 namespace App\Core\User;
 
+use App\Model\UserDTO;
+
 interface UserValidationInterface
 {
-    public function validate($userDTO);
+    public function validate(UserDTO $userDTO);
 }

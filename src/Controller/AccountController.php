@@ -29,7 +29,7 @@ class AccountController
         $this->validator = $validator;
     }
 
-    public function processDeposit(): void
+    public function processDeposit(): bool|string
     {
         $input = $_POST["amount"] ?? null;
 
@@ -59,18 +59,14 @@ class AccountController
         $balance = $this->repository->calculateBalance();
 
         if (isset($_POST["logout"])) {
-            $_SESSION["loginStatus"] = false;
-            session_unset();
+            session_destroy();
             header("Refresh:0");
         }
 
+        $activeUser = null;
         $loginStatus = false;
         if (isset($_SESSION["loginStatus"])) {
             $loginStatus = $_SESSION["loginStatus"];
-        }
-
-        $activeUser = null;
-        if (isset($_SESSION["username"])) {
             $activeUser = $_SESSION["username"];
         }
 
@@ -80,9 +76,10 @@ class AccountController
         $this->view->addParameter('success', $this->success);
 
         $this->view->display('deposit.twig');
+        return $errors;
     }
 
-    private function getCorrectAmount(string $input): float
+    public function getCorrectAmount(string $input): float
     {
         $amount = str_replace(['.', ','], ['', '.'], $input);
         return (float)$amount;

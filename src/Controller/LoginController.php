@@ -15,11 +15,22 @@ class LoginController
         $this->view = $view;
     }
 
-    public function userLogin(): void
+    public function formInput(): ?array
     {
         if (isset($_POST['login'])) {
             $mailCheck = $_POST["mail"];
             $password = $_POST["password"];
+            return [$mailCheck, $password];
+        }
+        return null;
+    }
+
+    public function userLogin(): bool
+    {
+        $credentials = $this->formInput();
+        if ($credentials !== null) {
+            $mailCheck = $credentials[0];
+            $password = $credentials[1];
 
             $userDTO = $this->userRepository->findByMail($mailCheck);
 
@@ -29,17 +40,16 @@ class LoginController
                     $_SESSION["username"] = $userDTO->user;
                     $_SESSION["loginStatus"] = true;
                     echo "Logged in as ", $userDTO->user;
-                } else {
-                    $_SESSION["loginStatus"] = false;
-                    echo "Nice try";
+                    $this->redirect->redirectTo('http://0.0.0.0:8000/?input=deposit');
+                    return true;
                 }
-            }
-
-            if ($_SESSION["loginStatus"] === true) {
-                $this->redirect->redirectTo('http://0.0.0.0:8000/?input=deposit');
+                $_SESSION["loginStatus"] = false;
+                echo "Nice try";
             }
         }
         $this->view->addParameter('pageTitle', 'Login Page');
         $this->view->display('login.twig');
+
+        return false;
     }
 }

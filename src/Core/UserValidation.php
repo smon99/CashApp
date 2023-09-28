@@ -3,27 +3,32 @@
 namespace App\Core;
 
 use App\Core\User\UserValidationInterface;
+use App\Core\User\ValidationException;
 use App\Model\UserDTO;
 
 class UserValidation
 {
     private array $validationCollection;
 
-    public function __construct(
-        UserValidationInterface ...$validations
-    )
+    public function __construct(UserValidationInterface ...$validations)
     {
         $this->validationCollection = $validations;
     }
 
-    public function collectErrors(UserDTO $userDTO): string|bool
+    public function collectErrors(UserDTO $userDTO): void
     {
-        foreach ($this->validationCollection as $validator) {     //array mit allen Fehlern soll gesammelt werden, alle Fehler sollen ausgegeben werden
-            $validatorResult = $validator->validate($userDTO);
-            if ($validatorResult !== true) {
-                return $validatorResult;
+        $errors = [];
+
+        foreach ($this->validationCollection as $validator) {
+            try {
+                $validator->validate($userDTO);
+            } catch (ValidationException $e) {
+                $errors[] = $e->getMessage();
             }
         }
-        return true;
+
+        if (!empty($errors)) {
+            throw new ValidationException(implode(' ', $errors));
+        }
     }
 }

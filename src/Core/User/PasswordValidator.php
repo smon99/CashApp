@@ -6,7 +6,7 @@ use App\Model\UserDTO;
 
 class PasswordValidator implements UserValidationInterface
 {
-    public function validate(UserDTO $userDTO): string|bool
+    public function validate(UserDTO $userDTO)
     {
         $uppercase = preg_match('@[A-Z]@', $userDTO->password);
         $lowercase = preg_match('@[a-z]@', $userDTO->password);
@@ -14,9 +14,8 @@ class PasswordValidator implements UserValidationInterface
         $specialChar = preg_match('@[^\w]@', $userDTO->password);
         $minLength = 6;
 
-        if ($uppercase && $lowercase && $number && $specialChar && strlen($userDTO->password) >= $minLength) {
-            return true;
+        if (!($uppercase && $lowercase && $number && $specialChar && strlen($userDTO->password) >= $minLength)) {
+            throw new ValidationException('Passwort Anforderungen nicht erfüllt! ');
         }
-        return 'Passwort Anforderungen nicht erfüllt';
     }
 }

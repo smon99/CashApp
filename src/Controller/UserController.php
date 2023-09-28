@@ -11,6 +11,7 @@ use App\Core\UserValidation;
 use App\Core\ViewInterface;
 use App\Model\UserDTO;
 use App\Model\UserEntityManager;
+use App\Core\User\ValidationException;
 
 class UserController
 {
@@ -27,7 +28,7 @@ class UserController
 
     public function action(): void
     {
-        $errors = null;
+        $errors = [];
         $userCheck = null;
         $mailCheck = null;
         $passwordCheck = null;
@@ -42,10 +43,15 @@ class UserController
             $validatorDTO->eMail = $mailCheck;
             $validatorDTO->password = $passwordCheck;
 
-            $validation = new UserValidation(new EmptyFieldValidator(), new UserDuplicationValidator(), new PasswordValidator(), new EMailValidator());
-            $errors = $validation->collectErrors($validatorDTO);
+            try {
+                $validation = new UserValidation(
+                    new EmptyFieldValidator(),
+                    new UserDuplicationValidator(),
+                    new PasswordValidator(),
+                    new EMailValidator()
+                );
+                $validation->collectErrors($validatorDTO);
 
-            if ($errors === true) {
                 $password = password_hash($passwordCheck, PASSWORD_DEFAULT);
 
                 $userDTO = new UserDTO();
@@ -55,11 +61,13 @@ class UserController
 
                 $this->userEntityManager->save($userDTO);
                 $this->redirect->redirectTo('http://0.0.0.0:8000/?input=login');
+            } catch (ValidationException $e) {
+                $errors[] = $e->getMessage();
             }
         }
 
-        if (is_string($errors)) {
-            $this->view->addParameter('error', $errors);
+        if (!empty($errors)) {
+            $this->view->addParameter('error', implode(' ', $errors));
         }
 
         if ($userCheck !== null && $mailCheck !== null && $passwordCheck !== null) {

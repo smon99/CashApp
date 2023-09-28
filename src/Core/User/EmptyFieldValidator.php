@@ -6,11 +6,10 @@ use App\Model\UserDTO;
 
 class EmptyFieldValidator implements UserValidationInterface
 {
-    public function validate(UserDTO $userDTO): string|bool
+    public function validate(UserDTO $userDTO)
     {
         if (empty($userDTO->user) || empty($userDTO->eMail) || empty($userDTO->password)) {
-            return 'Alle Felder müssen ausgefüllt sein!';
+            throw new ValidationException('Alle Felder müssen ausgefüllt sein! ');
         }
-        return true;
     }
 }

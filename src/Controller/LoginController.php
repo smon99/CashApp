@@ -8,11 +8,17 @@ use App\Model\UserRepository;
 
 class LoginController
 {
-    private $view;
+    private ViewInterface $view;
 
-    public function __construct(ViewInterface $view, private Redirect $redirect, private UserRepository $userRepository)
+    public function __construct(
+        ViewInterface          $view,
+        private Redirect       $redirect,
+        private UserRepository $userRepository
+    )
     {
         $this->view = $view;
+        $this->redirect = $redirect;
+        $this->userRepository = $userRepository;
     }
 
     public function formInput(): ?array
@@ -20,7 +26,7 @@ class LoginController
         if (isset($_POST['login'])) {
             $mailCheck = $_POST["mail"];
             $password = $_POST["password"];
-            return [$mailCheck, $password];
+            return ['mail' => $mailCheck, 'password' => $password];
         }
         return null;
     }
@@ -29,8 +35,8 @@ class LoginController
     {
         $credentials = $this->formInput();
         if ($credentials !== null) {
-            $mailCheck = $credentials[0];
-            $password = $credentials[1];
+            $mailCheck = $credentials['mail'];
+            $password = $credentials['password'];
 
             $userDTO = $this->userRepository->findByMail($mailCheck);
 

@@ -7,7 +7,6 @@ use App\Model\AccountRepository;
 use App\Core\ViewInterface;
 use App\Core\AccountValidation;
 use App\Core\Account\AccountValidationException;
-
 use App\Model\AccountEntityManager;
 
 class AccountController implements ControllerInterface
@@ -16,7 +15,7 @@ class AccountController implements ControllerInterface
     private ViewInterface $view;
     private AccountRepository $repository;
     private AccountEntityManager $entityManager;
-    private ?string $success = null;
+    private $success;
 
     public function __construct(
         ViewInterface        $view,

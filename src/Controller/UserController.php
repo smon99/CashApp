@@ -15,15 +15,19 @@ use App\Core\User\UserValidationException;
 
 class UserController
 {
-    private $view;
+    private ViewInterface $view;
+    private Redirect $redirect;
+    private UserEntityManager $userEntityManager;
 
     public function __construct(
-        ViewInterface             $view,
-        private Redirect          $redirect,
-        private UserEntityManager $userEntityManager,
+        ViewInterface     $view,
+        Redirect          $redirect,
+        UserEntityManager $userEntityManager
     )
     {
         $this->view = $view;
+        $this->redirect = $redirect;
+        $this->userEntityManager = $userEntityManager;
     }
 
     public function action(): void

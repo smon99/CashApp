@@ -88,5 +88,10 @@
         "user": "Anna",
         "eMail": "Anna@Anna.de",
         "password": "$2y$10$LcPsoBD6Xl8ouYnbMaVJH.vNTPfB7v7IPwyXe45MEez0azzR9Z6YC"
+    },
+    {
+        "user": "Kai",
+        "eMail": "Kai@Kai.de",
+        "password": "$2y$10$TeIaXamtt0hluOrrjPAz7eGI5DYZWrWn2YVfdZzEi7eJG5.GqJmqO"
     }
 ]

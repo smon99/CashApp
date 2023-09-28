@@ -11,7 +11,7 @@ use App\Core\UserValidation;
 use App\Core\ViewInterface;
 use App\Model\UserDTO;
 use App\Model\UserEntityManager;
-use App\Core\User\ValidationException;
+use App\Core\User\UserValidationException;
 
 class UserController
 {
@@ -61,7 +61,7 @@ class UserController
 
                 $this->userEntityManager->save($userDTO);
                 $this->redirect->redirectTo('http://0.0.0.0:8000/?input=login');
-            } catch (ValidationException $e) {
+            } catch (UserValidationException $e) {
                 $errors[] = $e->getMessage();
             }
         }

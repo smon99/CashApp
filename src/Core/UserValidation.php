@@ -3,7 +3,7 @@
 namespace App\Core;
 
 use App\Core\User\UserValidationInterface;
-use App\Core\User\ValidationException;
+use App\Core\User\UserValidationException;
 use App\Model\UserDTO;
 
 class UserValidation
@@ -22,13 +22,13 @@ class UserValidation
         foreach ($this->validationCollection as $validator) {
             try {
                 $validator->validate($userDTO);
-            } catch (ValidationException $e) {
+            } catch (UserValidationException $e) {
                 $errors[] = $e->getMessage();
             }
         }
 
         if (!empty($errors)) {
-            throw new ValidationException(implode(' ', $errors));
+            throw new UserValidationException(implode(' ', $errors));
         }
     }
 }

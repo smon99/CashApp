@@ -9,7 +9,7 @@ interface UserValidationInterface
     /**
      * @param UserDTO $userDTO
      *
-     * @throws ValidationException If validation criteria is not matched.
+     * @throws UserValidationException If validation criteria is not matched.
      */
     public function validate(UserDTO $userDTO);
 }

@@ -6,6 +6,8 @@ use App\Model\AccountDTO;
 use App\Model\AccountRepository;
 use App\Core\ViewInterface;
 use App\Core\AccountValidation;
+use App\Core\Account\AccountValidationException;
+
 use App\Model\AccountEntityManager;
 
 class AccountController implements ControllerInterface
@@ -14,7 +16,7 @@ class AccountController implements ControllerInterface
     private ViewInterface $view;
     private AccountRepository $repository;
     private AccountEntityManager $entityManager;
-    private $success;
+    private ?string $success = null;
 
     public function __construct(
         ViewInterface        $view,
@@ -34,12 +36,11 @@ class AccountController implements ControllerInterface
         $input = $_POST["amount"] ?? null;
 
         if ($input !== null) {
+            try {
+                $validateThis = $this->getCorrectAmount($input);
 
-            $validateThis = $this->getCorrectAmount($input);
+                $this->validator->collectErrors($validateThis);
 
-            $errors = $this->validator->collectErrors($validateThis);
-
-            if ($errors === true) {
                 $amount = $validateThis;
 
                 $date = date('Y-m-d');
@@ -50,9 +51,8 @@ class AccountController implements ControllerInterface
                 $saveData->time = $time;
                 $this->entityManager->saveDeposit($saveData);
                 $this->success = "Die Transaktion wurde erfolgreich gespeichert!";
-            }
-            if (is_string($errors)) {
-                $this->view->addParameter('error', $errors);
+            } catch (AccountValidationException $e) {
+                $this->view->addParameter('error', $e->getMessage());
             }
         }
 

@@ -15,7 +15,7 @@ class PasswordValidator implements UserValidationInterface
         $minLength = 6;
 
         if (!($uppercase && $lowercase && $number && $specialChar && strlen($userDTO->password) >= $minLength)) {
-            throw new ValidationException('Passwort Anforderungen nicht erfüllt! ');
+            throw new UserValidationException('Passwort Anforderungen nicht erfüllt! ');
         }
     }
 }

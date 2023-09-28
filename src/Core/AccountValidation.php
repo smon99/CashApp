@@ -3,29 +3,35 @@
 namespace App\Core;
 
 use App\Core\Account\AccountValidationInterface;
+use App\Core\Account\AccountValidationException;
 
 class AccountValidation
 {
     private array $validationCollection;
 
-    public function __construct(
-        AccountValidationInterface ...$validations
-    )
+    public function __construct(AccountValidationInterface ...$validations)
     {
         $this->validationCollection = $validations;
     }
 
-    public function collectErrors(float $amount): string|bool
+    public function collectErrors(float $amount): void
     {
+        $errors = [];
+
         if (!is_numeric($amount)) {
-            return 'Bitte einen Betrag eingeben!';
+            throw new AccountValidationException('Bitte einen Betrag eingeben!');
         }
 
         foreach ($this->validationCollection as $validator) {
-            if ($validator->validate($amount) !== true) {
-                return $validator->validate($amount);
+            try {
+                $validator->validate($amount);
+            } catch (AccountValidationException $e) {
+                $errors[] = $e->getMessage();
             }
         }
-        return true;
+
+        if (!empty($errors)) {
+            throw new AccountValidationException(implode(' ', $errors));
+        }
     }
 }

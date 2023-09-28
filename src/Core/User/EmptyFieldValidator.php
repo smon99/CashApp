@@ -9,7 +9,7 @@ class EmptyFieldValidator implements UserValidationInterface
     public function validate(UserDTO $userDTO)
     {
         if (empty($userDTO->user) || empty($userDTO->eMail) || empty($userDTO->password)) {
-            throw new ValidationException('Alle Felder müssen ausgefüllt sein! ');
+            throw new UserValidationException('Alle Felder müssen ausgefüllt sein! ');
         }
     }
 }

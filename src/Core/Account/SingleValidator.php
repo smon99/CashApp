@@ -4,11 +4,10 @@ namespace App\Core\Account;
 
 class SingleValidator implements AccountValidationInterface
 {
-    public function validate(float $amount): string|bool
+    public function validate(float $amount): void
     {
-        if ($amount >= 0.01 && $amount <= 50) {
-            return true;
+        if ($amount < 0.01 || $amount > 50) {
+            throw new AccountValidationException('Bitte einen Betrag von mindestens 0.01€ und maximal 50€ eingeben!');
         }
-        return 'Bitte einen Betrag von mindestens 0.01€ und maximal 50€ eingeben!';
     }
 }

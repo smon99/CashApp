@@ -4,6 +4,6 @@ namespace App\Core\User;
 
 use Exception;
 
-class ValidationException extends Exception
+class UserValidationException extends Exception
 {
 }

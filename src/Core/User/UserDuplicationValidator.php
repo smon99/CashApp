@@ -14,10 +14,10 @@ class UserDuplicationValidator implements UserValidationInterface
         $repository = new UserRepository($mapper);
 
         if ($repository->findByMail($userDTO->eMail) !== null) {
-            throw new ValidationException('Fehler eMail bereits vergeben! ');
+            throw new UserValidationException('Fehler eMail bereits vergeben! ');
         }
         if ($repository->findByUsername($userDTO->user) !== null) {
-            throw new ValidationException('Fehler Name bereits vergeben! ');
+            throw new UserValidationException('Fehler Name bereits vergeben! ');
         }
     }
 }

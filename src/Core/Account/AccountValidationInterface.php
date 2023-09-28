@@ -4,5 +4,12 @@ namespace App\Core\Account;
 
 interface AccountValidationInterface
 {
-    public function validate(float $amount);
+    /**
+     * @param float $amount
+     *
+     * @throws AccountValidationException
+     *
+     * @return void
+     */
+    public function validate(float $amount): void;
 }

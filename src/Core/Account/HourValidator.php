@@ -4,7 +4,7 @@ namespace App\Core\Account;
 
 class HourValidator implements AccountValidationInterface
 {
-    public function validate(float $amount): string|bool
+    public function validate(float $amount): void
     {
         $accountData = json_decode(file_get_contents(__DIR__ . '/../../Model/account.json'), true);
 
@@ -20,9 +20,9 @@ class HourValidator implements AccountValidationInterface
                 $amount += $transactionSet["amount"];
             }
         }
-        if ($amount < 100.00) {
-            return true;
+
+        if ($amount >= 100.00) {
+            throw new AccountValidationException('Stündliches Einzahlungslimit von 100€ überschritten!');
         }
-        return 'Stündliches Einzahlungslimit von 100€ überschritten!';
     }
 }

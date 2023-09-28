@@ -2,21 +2,19 @@
 
 namespace App\Core\Account;
 
+use App\Model\AccountMapper;
+use App\Model\AccountRepository;
+
 class DayValidator implements AccountValidationInterface
 {
     public function validate(float $amount): void
     {
-        $accountData = json_decode(file_get_contents(__DIR__ . '/../../Model/account.json'), true);
+        $repository = new AccountRepository(new AccountMapper());
+        $dayBalance = $repository->calculateBalancePerDay();
 
-        $date = date('Y-m-d');
+        $limit = $dayBalance + $amount;
 
-        foreach ($accountData as $transactionSet) {
-            if ($date === $transactionSet["date"]) {
-                $amount += $transactionSet["amount"];
-            }
-        }
-
-        if ($amount >= 500) {
+        if ($limit > 500.0) {
             throw new AccountValidationException('Tägliches Einzahlungslimit von 500€ überschritten!');
         }
     }

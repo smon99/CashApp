@@ -2,13 +2,15 @@
 
 namespace Test\Core;
 
-use App\Core\User\EmptyFieldValidator;
-use PHPUnit\Framework\TestCase;
 use App\Core\UserValidation;
+use App\Core\User\EmptyFieldValidator;
 use App\Core\User\EMailValidator;
 use App\Core\User\PasswordValidator;
 use App\Core\User\UserDuplicationValidator;
+use App\Core\User\UserValidationInterface;
+use App\Core\User\UserValidationException;
 use App\Model\UserDTO;
+use PHPUnit\Framework\TestCase;
 
 class UserValidationTest extends TestCase
 {
@@ -24,9 +26,15 @@ class UserValidationTest extends TestCase
         $userDTO->eMail = $eMail;
         $userDTO->password = $password;
 
-        $validation = new UserValidation(new UserDuplicationValidator(), new PasswordValidator(), new EMailValidator());
+        $validation = new UserValidation(
+            new UserDuplicationValidator(),
+            new PasswordValidator(),
+            new EMailValidator()
+        );
 
-        self::assertTrue($validation->collectErrors($userDTO));
+        $this->expectNotToPerformAssertions();
+
+        $validation->collectErrors($userDTO);
     }
 
     public function testUserValidationEMailFalse(): void
@@ -41,12 +49,19 @@ class UserValidationTest extends TestCase
         $userDTO->eMail = $eMail;
         $userDTO->password = $password;
 
-        $validation = new UserValidation(new UserDuplicationValidator(), new PasswordValidator(), new EMailValidator());
+        $validation = new UserValidation(
+            new UserDuplicationValidator(),
+            new PasswordValidator(),
+            new EMailValidator()
+        );
 
-        self::assertSame('Bitte gültige eMail eingeben!', $validation->collectErrors($userDTO));
+        $this->expectException(UserValidationException::class);
+        $this->expectExceptionMessage('Bitte gültige eMail eingeben!');
+
+        $validation->collectErrors($userDTO);
     }
 
-    public function testUserValidationDulicationEMailFalse(): void
+    public function testUserValidationDuplicationEMailFalse(): void
     {
         $userDTO = new UserDTO();
 
@@ -58,9 +73,16 @@ class UserValidationTest extends TestCase
         $userDTO->eMail = $eMail;
         $userDTO->password = $password;
 
-        $validation = new UserValidation(new UserDuplicationValidator(), new PasswordValidator(), new EMailValidator());
+        $validation = new UserValidation(
+            new UserDuplicationValidator(),
+            new PasswordValidator(),
+            new EMailValidator()
+        );
 
-        self::assertSame('Fehler eMail bereits vergeben!', $validation->collectErrors($userDTO));
+        $this->expectException(UserValidationException::class);
+        $this->expectExceptionMessage('Fehler eMail bereits vergeben!');
+
+        $validation->collectErrors($userDTO);
     }
 
     public function testUserValidationDuplicationUserFalse(): void
@@ -75,9 +97,16 @@ class UserValidationTest extends TestCase
         $userDTO->eMail = $eMail;
         $userDTO->password = $password;
 
-        $validation = new UserValidation(new UserDuplicationValidator(), new PasswordValidator(), new EMailValidator());
+        $validation = new UserValidation(
+            new UserDuplicationValidator(),
+            new PasswordValidator(),
+            new EMailValidator()
+        );
 
-        self::assertSame('Fehler Name bereits vergeben!', $validation->collectErrors($userDTO));
+        $this->expectException(UserValidationException::class);
+        $this->expectExceptionMessage('Fehler Name bereits vergeben!');
+
+        $validation->collectErrors($userDTO);
     }
 
     public function testValidationPasswordFalse(): void
@@ -86,15 +115,22 @@ class UserValidationTest extends TestCase
 
         $user = 'Benutzer';
         $eMail = 'eMail@eMail.de';
-        $password = 'assword';
+        $password = 'assword'; // Invalid password
 
         $userDTO->user = $user;
         $userDTO->eMail = $eMail;
         $userDTO->password = $password;
 
-        $validation = new UserValidation(new UserDuplicationValidator(), new PasswordValidator(), new EMailValidator());
+        $validation = new UserValidation(
+            new UserDuplicationValidator(),
+            new PasswordValidator(),
+            new EMailValidator()
+        );
 
-        self::assertSame('Passwort Anforderungen nicht erfüllt', $validation->collectErrors($userDTO));
+        $this->expectException(UserValidationException::class);
+        $this->expectExceptionMessage('Passwort Anforderungen nicht erfüllt');
+
+        $validation->collectErrors($userDTO);
     }
 
     public function testValidationEmptyFieldTrue(): void
@@ -109,8 +145,13 @@ class UserValidationTest extends TestCase
         $userDTO->eMail = $eMail;
         $userDTO->password = $password;
 
-        $validation = new UserValidation(new EmptyFieldValidator());
+        $validation = new UserValidation(
+            new EmptyFieldValidator()
+        );
 
-        self::assertSame('Alle Felder müssen ausgefüllt sein!', $validation->collectErrors($userDTO));
+        $this->expectException(UserValidationException::class);
+        $this->expectExceptionMessage('Alle Felder müssen ausgefüllt sein!');
+
+        $validation->collectErrors($userDTO);
     }
 }

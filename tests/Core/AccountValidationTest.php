@@ -7,6 +7,7 @@ use App\Core\Account\HourValidator;
 use App\Core\Account\SingleValidator;
 use PHPUnit\Framework\TestCase;
 use App\Core\AccountValidation;
+use App\Core\Account\AccountValidationException;
 
 class AccountValidationTest extends TestCase
 {
@@ -17,53 +18,62 @@ class AccountValidationTest extends TestCase
 
         $validator = new AccountValidation();
 
-        self::assertTrue($validator->collectErrors($amount));
-    }
-
-    public function testCollectErrorsNotNumeric(): void
-    {
-        $validator = new AccountValidation();
-        $amount = 'hi';
-
-        self::assertSame($validator->collectErrors($amount), 'Bitte einen Betrag eingeben!');
+        try {
+            $validator->collectErrors($amount);
+            self::assertTrue(true);
+        } catch (AccountValidationException $e) {
+            self::fail("Validation should not have thrown an exception: " . $e->getMessage());
+        }
     }
 
     public function testCollectErrorsNotTrue(): void
     {
         $validator = new AccountValidation(new DayValidator(), new HourValidator(), new SingleValidator());
         $amount = 510;
-        $errors = $validator->collectErrors($amount);
 
-        self::assertSame($errors, 'Tägliches Einzahlungslimit von 500€ überschritten!');
+        try {
+            $validator->collectErrors($amount);
+            self::fail("Validation should have thrown an exception.");
+        } catch (AccountValidationException $e) {
+            self::assertSame('Tägliches Einzahlungslimit von 500€ überschritten!', $e->getMessage());
+        }
     }
 
     public function testCollectErrorsTrue(): void
     {
         $validator = new AccountValidation(new DayValidator(), new HourValidator(), new SingleValidator());
 
-        $amount = 20;
-        $errors = $validator->collectErrors($amount);
-
-        self::assertTrue($errors);
+        try {
+            $amount = 20;
+            $validator->collectErrors($amount);
+            self::assertTrue(true);
+        } catch (AccountValidationException $e) {
+            self::fail("Validation should not have thrown an exception: " . $e->getMessage());
+        }
     }
 
     public function testSingleValidatorError(): void
     {
         $validator = new AccountValidation(new SingleValidator());
 
-        $amount = 51;
-        $errors = $validator->collectErrors($amount);
-
-        self::assertSame($errors, 'Bitte einen Betrag von mindestens 0.01€ und maximal 50€ eingeben!');
+        try {
+            $amount = 51;
+            $validator->collectErrors($amount);
+            self::fail("Validation should have thrown an exception.");
+        } catch (AccountValidationException $e) {
+            self::assertSame('Bitte einen Betrag von mindestens 0.01€ und maximal 50€ eingeben!', $e->getMessage());
+        }
     }
 
     public function testHourValidatorError(): void
     {
-        $validator = new AccountValidation(new HourValidator());
+        $validator = new AccountValidation(new HourValidator(), new DayValidator(), new SingleValidator());
+        $amount = 101.0;
 
-        $amount = 101;
-        $errors = $validator->collectErrors($amount);
-
-        self::assertSame($errors, 'Stündliches Einzahlungslimit von 100€ überschritten!');
+        try {
+            $validator->collectErrors($amount);
+        } catch (AccountValidationException $e) {
+            self::assertSame('Stündliches Einzahlungslimit von 100€ überschritten!', $e->getMessage());
+        }
     }
 }

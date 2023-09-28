@@ -16,22 +16,20 @@ class AccountValidation
 
     public function collectErrors(float $amount): void
     {
-        $errors = [];
-
-        if (!is_numeric($amount)) {
-            throw new AccountValidationException('Bitte einen Betrag eingeben!');
-        }
+        $firstError = null;
 
         foreach ($this->validationCollection as $validator) {
             try {
                 $validator->validate($amount);
             } catch (AccountValidationException $e) {
-                $errors[] = $e->getMessage();
+                if ($firstError === null) {
+                    $firstError = $e;
+                }
             }
         }
 
-        if (!empty($errors)) {
-            throw new AccountValidationException(implode(' ', $errors));
+        if ($firstError !== null) {
+            throw $firstError;
         }
     }
 }

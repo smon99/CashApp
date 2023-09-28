@@ -2,26 +2,19 @@
 
 namespace App\Core\Account;
 
+use App\Model\AccountMapper;
+use App\Model\AccountRepository;
+
 class HourValidator implements AccountValidationInterface
 {
     public function validate(float $amount): void
     {
-        $accountData = json_decode(file_get_contents(__DIR__ . '/../../Model/account.json'), true);
+        $repository = new AccountRepository(new AccountMapper());
+        $hourBalance = $repository->calculateBalancePerHour();
 
-        $date = date('Y-m-d');
-        $time = date('H:i:s');
-        $timestampCurrent = strtotime($time);
+        $limit = $hourBalance + $amount;
 
-        foreach ($accountData as $transactionSet) {
-            if ($date === $transactionSet["date"]) {
-                $timestampHistory = strtotime($transactionSet["time"]);
-            }
-            if (isset($timestampHistory) && $timestampHistory >= $timestampCurrent - (60 * 60)) {
-                $amount += $transactionSet["amount"];
-            }
-        }
-
-        if ($amount >= 100.00) {
+        if ($limit > 100.0) {
             throw new AccountValidationException('Stündliches Einzahlungslimit von 100€ überschritten!');
         }
     }

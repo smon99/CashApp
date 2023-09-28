@@ -2,8 +2,15 @@
 
 namespace App\Model;
 
+use JsonException;
+
 class AccountMapper
 {
+    /**
+     * @param string $jsonString
+     * @return AccountDTO[]
+     * @throws JsonException
+     */
     public function jsonToDTO(string $jsonString): array
     {
         $data = json_decode($jsonString, true, 512, JSON_THROW_ON_ERROR);

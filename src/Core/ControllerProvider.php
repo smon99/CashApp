@@ -3,6 +3,7 @@
 namespace App\Core;
 
 use App\Controller\AccountController;
+use App\Controller\UnknownController;
 use App\Controller\LoginController;
 use App\Controller\UserController;
 
@@ -17,6 +18,8 @@ class ControllerProvider
             "login" => LoginController::class,
 
             "user" => UserController::class,
+
+            "unknown" => UnknownController::class,
 
         ];
     }

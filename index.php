@@ -1,7 +1,6 @@
 <?php declare(strict_types=1);
 
 use App\Core\Container;
-use App\Core\View;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
@@ -18,6 +17,8 @@ $dependencyProvider->provide($container);
 
 $controllerProvider = new \App\Core\ControllerProvider();
 $page = $_GET['page'] ?? '';
+
+$controller = new \App\Controller\UnknownController($container);
 
 foreach ($controllerProvider->getList() as $key => $controllerClass) {
     if ($key === $page) {

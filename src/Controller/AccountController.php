@@ -6,7 +6,6 @@ use App\Core\Container;
 use App\Core\View;
 use App\Model\AccountDTO;
 use App\Model\AccountRepository;
-use App\Core\ViewInterface;
 use App\Core\AccountValidation;
 use App\Core\Account\AccountValidationException;
 use App\Model\AccountEntityManager;
@@ -14,7 +13,7 @@ use App\Model\AccountEntityManager;
 class AccountController implements ControllerInterface
 {
     private AccountValidation $validator;
-    private ViewInterface $view;
+    private View $view;
     private AccountRepository $repository;
     private AccountEntityManager $entityManager;
     private $success;
@@ -27,7 +26,7 @@ class AccountController implements ControllerInterface
         $this->validator = $container->get(AccountValidation::class);
     }
 
-    public function action(): void
+    public function action(): object
     {
         $input = $_POST["amount"] ?? null;
 
@@ -72,10 +71,10 @@ class AccountController implements ControllerInterface
         $this->view->addParameter('success', $this->success);
 
         $this->view->setTemplate('deposit.twig');
-        $this->view->display();
+        return $this->view;
     }
 
-    public function getCorrectAmount(string $input): float
+    private function getCorrectAmount(string $input): float
     {
         $amount = str_replace(['.', ','], ['', '.'], $input);
         return (float)$amount;

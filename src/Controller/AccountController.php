@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Core\Container;
+use App\Core\View;
 use App\Model\AccountDTO;
 use App\Model\AccountRepository;
 use App\Core\ViewInterface;
@@ -17,17 +19,12 @@ class AccountController implements ControllerInterface
     private AccountEntityManager $entityManager;
     private $success;
 
-    public function __construct(
-        ViewInterface        $view,
-        AccountRepository    $repository,
-        AccountEntityManager $entityManager,
-        AccountValidation    $validator
-    )
+    public function __construct(Container $container)
     {
-        $this->view = $view;
-        $this->repository = $repository;
-        $this->entityManager = $entityManager;
-        $this->validator = $validator;
+        $this->view = $container->get(View::class);
+        $this->repository = $container->get(AccountRepository::class);
+        $this->entityManager = $container->get(AccountEntityManager::class);
+        $this->validator = $container->get(AccountValidation::class);
     }
 
     public function action(): void
@@ -74,7 +71,8 @@ class AccountController implements ControllerInterface
         $this->view->addParameter('activeUser', $activeUser);
         $this->view->addParameter('success', $this->success);
 
-        $this->view->display('deposit.twig');
+        $this->view->setTemplate('deposit.twig');
+        $this->view->display();
     }
 
     public function getCorrectAmount(string $input): float

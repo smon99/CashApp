@@ -2,32 +2,29 @@
 
 namespace App\Controller;
 
+use App\Core\Container;
 use App\Core\Redirect;
 use App\Core\User\EMailValidator;
 use App\Core\User\EmptyFieldValidator;
 use App\Core\User\PasswordValidator;
 use App\Core\User\UserDuplicationValidator;
 use App\Core\UserValidation;
-use App\Core\ViewInterface;
+use App\Core\View;
 use App\Model\UserDTO;
 use App\Model\UserEntityManager;
 use App\Core\User\UserValidationException;
 
-class UserController
+class UserController implements ControllerInterface
 {
-    private ViewInterface $view;
+    private View $view;
     private Redirect $redirect;
     private UserEntityManager $userEntityManager;
 
-    public function __construct(
-        ViewInterface     $view,
-        Redirect          $redirect,
-        UserEntityManager $userEntityManager
-    )
+    public function __construct(Container $container)
     {
-        $this->view = $view;
-        $this->redirect = $redirect;
-        $this->userEntityManager = $userEntityManager;
+        $this->view = $container->get(View::class);
+        $this->redirect = $container->get(Redirect::class);
+        $this->userEntityManager = $container->get(UserEntityManager::class);
     }
 
     public function action(): void
@@ -64,22 +61,27 @@ class UserController
                 $userDTO->password = $password;
 
                 $this->userEntityManager->save($userDTO);
-                $this->redirect->redirectTo('http://0.0.0.0:8000/?input=login');
+                $this->redirect->redirectTo('http://0.0.0.0:8000/?page=login');
             } catch (UserValidationException $e) {
                 $errors[] = $e->getMessage();
             }
         }
+
+        $viewParameters = [];
 
         if (!empty($errors)) {
             $this->view->addParameter('error', implode(' ', $errors));
         }
 
         if ($userCheck !== null && $mailCheck !== null && $passwordCheck !== null) {
-            $this->view->addParameter('tempUserName', $userCheck);
-            $this->view->addParameter('tempMail', $mailCheck);
-            $this->view->addParameter('tempPassword', $passwordCheck);
+            $viewParameters['tempUserName'] = $userCheck;
+            $viewParameters['tempMail'] = $mailCheck;
+            $viewParameters['tempPassword'] = $passwordCheck;
         }
 
-        $this->view->display('user.twig');
+        $this->view->addParameter('parameters', $viewParameters);
+
+        $this->view->setTemplate('user.twig');
+        $this->view->display();
     }
 }

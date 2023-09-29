@@ -7,32 +7,37 @@ use Twig\Loader\FilesystemLoader;
 
 class View implements ViewInterface
 {
-    private $twig;
-    private string $template;
+    private Environment $twig;
+    private string $tpl;
 
     public function __construct(string $templatePath)
     {
         $loader = new FilesystemLoader($templatePath);
         $this->twig = new Environment($loader);
-
-        $this->parameters = [];
     }
 
-    public function addParameter(string $key,mixed $value): void
+    public function addParameter(string $key, mixed $value): void
     {
         $this->parameters[$key] = $value;
     }
 
-    public function display(string $template)
+    public function display()
     {
-        $this->template = $template;
-        echo $this->twig->render($template, $this->parameters);
+        echo $this->twig->render($this->tpl, $this->parameters);
     }
 
-    /*
-    public function getTemplate(): string
+    public function setTemplate(string $tpl)
     {
-        return $this->template;
+        $this->tpl = $tpl;
     }
-    */
+
+    public function getParameters(): array
+    {
+        return $this->parameters;
+    }
+
+    public function getTpl(): string
+    {
+        return $this->tpl;
+    }
 }

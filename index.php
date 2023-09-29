@@ -1,8 +1,7 @@
 <?php declare(strict_types=1);
 
-use App\Core\Account\DayValidator;
-use App\Core\Account\HourValidator;
-use App\Core\Account\SingleValidator;
+use App\Core\Container;
+use App\Core\View;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
@@ -12,32 +11,23 @@ error_reporting(E_ALL);
 
 session_start();
 
-$view = new App\Core\View(__DIR__ . '/src/View');
-$accountMapper = new \App\Model\AccountMapper();
-$accountValidator = new App\Core\AccountValidation(new DayValidator(), new HourValidator(), new SingleValidator());
-$repository = new \App\Model\AccountRepository($accountMapper);
-$entityManager = new \App\Model\AccountEntityManager();
-$userMapper = new \App\Model\UserMapper();
-$userRepository = new \App\Model\UserRepository($userMapper);
-$userEntityManager = new \App\Model\UserEntityManager($userMapper);
+$container = new Container();
 
-$input = $_GET['input'] ?? '';
+$dependencyProvider = new \App\Core\DependencyProvider();
+$dependencyProvider->provide($container);
 
-if ($input === 'deposit') {
-    $accountController = new App\Controller\AccountController($view, $repository, $entityManager, $accountValidator);
-    $accountController->action();
+$controllerProvider = new \App\Core\ControllerProvider();
+$page = $_GET['page'] ?? '';
+
+foreach ($controllerProvider->getList() as $key => $controllerClass) {
+    if ($key === $page) {
+        $controllerCheck = new $controllerClass($container);
+        if ($controllerCheck instanceof \App\Controller\ControllerInterface) {
+            $controller = $controllerCheck;
+            break;
+        }
+    }
 }
 
-if ($input === 'login') {
-    $loginController = new App\Controller\LoginController($view, new \App\Core\Redirect(), $userRepository);
-    $loginController->action();
-}
-
-if ($input === 'user') {
-    $userController = new App\Controller\UserController($view, new \App\Core\Redirect(), $userEntityManager);
-    $userController->action();
-}
-
-if ($input === 'index') {
-    include 'src/View/index.twig';
-}
+$data = $controller->action();
+$data->display();

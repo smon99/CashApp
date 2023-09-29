@@ -8,10 +8,6 @@ use App\Controller\UserController;
 
 class ControllerProvider
 {
-
-    /**
-     * @return string[]
-     */
     public function getList(): array
     {
         return [

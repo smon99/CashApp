@@ -2,26 +2,25 @@
 
 namespace App\Controller;
 
+use App\Core\Container;
 use App\Core\Redirect;
-use App\Core\ViewInterface;
+use App\Core\View;
 use App\Model\UserRepository;
 
-class LoginController
+class LoginController implements ControllerInterface
 {
-    private ViewInterface $view;
+    private View $view;
+    private Redirect $redirect;
+    private UserRepository $userRepository;
 
-    public function __construct(
-        ViewInterface          $view,
-        private Redirect       $redirect,
-        private UserRepository $userRepository
-    )
+    public function __construct(Container $container)
     {
-        $this->view = $view;
-        $this->redirect = $redirect;
-        $this->userRepository = $userRepository;
+        $this->view = $container->get(View::class);
+        $this->userRepository = $container->get(UserRepository::class);
+        $this->redirect = $container->get(Redirect::class);
     }
 
-    public function formInput(): ?array
+    private function formInput(): ?array
     {
         if (isset($_POST['login'])) {
             $mailCheck = $_POST["mail"];
@@ -33,6 +32,8 @@ class LoginController
 
     public function action(): void
     {
+        $this->view->setTemplate('login.twig');
+
         $credentials = $this->formInput();
         if ($credentials !== null) {
             $mailCheck = $credentials['mail'];
@@ -46,12 +47,13 @@ class LoginController
                     $_SESSION["username"] = $userDTO->user;
                     $_SESSION["loginStatus"] = true;
                     echo "Logged in as ", $userDTO->user;
-                    $this->redirect->redirectTo('http://0.0.0.0:8000/?input=deposit');
+                    $this->redirect->redirectTo('http://0.0.0.0:8000/?page=deposit');
                 }
                 echo "Nice try";
             }
         }
+
         $this->view->addParameter('pageTitle', 'Login Page');
-        $this->view->display('login.twig');
+        $this->view->display();
     }
 }

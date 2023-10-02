@@ -18,7 +18,7 @@ $dependencyProvider->provide($container);
 $controllerProvider = new \App\Core\ControllerProvider();
 $page = $_GET['page'] ?? '';
 
-$controller = new \App\Controller\UnknownController($container);
+$controller = new \App\Controller\ErrorController($container);
 
 foreach ($controllerProvider->getList() as $key => $controllerClass) {
     if ($key === $page) {

@@ -89,4 +89,9 @@ class AccountControllerTest extends TestCase
 
         self::assertNull($_SESSION['loginStatus']);
     }
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+    }
 }

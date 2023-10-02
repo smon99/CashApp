@@ -60,10 +60,13 @@ class UserControllerTest extends TestCase
         $_POST["mail"] = "test@example.com";
         $_POST["password"] = "invalid";
 
-        ob_start();
         $response = $this->controller->action();
-        $output = ob_get_clean();
 
         $this->assertInstanceOf(View::class, $response);
+    }
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
     }
 }

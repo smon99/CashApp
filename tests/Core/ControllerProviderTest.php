@@ -4,7 +4,7 @@ namespace Test\Core;
 
 use App\Controller\AccountController;
 use App\Controller\LoginController;
-use App\Controller\UnknownController;
+use App\Controller\ErrorController;
 use App\Controller\UserController;
 use App\Core\ControllerProvider;
 use PHPUnit\Framework\TestCase;
@@ -27,6 +27,6 @@ class ControllerProviderTest extends TestCase
         $this->assertSame(AccountController::class, $controllerList['account']);
         $this->assertSame(LoginController::class, $controllerList['login']);
         $this->assertSame(UserController::class, $controllerList['user']);
-        $this->assertSame(UnknownController::class, $controllerList['unknown']);
+        $this->assertSame(ErrorController::class, $controllerList['unknown']);
     }
 }

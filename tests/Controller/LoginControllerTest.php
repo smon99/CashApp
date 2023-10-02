@@ -65,9 +65,16 @@ class LoginControllerTest extends TestCase
 
     public function testLoginWithInvalidCredentials(): void
     {
+        $_POST['login'] = null;
+
         $response = $this->controller->action();
 
         self::assertInstanceOf(View::class, $response);
+    }
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
     }
 
 }

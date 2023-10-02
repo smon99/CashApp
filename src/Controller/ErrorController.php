@@ -5,7 +5,7 @@ namespace App\Controller;
 use App\Core\Container;
 use App\Core\View;
 
-class UnknownController implements ControllerInterface
+class ErrorController implements ControllerInterface
 {
     private View $view;
 

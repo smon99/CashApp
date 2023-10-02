@@ -3,7 +3,7 @@
 namespace App\Core;
 
 use App\Controller\AccountController;
-use App\Controller\UnknownController;
+use App\Controller\ErrorController;
 use App\Controller\LoginController;
 use App\Controller\UserController;
 
@@ -19,7 +19,7 @@ class ControllerProvider
 
             "user" => UserController::class,
 
-            "unknown" => UnknownController::class,
+            "unknown" => ErrorController::class,
 
         ];
     }

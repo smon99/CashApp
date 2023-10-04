@@ -41,13 +41,13 @@ class AccountControllerTest extends TestCase
 
     public function testActionWithValidInput(): void
     {
-        $_POST["amount"] = "100.50";
+        $_POST["amount"] = "10.50";
 
         $this->validator->expects($this->once())
             ->method('collectErrors');
         $this->repository->expects($this->once())
             ->method('calculateBalance')
-            ->willReturn(500.75);
+            ->willReturn(10.50);
         $this->entityManager->expects($this->once())
             ->method('saveDeposit');
 
@@ -62,7 +62,7 @@ class AccountControllerTest extends TestCase
 
         $this->validator->expects($this->once())
             ->method('collectErrors')
-            ->willThrowException(new AccountValidationException("Validation failed"));
+            ->willThrowException(new AccountValidationException(" "));
 
         $response = $this->controller->action();
 

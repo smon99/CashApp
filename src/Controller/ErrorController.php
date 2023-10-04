@@ -14,13 +14,12 @@ class ErrorController implements ControllerInterface
         $this->view = $container->get(View::class);
     }
 
-    public function action(): object
+    public function action(): void
     {
         $viewParameters = [];
 
         $this->view->addParameter('parameters', $viewParameters);
 
         $this->view->setTemplate('unknown.twig');
-        return $this->view;
     }
 }

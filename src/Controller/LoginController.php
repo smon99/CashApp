@@ -30,7 +30,7 @@ class LoginController implements ControllerInterface
         return null;
     }
 
-    public function action(): object
+    public function action(): void
     {
         $this->view->setTemplate('login.twig');
 
@@ -47,13 +47,12 @@ class LoginController implements ControllerInterface
                     $_SESSION["username"] = $userDTO->user;
                     $_SESSION["loginStatus"] = true;
                     echo "Logged in as ", $userDTO->user;
-                    $this->redirect->redirectTo('http://0.0.0.0:8000/?page=deposit');
+                    $this->redirect->redirectTo('http://0.0.0.0:8000/?page=account');
                 }
                 echo "Nice try";
             }
         }
 
         $this->view->addParameter('pageTitle', 'Login Page');
-        return $this->view;
     }
 }

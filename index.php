@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 
 use App\Core\Container;
+use App\Core\View;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
@@ -30,5 +31,7 @@ foreach ($controllerProvider->getList() as $key => $controllerClass) {
     }
 }
 
-$data = $controller->action();
-$data->display();
+$controller->action();
+
+$view = $container->get(View::class);
+$view->display();

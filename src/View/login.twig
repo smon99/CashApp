@@ -3,12 +3,12 @@
 <head><title>Login</title></head>
 
 <h1>
-    Anmelden
+    {{ pageTitle }}
 </h1>
 
-<form action='?input=login' method='POST'>
+<form action='?page=login' method='POST'>
     E-Mail: <input type='text' name='mail'> <br>
-    Passwort: <input type='text' name='password'> <br>
+    Passwort: <input type='password' name='password'> <br>
     <input type='submit' value='Einloggen' name="login">
 </form>
 

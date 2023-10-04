@@ -26,8 +26,11 @@ class AccountController implements ControllerInterface
         $this->validator = $container->get(AccountValidation::class);
     }
 
-    public function action(): object
+    public function action(): View
     {
+        $activeUser = null;
+        $loginStatus = false;
+
         $input = $_POST["amount"] ?? null;
 
         if ($input !== null) {
@@ -58,8 +61,6 @@ class AccountController implements ControllerInterface
             header("Refresh:0");
         }
 
-        $activeUser = null;
-        $loginStatus = false;
         if (isset($_SESSION["loginStatus"])) {
             $loginStatus = $_SESSION["loginStatus"];
             $activeUser = $_SESSION["username"];

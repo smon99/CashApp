@@ -27,7 +27,7 @@ class UserController implements ControllerInterface
         $this->userEntityManager = $container->get(UserEntityManager::class);
     }
 
-    public function action(): object
+    public function action(): void
     {
         $errors = [];
         $userCheck = null;
@@ -82,6 +82,5 @@ class UserController implements ControllerInterface
         $this->view->addParameter('parameters', $viewParameters);
 
         $this->view->setTemplate('user.twig');
-        return $this->view;
     }
 }

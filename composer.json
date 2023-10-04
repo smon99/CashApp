@@ -1,7 +1,9 @@
 {
   "require": {
     "ext-json": "*",
-    "twig/twig": "^3.7"
+    "twig/twig": "^3.7",
+    "ext-http": "*",
+    "ext-pdo": "*"
   },
   "autoload": {
     "psr-4": {
@@ -15,8 +17,7 @@
     }
   },
   "require-dev": {
-    "roave/security-advisories": "dev-latest"
-    ,
+    "roave/security-advisories": "dev-latest",
     "phpunit/phpunit": "^10.3"
   },
   "scripts": {

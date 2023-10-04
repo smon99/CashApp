@@ -6,7 +6,7 @@ use App\Model\UserDTO;
 
 class PasswordValidator implements UserValidationInterface
 {
-    public function validate(UserDTO $userDTO)
+    public function validate(UserDTO $userDTO): void
     {
         $uppercase = preg_match('@[A-Z]@', $userDTO->password);
         $lowercase = preg_match('@[a-z]@', $userDTO->password);

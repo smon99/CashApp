@@ -8,7 +8,7 @@ use App\Model\UserMapper;
 
 class UserDuplicationValidator implements UserValidationInterface
 {
-    public function validate(UserDTO $userDTO)
+    public function validate(UserDTO $userDTO): void
     {
         $mapper = new UserMapper();
         $repository = new UserRepository($mapper);

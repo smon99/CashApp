@@ -2,5 +2,4 @@
 /vendor
 /coverage
 /.phpunit.cache
-/src/Model/SqlConnector.php
 XDEBUG_MODE=coverage

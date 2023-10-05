@@ -5,38 +5,27 @@ namespace App\Model;
 class UserEntityManager
 {
     private UserMapper $userMapper;
-    private string $path;
+    private SqlConnector $sqlConnector;
 
-    public function __construct(UserMapper $userMapper, ?string $path = null)
+    public function __construct(SqlConnector $sqlConnector, UserMapper $userMapper)
     {
+        $this->sqlConnector = $sqlConnector;
         $this->userMapper = $userMapper;
-
-        if ($path === null) {
-            $path = __DIR__ . '/user.json';
-        }
-
-        $this->path = $path;
     }
 
     public function save(UserDTO $userDTO): void
     {
-        $userDTOList = $this->getUserDTOList();
+        $query = "INSERT INTO Users (username, email, password) VALUES (:username, :email, :password)";
 
-        $userDTOList[] = $userDTO;
+        $data = $this->userMapper->dtoToArray($userDTO);
 
-        $user_data = $this->userMapper->jsonFromDTO($userDTOList);
+        $params = [
+            ':username' => $data['username'],
+            ':email' => $data['email'],
+            ':password' => $data['password'],
+        ];
 
-        file_put_contents($this->path, $user_data, LOCK_EX);
+        $this->sqlConnector->executeInsertUserQuery($query, $params);
     }
 
-    private function getUserDTOList(): array
-    {
-        if (!file_exists($this->path)) {
-            return [];
-        }
-
-        $jsonString = file_get_contents($this->path);
-
-        return $this->userMapper->jsonToDTO($jsonString);
-    }
 }

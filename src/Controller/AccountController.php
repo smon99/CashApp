@@ -30,8 +30,7 @@ class AccountController implements ControllerInterface
     {
         $activeUser = null;
         $loginStatus = false;
-
-        echo $_SESSION["userID"];
+        $balance = null;
 
         $input = $_POST["amount"] ?? null;
 
@@ -65,9 +64,9 @@ class AccountController implements ControllerInterface
         if (isset($_SESSION["loginStatus"])) {
             $loginStatus = $_SESSION["loginStatus"];
             $activeUser = $_SESSION["username"];
+            $balance = $this->repository->calculateBalance($_SESSION["userID"]);
         }
 
-        $balance = $this->repository->calculateBalance($_SESSION["userID"]);
 
         $this->view->addParameter('balance', $balance);
         $this->view->addParameter('loginStatus', $loginStatus);

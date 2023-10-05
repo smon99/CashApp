@@ -2,6 +2,7 @@
 
 namespace App\Core\User;
 
+use App\Model\SqlConnector;
 use App\Model\UserDTO;
 use App\Model\UserRepository;
 use App\Model\UserMapper;
@@ -11,7 +12,8 @@ class UserDuplicationValidator implements UserValidationInterface
     public function validate(UserDTO $userDTO): void
     {
         $mapper = new UserMapper();
-        $repository = new UserRepository($mapper);
+        $connector = new SqlConnector();
+        $repository = new UserRepository($mapper, $connector);
 
         if ($repository->findByMail($userDTO->email) !== null) {
             throw new UserValidationException('Fehler eMail bereits vergeben! ');

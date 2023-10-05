@@ -4,39 +4,41 @@ namespace App\Model;
 
 class UserRepository
 {
-    public function __construct(private UserMapper $userMapper, private string $path = __DIR__ . '/user.json')
+    public function __construct(
+        private UserMapper   $userMapper,
+        private SqlConnector $sqlConnector
+    )
     {
     }
 
-    public function findByUsername(string $userCheck): ?UserDTO
+    public function fetchAllUsers(): array     //dammit i love sql <3
     {
-        $userDTOList = $this->getUserDTOList();
-
-        foreach ($userDTOList as $userDTO) {
-            if ($userDTO->user === $userCheck) {
-                return $userDTO;
-            }
-        }
-
-        return null;
+        $query = "SELECT * FROM Users";
+        $data = $this->sqlConnector->executeSelectAllUsersQuery($query);
+        return $this->userMapper->sqlToDTO($data);
     }
 
     public function findByMail(string $mailCheck): ?UserDTO
     {
-        $userDTOList = $this->getUserDTOList();
+        $data = $this->fetchAllUsers();
 
-        foreach ($userDTOList as $userDTO) {
-            if ($userDTO->email === $mailCheck) {
-                return $userDTO;
+        foreach ($data as $dataset) {
+            if ($mailCheck === $dataset->email) {
+                return $dataset;
             }
         }
-
         return null;
     }
 
-    private function getUserDTOList(): array
+    public function findByUsername(string $userCheck): ?UserDTO
     {
-        $jsonString = file_get_contents($this->path);
-        return $this->userMapper->jsonToDTO($jsonString);
+        $data = $this->fetchAllUsers();
+
+        foreach ($data as $dataset) {
+            if ($userCheck === $dataset->username) {
+                return $dataset;
+            }
+        }
+        return null;
     }
 }

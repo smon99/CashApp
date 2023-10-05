@@ -3,7 +3,8 @@
     "ext-json": "*",
     "twig/twig": "^3.7",
     "ext-http": "*",
-    "ext-pdo": "*"
+    "ext-pdo": "*",
+    "ext-mysql_xdevapi": "*"
   },
   "autoload": {
     "psr-4": {

@@ -2,24 +2,10 @@
 
 namespace App\Model;
 
+use mysql_xdevapi\Collection;
+
 class UserMapper
 {
-    public function jsonToDTO(string $jsonString): array
-    {
-        $data = json_decode($jsonString, true, 512, JSON_THROW_ON_ERROR);
-        $userDTOList = [];
-
-        foreach ($data as $entryData) {
-            $userDTO = new UserDTO();
-            $userDTO->userID = (int)$entryData['userID'];
-            $userDTO->username = (string)$entryData['username'];
-            $userDTO->email = (string)$entryData['email'];
-            $userDTO->password = (string)$entryData['password'];
-            $userDTOList[] = $userDTO;
-        }
-        return $userDTOList;
-    }
-
     public function jsonFromDTO(array $userDTOList): string
     {
         $entries = [];
@@ -34,4 +20,31 @@ class UserMapper
         }
         return json_encode($entries, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT);
     }
+
+    public function sqlToDTO($data): array
+    {
+        $collection = [];
+
+        foreach ($data as $ENTRY) {
+            $userDTO = new UserDTO();
+            $userDTO->userID = (int)$ENTRY["userID"];
+            $userDTO->username = (string)$ENTRY["username"];
+            $userDTO->email = (string)$ENTRY["email"];
+            $userDTO->password = (string)$ENTRY["password"];
+
+            $collection[] = $userDTO;
+        }
+        return $collection;
+    }
+
+    public function dtoToArray(UserDTO $userDTO): array
+    {
+        return [
+            'userID' => $userDTO->userID,
+            'username' => $userDTO->username,
+            'email' => $userDTO->email,
+            'password' => $userDTO->password,
+        ];
+    }
+
 }

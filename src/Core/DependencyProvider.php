@@ -12,6 +12,7 @@ use App\Core\User\UserDuplicationValidator;
 use App\Model\AccountEntityManager;
 use App\Model\AccountMapper;
 use App\Model\AccountRepository;
+use App\Model\SqlConnector;
 use App\Model\UserEntityManager;
 use App\Model\UserMapper;
 use App\Model\UserRepository;
@@ -24,10 +25,10 @@ class DependencyProvider
         $container->set(Redirect::class, new Redirect());
 
         $container->set(AccountRepository::class, new AccountRepository(new AccountMapper()));
-        $container->set(UserRepository::class, new UserRepository(new UserMapper()));
+        $container->set(UserRepository::class, new UserRepository(new UserMapper(), new SqlConnector()));
 
         $container->set(AccountEntityManager::class, new AccountEntityManager());
-        $container->set(UserEntityManager::class, new UserEntityManager(new UserMapper()));
+        $container->set(UserEntityManager::class, new UserEntityManager(new SqlConnector(), new UserMapper()));
 
         $container->set(AccountValidation::class, new AccountValidation(new SingleValidator(), new DayValidator(), new HourValidator()));
         $container->set(UserValidation::class, new UserValidation(new EmptyFieldValidator(), new EMailValidator(), new PasswordValidator(), new UserDuplicationValidator()));

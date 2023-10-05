@@ -30,9 +30,37 @@ class SqlConnector
         }
     }
 
-    public function executeQuery(string $query): bool|\PDOStatement
+    public function executeSelectAllUsersQuery($query): bool|array|null
+    {
+        try {
+            $this->connect();
+
+            return $this->pdo->query($query)->fetchAll(PDO::FETCH_ASSOC);
+
+        } catch (PDOException $exception) {
+            echo 'Error executing SELECT query: ' . $exception->getMessage();
+            return null;
+        }
+    }
+
+    public function executeInsertUserQuery(string $query, array $params): string
     {
         $this->connect();
-        return $this->pdo->query($query);
+
+        try {
+            $statement = $this->pdo->prepare($query);
+
+            foreach ($params as $param => $value) {
+                $statement->bindValue($param, $value, PDO::PARAM_STR);
+            }
+
+            $statement->execute();
+
+            return $this->pdo->lastInsertId();
+        } catch (PDOException $exception) {
+            die("Query failed: " . $exception->getMessage());
+        }
     }
+
+
 }

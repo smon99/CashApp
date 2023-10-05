@@ -26,7 +26,7 @@ class UserRepository
         $userDTOList = $this->getUserDTOList();
 
         foreach ($userDTOList as $userDTO) {
-            if ($userDTO->eMail === $mailCheck) {
+            if ($userDTO->email === $mailCheck) {
                 return $userDTO;
             }
         }

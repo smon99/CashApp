@@ -1,97 +1,14 @@
 [
     {
-        "user": "Simon",
-        "eMail": "Simon@Simon.de",
-        "password": "$2y$10$QrjoSFDLGgIxx1RTMosqYe8pAfY2m3\/gt70gNogWOVyBD.VZVmCVq"
+        "userID": 0,
+        "username": "Default",
+        "email": "Default@Default.de",
+        "password": "$2y$10$QID5h3RVPO\/Jrlq1VLAo9uMDy3xscS7jIqO8FqXOgXuZBs.syrvfe"
     },
     {
-        "user": "Nico",
-        "eMail": "Nico@Nico.de",
-        "password": "$2y$10$r99.XOzEPniJRiVuPBcQk.\/ANhY.g728eNLDWNHoSo5.xB6EmFqEG"
-    },
-    {
-        "user": "Fabian",
-        "eMail": "Fabian@Fabian.de",
-        "password": "$2y$10$yPSrFfQ5qiq9mSpjHg.J0.r0u3TX0\/YN\/yuj4tmmOPNv83fANBVOC"
-    },
-    {
-        "user": "Flip",
-        "eMail": "Flip@Flip.de",
-        "password": "$2y$10$Xr3qIrjRDfRQ5Mqy.3jhfuei0w8l\/oTRBlAy5h5v0AqKrQYfLGsRe"
-    },
-    {
-        "user": "Harun",
-        "eMail": "Harun@Harun.de",
-        "password": "$2y$10$\/.152JIA1N715E2umetsgegv9yCGuzzy.3BhfkHLyHd0kSor2xTbm"
-    },
-    {
-        "user": "Yusuf",
-        "eMail": "Yusuf@Yusuf.de",
-        "password": "$2y$10$OzYUOBznZN0H\/iiuxlyzjuluJ7utCB6XFq1tlkqb.N\/UMP2RsH9Em"
-    },
-    {
-        "user": "Rafal",
-        "eMail": "Rafal@Rafal.de",
-        "password": "$2y$10$sntqiXB0x3nKqgMuRglsPeoZIioB7coeDnM2yIMSUYIvytfzbZuVK"
-    },
-    {
-        "user": "Ode",
-        "eMail": "Ode@Ode.de",
-        "password": "$2y$10$\/rjsQr6i6RGhmvZXOSyqHuKdA2Lgxt0F9JUErlg58QZ8WTofaSR9W"
-    },
-    {
-        "user": "Tim",
-        "eMail": "Tim@Tim.de",
-        "password": "$2y$10$ygYqwfjFSUg0ewKjUlmK8uOetwmRm70wuIdzwYFCi9JgnYpdyL5Eu"
-    },
-    {
-        "user": "Hauke",
-        "eMail": "Hauke@Hauke.de",
-        "password": "$2y$10$uY\/Sj0vgCtcwRVz6Do7zp.8W8IMTIQmDDUOVtumrJkCsmq9A53vRC"
-    },
-    {
-        "user": "TestUser",
-        "eMail": "TestUser@TestUser.de",
-        "password": "$2y$10$mUhklPZSOKe6ywT7pl0KnO44vUlBwYYUUQxltAdbUL5R44MJDJgkq"
-    },
-    {
-        "user": "Meike",
-        "eMail": "Meike@Meike.de",
-        "password": "$2y$10$hOUuW7TUUaVDNoaP7aWNkennHnoij8JrGxRbO.BHiRWq36Xyw7jsK"
-    },
-    {
-        "user": "Melanie",
-        "eMail": "Melanie@Melanie.de",
-        "password": "$2y$10$HhSCzGhQALvBJGWhykT4H.EOHXjd5Aa8hUWgZ30kk2GRv\/bm6Y2LO"
-    },
-    {
-        "user": "Uwe",
-        "eMail": "Uwe@Uwe.de",
-        "password": "$2y$10$gLWqLROf831YjCSlKTW48efOz6UeGFAJNhhenuNxFgx.GY9N57som"
-    },
-    {
-        "user": "Patrick",
-        "eMail": "Patrick@Patrick.de",
-        "password": "$2y$10$0PpMatEUOvfawyi5sLyEruRbQLKJhfIqu0ZisbqxqLuYxe3c44iUW"
-    },
-    {
-        "user": "Steve",
-        "eMail": "Steve@Steve.de",
-        "password": "$2y$10$kxdEok1oD41JegPsFCpRWuFHPjdhiLF1Z5AEHNICQBtB6cmK\/4HQy"
-    },
-    {
-        "user": "Test",
-        "eMail": "Test@Test.de",
-        "password": "$2y$10$v5cZV8GShi6DOrk.Pp0aB.lxCzeMM8JuSwxSNeuw6CxNoScVk2WM2"
-    },
-    {
-        "user": "Anna",
-        "eMail": "Anna@Anna.de",
-        "password": "$2y$10$LcPsoBD6Xl8ouYnbMaVJH.vNTPfB7v7IPwyXe45MEez0azzR9Z6YC"
-    },
-    {
-        "user": "Kai",
-        "eMail": "Kai@Kai.de",
-        "password": "$2y$10$TeIaXamtt0hluOrrjPAz7eGI5DYZWrWn2YVfdZzEi7eJG5.GqJmqO"
+        "userID": 1,
+        "username": "Simon",
+        "email": "Simon@Simon.de",
+        "password": "$2y$10$rqTcf57sIEVAZsertDU7P.8O3kObwxc17jL6Cec.6oMcX\/VWdFX0i"
     }
 ]

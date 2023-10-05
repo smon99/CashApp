@@ -43,7 +43,7 @@ class LoginControllerTest extends TestCase
         $_POST['password'] = 'valid_password';
 
         $userDTO = new UserDTO();
-        $userDTO->user = 'TestUser';
+        $userDTO->username = 'TestUser';
         $userDTO->password = password_hash('valid_password', PASSWORD_DEFAULT);
 
         $this->userRepository->expects($this->once())

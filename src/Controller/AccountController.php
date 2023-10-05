@@ -31,6 +31,8 @@ class AccountController implements ControllerInterface
         $activeUser = null;
         $loginStatus = false;
 
+        echo $_SESSION["userID"];
+
         $input = $_POST["amount"] ?? null;
 
         if ($input !== null) {
@@ -44,17 +46,16 @@ class AccountController implements ControllerInterface
                 $date = date('Y-m-d');
                 $time = date('H:i:s');
                 $saveData = new AccountDTO();
-                $saveData->amount = $amount;
-                $saveData->date = $date;
-                $saveData->time = $time;
+                $saveData->value = $amount;
+                $saveData->transactionDate = $date;
+                $saveData->transactionTime = $time;
+                $saveData->userID = $_SESSION["userID"];
                 $this->entityManager->saveDeposit($saveData);
                 $this->success = "Die Transaktion wurde erfolgreich gespeichert!";
             } catch (AccountValidationException $e) {
                 $this->view->addParameter('error', $e->getMessage());
             }
         }
-
-        $balance = $this->repository->calculateBalance();
 
         if (isset($_POST["logout"])) {
             session_destroy();
@@ -65,6 +66,8 @@ class AccountController implements ControllerInterface
             $loginStatus = $_SESSION["loginStatus"];
             $activeUser = $_SESSION["username"];
         }
+
+        $balance = $this->repository->calculateBalance($_SESSION["userID"]);
 
         $this->view->addParameter('balance', $balance);
         $this->view->addParameter('loginStatus', $loginStatus);

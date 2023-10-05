@@ -44,9 +44,10 @@ class LoginController implements ControllerInterface
             if ($userDTO !== null) {
                 $passwordCheck = $userDTO->password;
                 if (password_verify($password, $passwordCheck)) {
-                    $_SESSION["username"] = $userDTO->user;
+                    $_SESSION["username"] = $userDTO->username;
                     $_SESSION["loginStatus"] = true;
-                    echo "Logged in as ", $userDTO->user;
+                    $_SESSION["userID"] = $userDTO->userID;
+                    echo "Logged in as ", $userDTO->username;
                     $this->redirect->redirectTo('http://0.0.0.0:8000/?page=account');
                 }
                 echo "Nice try";

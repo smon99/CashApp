@@ -18,9 +18,11 @@ class AccountMapper
 
         foreach ($data as $entryData) {
             $accountDTO = new AccountDTO();
-            $accountDTO->amount = (float)$entryData['amount'];
-            $accountDTO->date = (string)$entryData['date'];
-            $accountDTO->time = (string)$entryData['time'];
+            $accountDTO->transactionID = (int)$entryData['transactionID'];
+            $accountDTO->userID = (int)$entryData['userID'];
+            $accountDTO->value = (float)$entryData['value'];
+            $accountDTO->transactionDate = (string)$entryData['transactionDate'];
+            $accountDTO->transactionTime = (string)$entryData['transactionTime'];
             $accountDTOList[] = $accountDTO;
         }
 
@@ -33,9 +35,11 @@ class AccountMapper
 
         foreach ($accountDTOList as $accountDTO) {
             $entries[] = [
-                'amount' => (float)$accountDTO->amount,
-                'date' => (string)$accountDTO->date,
-                'time' => (string)$accountDTO->time,
+                'transactionID' => (int)$accountDTO->transactionID,
+                'userID' => (int)$accountDTO->userID,
+                'value' => (float)$accountDTO->value,
+                'transactionDate' => (string)$accountDTO->transactionDate,
+                'transactionTime' => (string)$accountDTO->transactionTime,
             ];
         }
 

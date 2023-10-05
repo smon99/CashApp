@@ -8,7 +8,7 @@ class EMailValidator implements UserValidationInterface
 {
     public function validate(UserDTO $userDTO): void
     {
-        if (!filter_var($userDTO->eMail, FILTER_VALIDATE_EMAIL)) {
+        if (!filter_var($userDTO->email, FILTER_VALIDATE_EMAIL)) {
             throw new UserValidationException('Bitte gültige eMail eingeben! ');
         }
     }

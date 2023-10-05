@@ -19,22 +19,22 @@ class AccountMapperTest extends TestCase
         $this->assertCount(1, $accountDTOList);
 
         $this->assertInstanceOf(AccountDTO::class, $accountDTOList[0]);
-        $this->assertEquals(100.0, $accountDTOList[0]->amount);
-        $this->assertEquals('2023-09-20', $accountDTOList[0]->date);
-        $this->assertEquals('10:00:00', $accountDTOList[0]->time);
+        $this->assertEquals(100.0, $accountDTOList[0]->value);
+        $this->assertEquals('2023-09-20', $accountDTOList[0]->transactionDate);
+        $this->assertEquals('10:00:00', $accountDTOList[0]->transactionTime);
     }
 
     public function testJsonFromDTO(): void
     {
         $entry1 = new AccountDTO();
-        $entry1->amount = 100.0;
-        $entry1->date = '2023-09-20';
-        $entry1->time = '10:00:00';
+        $entry1->value = 100.0;
+        $entry1->transactionDate = '2023-09-20';
+        $entry1->transactionTime = '10:00:00';
 
         $entry2 = new AccountDTO();
-        $entry2->amount = 200.0;
-        $entry2->date = '2023-09-21';
-        $entry2->time = '11:00:00';
+        $entry2->value = 200.0;
+        $entry2->transactionDate = '2023-09-21';
+        $entry2->transactionTime = '11:00:00';
 
         $accountDTOList = [$entry1, $entry2];
 

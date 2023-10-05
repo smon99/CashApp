@@ -11,8 +11,9 @@ class UserMapper
 
         foreach ($data as $entryData) {
             $userDTO = new UserDTO();
-            $userDTO->user = (string)$entryData['user'];
-            $userDTO->eMail = (string)$entryData['eMail'];
+            $userDTO->userID = (int)$entryData['userID'];
+            $userDTO->username = (string)$entryData['username'];
+            $userDTO->email = (string)$entryData['email'];
             $userDTO->password = (string)$entryData['password'];
             $userDTOList[] = $userDTO;
         }
@@ -25,8 +26,9 @@ class UserMapper
 
         foreach ($userDTOList as $userDTO) {
             $entries[] = [
-                'user' => (string)$userDTO->user,
-                'eMail' => (string)$userDTO->eMail,
+                'userID' => (int)$userDTO->userID,
+                'username' => (string)$userDTO->username,
+                'email' => (string)$userDTO->email,
                 'password' => (string)$userDTO->password,
             ];
         }

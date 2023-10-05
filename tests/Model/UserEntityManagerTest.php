@@ -15,16 +15,16 @@ class UserEntityManagerTest extends TestCase
     public function testSaveFileTrue(): void
     {
         $userDTO = new UserDTO();
-        $userDTO->user = 'Tester';
-        $userDTO->eMail = 'Tester@Tester.de';
+        $userDTO->username = 'Tester';
+        $userDTO->email = 'Tester@Tester.de';
         $userDTO->password = 'Test123#';
 
         $userEntityManager = new UserEntityManager(new UserMapper(), $this->testFilePath);
         $userEntityManager->save($userDTO);
 
         $userDTOReal = new UserDTO();
-        $userDTOReal->user = 'TesterReal';
-        $userDTOReal->eMail = 'Tester@TesterReal.de';
+        $userDTOReal->username = 'TesterReal';
+        $userDTOReal->email = 'Tester@TesterReal.de';
         $userDTOReal->password = 'TesterReal123#';
 
         $userEntityManagerTest = new UserEntityManager(new UserMapper(), $this->testFilePath);
@@ -49,8 +49,8 @@ class UserEntityManagerTest extends TestCase
         }
 
         $userDTO = new UserDTO();
-        $userDTO->user = 'Tester';
-        $userDTO->eMail = 'Tester@Tester.de';
+        $userDTO->username = 'Tester';
+        $userDTO->email = 'Tester@Tester.de';
         $userDTO->password = 'Test123#';
 
         $userEntityManager = new UserEntityManager(new UserMapper(), $this->testFilePath);

@@ -4,7 +4,9 @@ namespace App\Model;
 
 class AccountDTO
 {
-    public float $amount = 0.00;
-    public string $date = '';
-    public string $time = '';
+    public int $transactionID = 0;
+    public int $userID = 0;
+    public float $value = 0.00;
+    public string $transactionDate = '';
+    public string $transactionTime = '';
 }

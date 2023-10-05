@@ -22,8 +22,8 @@ class UserValidationTest extends TestCase
         $eMail = 'eMail@eMail.de';
         $password = 'Passwort123#';
 
-        $userDTO->user = $user;
-        $userDTO->eMail = $eMail;
+        $userDTO->username = $user;
+        $userDTO->email = $eMail;
         $userDTO->password = $password;
 
         $validation = new UserValidation(
@@ -45,8 +45,8 @@ class UserValidationTest extends TestCase
         $eMail = 'eMaileMail';
         $password = 'Passwort123#';
 
-        $userDTO->user = $user;
-        $userDTO->eMail = $eMail;
+        $userDTO->username = $user;
+        $userDTO->email = $eMail;
         $userDTO->password = $password;
 
         $validation = new UserValidation(
@@ -69,8 +69,8 @@ class UserValidationTest extends TestCase
         $eMail = 'Test@Test.de';
         $password = 'Passwort123#';
 
-        $userDTO->user = $user;
-        $userDTO->eMail = $eMail;
+        $userDTO->username = $user;
+        $userDTO->email = $eMail;
         $userDTO->password = $password;
 
         $validation = new UserValidation(
@@ -93,8 +93,8 @@ class UserValidationTest extends TestCase
         $eMail = 'Email@Email.de';
         $password = 'Passwort123#';
 
-        $userDTO->user = $user;
-        $userDTO->eMail = $eMail;
+        $userDTO->username = $user;
+        $userDTO->email = $eMail;
         $userDTO->password = $password;
 
         $validation = new UserValidation(
@@ -117,8 +117,8 @@ class UserValidationTest extends TestCase
         $eMail = 'eMail@eMail.de';
         $password = 'assword'; // Invalid password
 
-        $userDTO->user = $user;
-        $userDTO->eMail = $eMail;
+        $userDTO->username = $user;
+        $userDTO->email = $eMail;
         $userDTO->password = $password;
 
         $validation = new UserValidation(
@@ -141,8 +141,8 @@ class UserValidationTest extends TestCase
         $eMail = '';
         $password = '';
 
-        $userDTO->user = $user;
-        $userDTO->eMail = $eMail;
+        $userDTO->username = $user;
+        $userDTO->email = $eMail;
         $userDTO->password = $password;
 
         $validation = new UserValidation(

@@ -14,8 +14,8 @@ class UserRepositoryTest extends TestCase
     public function setUp(): void
     {
         $userDTO = new UserDTO();
-        $userDTO->user = 'TestUser';
-        $userDTO->eMail = 'TestUser@TestUser.de';
+        $userDTO->username = 'TestUser';
+        $userDTO->email = 'TestUser@TestUser.de';
         $userDTO->password = '$2y$10$mUhklPZSOKe6ywT7pl0KnO44vUlBwYYUUQxltAdbUL5R44MJDJgkq'; // TestUser123#
 
         $userMapper = new UserMapper();
@@ -35,8 +35,8 @@ class UserRepositoryTest extends TestCase
         $userRepository = new UserRepository(new UserMapper(), $this->testFilePath);
         $usernameTestDataset = $userRepository->findByUsername('TestUser');
 
-        self::assertSame('TestUser', $usernameTestDataset->user);
-        self::assertSame('TestUser@TestUser.de', $usernameTestDataset->eMail);
+        self::assertSame('TestUser', $usernameTestDataset->username);
+        self::assertSame('TestUser@TestUser.de', $usernameTestDataset->email);
         self::assertSame('$2y$10$mUhklPZSOKe6ywT7pl0KnO44vUlBwYYUUQxltAdbUL5R44MJDJgkq', $usernameTestDataset->password); // TestUser123#
     }
 
@@ -53,8 +53,8 @@ class UserRepositoryTest extends TestCase
         $userRepository = new UserRepository(new UserMapper(), $this->testFilePath);
         $mailTestDataset = $userRepository->findByMail('TestUser@TestUser.de');
 
-        self::assertSame('TestUser', $mailTestDataset->user);
-        self::assertSame('TestUser@TestUser.de', $mailTestDataset->eMail);
+        self::assertSame('TestUser', $mailTestDataset->username);
+        self::assertSame('TestUser@TestUser.de', $mailTestDataset->email);
         self::assertSame('$2y$10$mUhklPZSOKe6ywT7pl0KnO44vUlBwYYUUQxltAdbUL5R44MJDJgkq', $mailTestDataset->password); // TestUser123#
     }
 

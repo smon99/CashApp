@@ -28,14 +28,16 @@ class AccountRepository
         return $this->accountMapper->jsonToDTO($jsonString);
     }
 
-    public function calculateBalance(): float
+    public function calculateBalance(int $userID): float
     {
         $accountDTOList = $this->findAll();
 
         $balance = 0.0;
 
         foreach ($accountDTOList as $entry) {
-            $balance += $entry->amount;
+            if ($entry->userID === $userID) {
+                $balance += $entry->value;
+            }
         }
         return $balance;
     }
@@ -50,8 +52,8 @@ class AccountRepository
         $time = strtotime(date('H:i:s'));
 
         foreach ($accountDTOList as $entry) {
-            if (strtotime($entry->time) > $time - (60 * 60) && strtotime($entry->date) === $date) {
-                $balancePerHour += $entry->amount;
+            if (strtotime($entry->transactionTime) > $time - (60 * 60) && strtotime($entry->transactionDate) === $date) {
+                $balancePerHour += $entry->value;
             }
         }
         return $balancePerHour;
@@ -66,8 +68,8 @@ class AccountRepository
         $date = date('Y-m-d');
 
         foreach ($accountDTOList as $entry) {
-            if ($entry->date === $date) {
-                $balancePerDay += $entry->amount;
+            if ($entry->transactionDate === $date) {
+                $balancePerDay += $entry->value;
             }
         }
         return $balancePerDay;

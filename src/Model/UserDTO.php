@@ -4,7 +4,8 @@ namespace App\Model;
 
 class UserDTO
 {
-    public string $user = '';
-    public string $eMail = '';
+    public int $userID = 1;
+    public string $username = '';
+    public string $email = '';
     public string $password = '';
 }

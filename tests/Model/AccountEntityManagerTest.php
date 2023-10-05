@@ -23,9 +23,9 @@ class AccountEntityManagerTest extends TestCase
         $entityManager = new AccountEntityManager($jsonFilePath);
 
         $deposit = new AccountDTO();
-        $deposit->amount = 100.0;
-        $deposit->date = '2023-09-20';
-        $deposit->time = '10:00:00';
+        $deposit->value = 100.0;
+        $deposit->transactionDate = '2023-09-20';
+        $deposit->transactionTime = '10:00:00';
 
         $entityManager->saveDeposit($deposit);
 

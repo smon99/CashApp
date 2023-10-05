@@ -41,14 +41,14 @@ class AccountRepositoryTest extends TestCase
         $time = date('H:i:s');
 
         $deposit1 = new AccountDTO();
-        $deposit1->amount = 100.0;
-        $deposit1->date = $date;
-        $deposit1->time = $time;
+        $deposit1->value = 100.0;
+        $deposit1->transactionDate = $date;
+        $deposit1->transactionTime = $time;
 
         $deposit2 = new AccountDTO();
-        $deposit2->amount = 200.0;
-        $deposit2->date = $date;
-        $deposit2->time = $time;
+        $deposit2->value = 200.0;
+        $deposit2->transactionDate = $date;
+        $deposit2->transactionTime = $time;
 
         $entityManager = new AccountEntityManager($jsonFilePath);
 
@@ -94,14 +94,14 @@ class AccountRepositoryTest extends TestCase
         $amount2 = 200.0;
 
         $deposit1 = new AccountDTO();
-        $deposit1->amount = $amount1;
-        $deposit1->date = $date;
-        $deposit1->time = $time;
+        $deposit1->value = $amount1;
+        $deposit1->transactionDate = $date;
+        $deposit1->transactionTime = $time;
 
         $deposit2 = new AccountDTO();
-        $deposit2->amount = $amount2;
-        $deposit2->date = $date;
-        $deposit2->time = $time;
+        $deposit2->value = $amount2;
+        $deposit2->transactionDate = $date;
+        $deposit2->transactionTime = $time;
 
         $entityManager = new AccountEntityManager($jsonFilePath);
 
@@ -132,14 +132,14 @@ class AccountRepositoryTest extends TestCase
         $accountMapper = new AccountMapper();
 
         $deposit1 = new AccountDTO();
-        $deposit1->amount = 100.0;
-        $deposit1->date = $date;
-        $deposit1->time = '10:00:00';
+        $deposit1->value = 100.0;
+        $deposit1->transactionDate = $date;
+        $deposit1->transactionTime = '10:00:00';
 
         $deposit2 = new AccountDTO();
-        $deposit2->amount = 200.0;
-        $deposit2->date = $date;
-        $deposit2->time = '11:00:00';
+        $deposit2->value = 200.0;
+        $deposit2->transactionDate = $date;
+        $deposit2->transactionTime = '11:00:00';
 
         $entityManager = new AccountEntityManager($jsonFilePath);
 

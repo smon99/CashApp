@@ -35,14 +35,15 @@ class UserController implements ControllerInterface
         $passwordCheck = null;
 
         if (isset($_POST['register'])) {
-            $userCheck = $_POST["username"];
-            $mailCheck = $_POST["mail"];
-            $passwordCheck = $_POST["password"];
+            $userCheck = $_POST['username'];
+            $mailCheck = $_POST['email'];
+            $passwordCheck = $_POST['password'];
 
             $validatorDTO = new UserDTO();
-            $validatorDTO->user = $userCheck;
-            $validatorDTO->eMail = $mailCheck;
+            $validatorDTO->username = $userCheck;
+            $validatorDTO->email = $mailCheck;
             $validatorDTO->password = $passwordCheck;
+            $validatorDTO->userID = 0;
 
             try {
                 $validation = new UserValidation(
@@ -56,8 +57,8 @@ class UserController implements ControllerInterface
                 $password = password_hash($passwordCheck, PASSWORD_DEFAULT);
 
                 $userDTO = new UserDTO();
-                $userDTO->user = $userCheck;
-                $userDTO->eMail = $mailCheck;
+                $userDTO->username = $userCheck;
+                $userDTO->email = $mailCheck;
                 $userDTO->password = $password;
 
                 $this->userEntityManager->save($userDTO);

@@ -2,8 +2,6 @@
 
 namespace App\Model;
 
-use JsonException;
-
 class AccountRepository
 {
     private AccountMapper $accountMapper;
@@ -15,10 +13,7 @@ class AccountRepository
         $this->accountMapper = $accountMapper;
     }
 
-    /**
-     * @return AccountDTO[]
-     * @throws JsonException
-     */
+
     public function calculateBalance(int $userID): float
     {
         $accountDTOList = $this->fetchAllTransactions();
@@ -49,7 +44,6 @@ class AccountRepository
         }
         return $balancePerHour;
     }
-
 
     public function calculateBalancePerDay(): float
     {

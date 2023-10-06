@@ -44,11 +44,13 @@ class AccountController implements ControllerInterface
 
                 $date = date('Y-m-d');
                 $time = date('H:i:s');
+
                 $saveData = new AccountDTO();
                 $saveData->value = $amount;
+                $saveData->userID = $_SESSION["userID"];
                 $saveData->transactionDate = $date;
                 $saveData->transactionTime = $time;
-                $saveData->userID = $_SESSION["userID"];
+                $saveData->purpose = 'deposit';
                 $this->entityManager->saveDeposit($saveData);
                 $this->success = "Die Transaktion wurde erfolgreich gespeichert!";
             } catch (AccountValidationException $e) {

@@ -15,12 +15,11 @@ class AccountEntityManager
 
     public function saveDeposit(AccountDTO $deposit): void
     {
-        $query = "INSERT INTO Accounts (transactionID, value, userID, transactionDate, transactionTime, purpose) VALUES (:transactionID :value, :userID, :transactionDate, :transactionTime, :purpose)";
+        $query = "INSERT INTO Transactions (value, userID, transactionDate, transactionTime, purpose) VALUES (:value, :userID, :transactionDate, :transactionTime, :purpose)";
 
         $data = $this->accountMapper->dtoToArray($deposit);
 
         $params = [
-            ':transactionID' => $data['transactionID'],
             ':value' => $data['value'],
             ':userID' => $data['userID'],
             ':transactionDate' => $data['transactionDate'],

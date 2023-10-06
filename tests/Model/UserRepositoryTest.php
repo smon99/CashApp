@@ -2,67 +2,71 @@
 
 namespace Test\Model;
 
-use App\Model\UserRepository;
-use App\Model\UserDTO;
-use App\Model\UserMapper;
 use PHPUnit\Framework\TestCase;
+use App\Model\UserDTO;
+use App\Model\UserRepository;
+use App\Model\UserMapper;
+use App\Model\SqlConnector;
 
 class UserRepositoryTest extends TestCase
 {
-    private string $testFilePath = __DIR__ . '/../../tests/Model/user.json';
+    private UserRepository $userRepository;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
-        $userDTO = new UserDTO();
-        $userDTO->username = 'TestUser';
-        $userDTO->email = 'TestUser@TestUser.de';
-        $userDTO->password = '$2y$10$mUhklPZSOKe6ywT7pl0KnO44vUlBwYYUUQxltAdbUL5R44MJDJgkq'; // TestUser123#
+        $userMapper = $this->createMock(UserMapper::class);
+        $sqlConnector = $this->createMock(SqlConnector::class);
 
-        $userMapper = new UserMapper();
-        $userJson = $userMapper->jsonFromDTO([$userDTO]);
-        file_put_contents($this->testFilePath, $userJson);
+        $mockedData = [
+            $this->createUserDTO(1, 'user1', 'user1@example.com', 'password1'),
+            $this->createUserDTO(2, 'user2', 'user2@example.com', 'password2'),
+            $this->createUserDTO(3, 'user3', 'user3@example.com', 'password3'),
+        ];
+
+        $userMapper->method('sqlToDTO')->willReturn($mockedData);
+
+        $this->userRepository = new UserRepository($userMapper, $sqlConnector);
     }
 
-    public function tearDown(): void
+    public function testFetchAllUsers(): void
     {
-        if (file_exists($this->testFilePath)) {
-            unlink($this->testFilePath);
-        }
-    }
-
-    public function testFindByUsername(): void
-    {
-        $userRepository = new UserRepository(new UserMapper(), $this->testFilePath);
-        $usernameTestDataset = $userRepository->findByUsername('TestUser');
-
-        self::assertSame('TestUser', $usernameTestDataset->username);
-        self::assertSame('TestUser@TestUser.de', $usernameTestDataset->email);
-        self::assertSame('$2y$10$mUhklPZSOKe6ywT7pl0KnO44vUlBwYYUUQxltAdbUL5R44MJDJgkq', $usernameTestDataset->password); // TestUser123#
-    }
-
-    public function testFindByUsernameNull(): void
-    {
-        $userRepository = new UserRepository(new UserMapper(), $this->testFilePath);
-        $usernameNullTestDataset = $userRepository->findByUsername('Non Existing');
-
-        self::assertNull($usernameNullTestDataset);
+        $users = $this->userRepository->fetchAllUsers();
+        $this->assertCount(3, $users);
     }
 
     public function testFindByMail(): void
     {
-        $userRepository = new UserRepository(new UserMapper(), $this->testFilePath);
-        $mailTestDataset = $userRepository->findByMail('TestUser@TestUser.de');
-
-        self::assertSame('TestUser', $mailTestDataset->username);
-        self::assertSame('TestUser@TestUser.de', $mailTestDataset->email);
-        self::assertSame('$2y$10$mUhklPZSOKe6ywT7pl0KnO44vUlBwYYUUQxltAdbUL5R44MJDJgkq', $mailTestDataset->password); // TestUser123#
+        $user = $this->userRepository->findByMail('user2@example.com');
+        $this->assertInstanceOf(UserDTO::class, $user);
+        $this->assertEquals('user2@example.com', $user->email);
     }
 
-    public function testFindByMailNull(): void
+    public function testFindByMailNotFound(): void
     {
-        $userRepository = new UserRepository(new UserMapper(), $this->testFilePath);
-        $mailNullTestDataset = $userRepository->findByMail('Non Existing');
+        $user = $this->userRepository->findByMail('nonexistent@example.com');
+        $this->assertNull($user);
+    }
 
-        self::assertNull($mailNullTestDataset);
+    public function testFindByUsername(): void
+    {
+        $user = $this->userRepository->findByUsername('user3');
+        $this->assertInstanceOf(UserDTO::class, $user);
+        $this->assertEquals('user3', $user->username);
+    }
+
+    public function testFindByUsernameNotFound(): void
+    {
+        $user = $this->userRepository->findByUsername('nonexistentuser');
+        $this->assertNull($user);
+    }
+
+    private function createUserDTO(int $userID, string $username, string $email, string $password): UserDTO
+    {
+        $userDTO = new UserDTO();
+        $userDTO->userID = $userID;
+        $userDTO->username = $username;
+        $userDTO->email = $email;
+        $userDTO->password = $password;
+        return $userDTO;
     }
 }

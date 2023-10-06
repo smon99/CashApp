@@ -36,7 +36,7 @@ class UserEntityManager
             ':userID' => $userDTO->userID,
         ];
 
-        $this->sqlConnector->executeDeleteUserQuery($query, $params);
+        $this->sqlConnector->executeDeleteQuery($query, $params);
     }
 
 }

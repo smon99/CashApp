@@ -2,52 +2,8 @@
 
 namespace App\Model;
 
-use JsonException;
-
 class AccountMapper
 {
-    /**
-     * @param string $jsonString
-     * @return AccountDTO[]
-     * @throws JsonException
-     */
-    public function jsonToDTO(string $jsonString): array
-    {
-        $data = json_decode($jsonString, true, 512, JSON_THROW_ON_ERROR);
-        $accountDTOList = [];
-
-        foreach ($data as $entryData) {
-            $accountDTO = new AccountDTO();
-            $accountDTO->transactionID = (int)$entryData['transactionID'];
-            $accountDTO->value = (float)$entryData['value'];
-            $accountDTO->userID = (int)$entryData['userID'];
-            $accountDTO->transactionDate = (string)$entryData['transactionDate'];
-            $accountDTO->transactionTime = (string)$entryData['transactionTime'];
-            $accountDTO->purpose = (string)$entryData['purpose'];
-            $accountDTOList[] = $accountDTO;
-        }
-
-        return $accountDTOList;
-    }
-
-    public function jsonFromDTO(array $accountDTOList): string
-    {
-        $entries = [];
-
-        foreach ($accountDTOList as $accountDTO) {
-            $entries[] = [
-                'transactionID' => (int)$accountDTO->transactionID,
-                'value' => (float)$accountDTO->value,
-                'userID' => (int)$accountDTO->userID,
-                'transactionDate' => (string)$accountDTO->transactionDate,
-                'transactionTime' => (string)$accountDTO->transactionTime,
-                'purpose' => (string)$accountDTO->purpose,
-            ];
-        }
-
-        return json_encode($entries, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT);
-    }
-
     public function sqlToDTO($data): array
     {
         $collection = [];

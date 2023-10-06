@@ -13,7 +13,6 @@ class AccountRepository
         $this->accountMapper = $accountMapper;
     }
 
-
     public function calculateBalance(int $userID): float
     {
         $accountDTOList = $this->fetchAllTransactions();

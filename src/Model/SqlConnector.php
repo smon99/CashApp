@@ -62,7 +62,24 @@ class SqlConnector
         }
     }
 
-    public function executeDeleteUserQuery(string $query, array $params): void
+    public function executeUpdateQuery(string $query, array $params): void
+    {
+        $this->connect();
+
+        try {
+            $statement = $this->pdo->prepare($query);
+
+            foreach ($params as $param => $value) {
+                $statement->bindValue($param, $value, PDO::PARAM_STR);
+            }
+
+            $statement->execute();
+        } catch (PDOException $exception) {
+            die("Query failed: " . $exception->getMessage());
+        }
+    }
+
+    public function executeDeleteQuery(string $query, array $params): void
     {
         $this->connect();
 

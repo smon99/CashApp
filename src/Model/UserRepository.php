@@ -4,11 +4,13 @@ namespace App\Model;
 
 class UserRepository
 {
-    public function __construct(
-        private UserMapper   $userMapper,
-        private SqlConnector $sqlConnector
-    )
+    private UserMapper $userMapper;
+    private SqlConnector $sqlConnector;
+
+    public function __construct(UserMapper $userMapper, SqlConnector $sqlConnector)
     {
+        $this->userMapper = $userMapper;
+        $this->sqlConnector = $sqlConnector;
     }
 
     public function fetchAllUsers(): array     //dammit i love sql <3

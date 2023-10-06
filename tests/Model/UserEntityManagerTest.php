@@ -2,7 +2,7 @@
 
 namespace Test\Model;
 
-use App\Model\UserRepository;
+use App\Model\SqlConnector;
 use PHPUnit\Framework\TestCase;
 use App\Model\UserEntityManager;
 use App\Model\UserDTO;
@@ -10,69 +10,55 @@ use App\Model\UserMapper;
 
 class UserEntityManagerTest extends TestCase
 {
-    private $testFilePath = __DIR__ . '/../../tests/Model/user.json';
-
-    public function testSaveFileTrue(): void
+    public function testSaveUser(): void
     {
-        $userDTO = new UserDTO();
-        $userDTO->username = 'Tester';
-        $userDTO->email = 'Tester@Tester.de';
-        $userDTO->password = 'Test123#';
+        $sqlConnector = $this->createMock(SqlConnector::class);
+        $userMapper = $this->createMock(UserMapper::class);
 
-        $userEntityManager = new UserEntityManager(new UserMapper(), $this->testFilePath);
-        $userEntityManager->save($userDTO);
+        $expectedQuery = "INSERT INTO Users (username, email, password) VALUES (:username, :email, :password)";
+        $expectedData = ['username' => 'testuser', 'email' => 'test@example.com', 'password' => 'password'];
+        $expectedParams = [
+            ':username' => 'testuser',
+            ':email' => 'test@example.com',
+            ':password' => 'password',
+        ];
 
-        $userDTOReal = new UserDTO();
-        $userDTOReal->username = 'TesterReal';
-        $userDTOReal->email = 'Tester@TesterReal.de';
-        $userDTOReal->password = 'TesterReal123#';
+        $userMapper->expects($this->once())
+            ->method('dtoToArray')
+            ->willReturn($expectedData);
 
-        $userEntityManagerTest = new UserEntityManager(new UserMapper(), $this->testFilePath);
-        $userEntityManagerTest->save($userDTOReal);
-
-        $test = false;
-
-        $userRepository = new UserRepository(new UserMapper(), $this->testFilePath);
-        $match = $userRepository->findByUsername('TesterReal');
-
-        if ($match !== null) {
-            unlink($this->testFilePath);
-            $test = true;
-        }
-        self::assertTrue($test);
-    }
-
-    public function testSaveFileFalse(): void
-    {
-        if (file_exists($this->testFilePath)) {
-            unlink($this->testFilePath);
-        }
+        $sqlConnector->expects($this->once())
+            ->method('executeInsertQuery')
+            ->with($expectedQuery, $expectedParams);
 
         $userDTO = new UserDTO();
-        $userDTO->username = 'Tester';
-        $userDTO->email = 'Tester@Tester.de';
-        $userDTO->password = 'Test123#';
+        $userDTO->username = 'testuser';
+        $userDTO->email = 'test@example.com';
+        $userDTO->password = 'password';
 
-        $userEntityManager = new UserEntityManager(new UserMapper(), $this->testFilePath);
-        $userEntityManager->save($userDTO);
-
-        $test = false;
-
-        $userRepository = new UserRepository(new UserMapper(), $this->testFilePath);
-        $match = $userRepository->findByUsername('Tester');
-
-        if ($match !== null) {
-            unlink($this->testFilePath);
-            $test = true;
-        }
-        self::assertTrue($test);
+        $entityManager = new UserEntityManager($sqlConnector, $userMapper);
+        $entityManager->save($userDTO);
     }
 
-    public function testConstructor(): void
+
+    public function testDeleteUser(): void
     {
-        $userMapper = new UserMapper();
-        $entityManager = new UserEntityManager($userMapper);
+        $sqlConnector = $this->createMock(SqlConnector::class);
 
-        self::assertSame($entityManager, $entityManager);
+        $userMapper = $this->createMock(UserMapper::class);
+
+        $expectedQuery = "DELETE FROM Users WHERE userID = :userID";
+        $expectedParams = [':userID' => 123];
+
+        $sqlConnector->expects($this->once())
+            ->method('executeDeleteQuery')
+            ->with($expectedQuery, $expectedParams);
+
+        $userDTO = new UserDTO();
+        $userDTO->userID = 123;
+
+        $entityManager = new UserEntityManager($sqlConnector, $userMapper);
+        $entityManager->deleteUser($userDTO);
     }
+
 }

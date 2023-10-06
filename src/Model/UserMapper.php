@@ -6,21 +6,6 @@ use mysql_xdevapi\Collection;
 
 class UserMapper
 {
-    public function jsonFromDTO(array $userDTOList): string
-    {
-        $entries = [];
-
-        foreach ($userDTOList as $userDTO) {
-            $entries[] = [
-                'userID' => (int)$userDTO->userID,
-                'username' => (string)$userDTO->username,
-                'email' => (string)$userDTO->email,
-                'password' => (string)$userDTO->password,
-            ];
-        }
-        return json_encode($entries, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT);
-    }
-
     public function sqlToDTO($data): array
     {
         $collection = [];

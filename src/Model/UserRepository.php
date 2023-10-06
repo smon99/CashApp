@@ -14,7 +14,7 @@ class UserRepository
     public function fetchAllUsers(): array     //dammit i love sql <3
     {
         $query = "SELECT * FROM Users";
-        $data = $this->sqlConnector->executeSelectAllUsersQuery($query);
+        $data = $this->sqlConnector->executeSelectAllQuery($query);
         return $this->userMapper->sqlToDTO($data);
     }
 

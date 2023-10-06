@@ -24,10 +24,10 @@ class DependencyProvider
         $container->set(View::class, new View(__DIR__ . '/../View'));
         $container->set(Redirect::class, new Redirect());
 
-        $container->set(AccountRepository::class, new AccountRepository(new AccountMapper()));
+        $container->set(AccountRepository::class, new AccountRepository(new AccountMapper(), new SqlConnector()));
         $container->set(UserRepository::class, new UserRepository(new UserMapper(), new SqlConnector()));
 
-        $container->set(AccountEntityManager::class, new AccountEntityManager());
+        $container->set(AccountEntityManager::class, new AccountEntityManager(new SqlConnector(), new AccountMapper()));
         $container->set(UserEntityManager::class, new UserEntityManager(new SqlConnector(), new UserMapper()));
 
         $container->set(AccountValidation::class, new AccountValidation(new SingleValidator(), new DayValidator(), new HourValidator()));

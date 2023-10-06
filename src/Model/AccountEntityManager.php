@@ -4,24 +4,30 @@ namespace App\Model;
 
 class AccountEntityManager
 {
-    private string $path;
-    private string $jsonString;
+    private SqlConnector $sqlConnector;
+    private AccountMapper $accountMapper;
 
-    public function __construct(?string $path = AccountRepository::ACCOUNT_DEFAULT_PATH)
+    public function __construct(SqlConnector $sqlConnector, AccountMapper $accountMapper)
     {
-        $this->path = $path;
-        $this->jsonString = file_get_contents($path);
+        $this->sqlConnector = $sqlConnector;
+        $this->accountMapper = $accountMapper;
     }
 
     public function saveDeposit(AccountDTO $deposit): void
     {
-        $accountMapper = new AccountMapper();
+        $query = "INSERT INTO Accounts (transactionID, value, userID, transactionDate, transactionTime, purpose) VALUES (:transactionID :value, :userID, :transactionDate, :transactionTime, :purpose)";
 
-        $accountDTOList = $accountMapper->jsonToDTO($this->jsonString);
+        $data = $this->accountMapper->dtoToArray($deposit);
 
-        $accountDTOList[] = $deposit;
+        $params = [
+            ':transactionID' => $data['transactionID'],
+            ':value' => $data['value'],
+            ':userID' => $data['userID'],
+            ':transactionDate' => $data['transactionDate'],
+            ':transactionTime' => $data['transactionTime'],
+            ':purpose' => $data['purpose'],
+        ];
 
-        $this->jsonString = $accountMapper->jsonFromDTO($accountDTOList);
-        file_put_contents($this->path, $this->jsonString);
+        $this->sqlConnector->executeInsertQuery($query, $params);
     }
 }

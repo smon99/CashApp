@@ -30,7 +30,7 @@ class SqlConnector
         }
     }
 
-    public function executeSelectAllUsersQuery($query): bool|array|null
+    public function executeSelectAllQuery($query): bool|array|null
     {
         try {
             $this->connect();
@@ -43,7 +43,7 @@ class SqlConnector
         }
     }
 
-    public function executeInsertUserQuery(string $query, array $params): string
+    public function executeInsertQuery(string $query, array $params): string
     {
         $this->connect();
 
@@ -62,5 +62,21 @@ class SqlConnector
         }
     }
 
+    public function executeDeleteUserQuery(string $query, array $params): void
+    {
+        $this->connect();
+
+        try {
+            $statement = $this->pdo->prepare($query);
+
+            foreach ($params as $param => $value) {
+                $statement->bindValue($param, $value, PDO::PARAM_STR);
+            }
+
+            $statement->execute();
+        } catch (PDOException $exception) {
+            die("Query failed: " . $exception->getMessage());
+        }
+    }
 
 }

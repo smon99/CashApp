@@ -6,15 +6,12 @@ use JsonException;
 
 class AccountRepository
 {
-    public const ACCOUNT_DEFAULT_PATH = __DIR__ . '/account.json';
-
-    private string $path;
     private AccountMapper $accountMapper;
+    private SqlConnector $sqlConnector;
 
-    public function __construct(AccountMapper $accountMapper, ?string $path = self::ACCOUNT_DEFAULT_PATH)
+    public function __construct(AccountMapper $accountMapper, SqlConnector $sqlConnector)
     {
-        $this->path = $path;
-
+        $this->sqlConnector = $sqlConnector;
         $this->accountMapper = $accountMapper;
     }
 
@@ -22,15 +19,9 @@ class AccountRepository
      * @return AccountDTO[]
      * @throws JsonException
      */
-    public function findAll(): array
-    {
-        $jsonString = file_get_contents($this->path);
-        return $this->accountMapper->jsonToDTO($jsonString);
-    }
-
     public function calculateBalance(int $userID): float
     {
-        $accountDTOList = $this->findAll();
+        $accountDTOList = $this->fetchAllTransactions();
 
         $balance = 0.0;
 
@@ -44,7 +35,7 @@ class AccountRepository
 
     public function calculateBalancePerHour(): float
     {
-        $accountDTOList = $this->findAll();
+        $accountDTOList = $this->fetchAllTransactions();
 
         $balancePerHour = 0.0;
 
@@ -62,7 +53,7 @@ class AccountRepository
 
     public function calculateBalancePerDay(): float
     {
-        $accountDTOList = $this->findAll();
+        $accountDTOList = $this->fetchAllTransactions();
 
         $balancePerDay = 0.0;
         $date = date('Y-m-d');
@@ -73,5 +64,12 @@ class AccountRepository
             }
         }
         return $balancePerDay;
+    }
+
+    public function fetchAllTransactions(): array
+    {
+        $query = "SELECT * FROM Transactions";
+        $data = $this->sqlConnector->executeSelectAllQuery($query);
+        return $this->accountMapper->sqlToDTO($data);
     }
 }

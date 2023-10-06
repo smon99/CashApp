@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Core\Container;
+use App\Core\Redirect;
 use App\Core\View;
 use App\Model\AccountDTO;
 use App\Model\AccountRepository;
@@ -12,10 +13,11 @@ use App\Model\AccountEntityManager;
 
 class AccountController implements ControllerInterface
 {
-    private AccountValidation $validator;
     private View $view;
     private AccountRepository $repository;
     private AccountEntityManager $entityManager;
+    private AccountValidation $validator;
+    private Redirect $redirect;
     private $success;
 
     public function __construct(Container $container)
@@ -24,10 +26,15 @@ class AccountController implements ControllerInterface
         $this->repository = $container->get(AccountRepository::class);
         $this->entityManager = $container->get(AccountEntityManager::class);
         $this->validator = $container->get(AccountValidation::class);
+        $this->redirect = $container->get(Redirect::class);
     }
 
-    public function action(): View
+    public function action(): void
     {
+        if (!isset($_SESSION["loginStatus"])) {
+            $this->redirect->redirectTo('http://0.0.0.0:8000/?page=login');
+        }
+
         $activeUser = null;
         $loginStatus = false;
         $balance = null;
@@ -76,7 +83,6 @@ class AccountController implements ControllerInterface
         $this->view->addParameter('success', $this->success);
 
         $this->view->setTemplate('deposit.twig');
-        return $this->view;
     }
 
     private function getCorrectAmount(string $input): float

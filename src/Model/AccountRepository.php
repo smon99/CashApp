@@ -27,7 +27,7 @@ class AccountRepository
         return $balance;
     }
 
-    public function calculateBalancePerHour(): float
+    public function calculateBalancePerHour(int $userID): float
     {
         $accountDTOList = $this->fetchAllTransactions();
 
@@ -37,14 +37,14 @@ class AccountRepository
         $time = strtotime(date('H:i:s'));
 
         foreach ($accountDTOList as $entry) {
-            if (strtotime($entry->transactionTime) > $time - (60 * 60) && strtotime($entry->transactionDate) === $date) {
+            if (($entry->userID === $userID) && strtotime($entry->transactionTime) > $time - (60 * 60) && strtotime($entry->transactionDate) === $date) {
                 $balancePerHour += $entry->value;
             }
         }
         return $balancePerHour;
     }
 
-    public function calculateBalancePerDay(): float
+    public function calculateBalancePerDay(int $userID): float
     {
         $accountDTOList = $this->fetchAllTransactions();
 
@@ -52,7 +52,7 @@ class AccountRepository
         $date = date('Y-m-d');
 
         foreach ($accountDTOList as $entry) {
-            if ($entry->transactionDate === $date) {
+            if (($entry->userID === $userID) && $entry->transactionDate === $date) {
                 $balancePerDay += $entry->value;
             }
         }

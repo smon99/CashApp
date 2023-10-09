@@ -11,5 +11,5 @@ interface AccountValidationInterface
      *
      * @return void
      */
-    public function validate(float $amount): void;
+    public function validate(float $amount, int $userID): void;
 }

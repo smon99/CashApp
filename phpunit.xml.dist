@@ -8,6 +8,7 @@
         beStrictAboutOutputDuringTests="true"
         cacheDirectory=".phpunit.cache">
     <php>
+        <env name="DATABASE" value="cash_test" force="true" />
         <ini name="display_errors" value="On"/>
         <ini name="error_reporting" value="-1"/>
     </php>

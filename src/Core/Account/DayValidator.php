@@ -8,10 +8,10 @@ use App\Model\SqlConnector;
 
 class DayValidator implements AccountValidationInterface
 {
-    public function validate(float $amount): void
+    public function validate(float $amount, int $userID): void
     {
         $repository = new AccountRepository(new AccountMapper(), new SqlConnector());
-        $dayBalance = $repository->calculateBalancePerDay();
+        $dayBalance = $repository->calculateBalancePerDay($userID);
 
         $limit = $dayBalance + $amount;
 

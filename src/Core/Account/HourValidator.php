@@ -8,10 +8,10 @@ use App\Model\SqlConnector;
 
 class HourValidator implements AccountValidationInterface
 {
-    public function validate(float $amount): void
+    public function validate(float $amount, int $userID): void
     {
         $repository = new AccountRepository(new AccountMapper(), new SqlConnector());
-        $hourBalance = $repository->calculateBalancePerHour();
+        $hourBalance = $repository->calculateBalancePerHour($userID);
 
         $limit = $hourBalance + $amount;
 

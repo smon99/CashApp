@@ -45,7 +45,7 @@ class AccountController implements ControllerInterface
             try {
                 $validateThis = $this->getCorrectAmount($input);
 
-                $this->validator->collectErrors($validateThis);
+                $this->validator->collectErrors($validateThis, $_SESSION["userID"]);
 
                 $amount = $validateThis;
 

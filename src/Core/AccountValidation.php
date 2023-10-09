@@ -14,13 +14,13 @@ class AccountValidation
         $this->validationCollection = $validations;
     }
 
-    public function collectErrors(float $amount): void
+    public function collectErrors(float $amount, int $userID): void
     {
         $firstError = null;
 
         foreach ($this->validationCollection as $validator) {
             try {
-                $validator->validate($amount);
+                $validator->validate($amount, $userID);
             } catch (AccountValidationException $e) {
                 if ($firstError === null) {
                     $firstError = $e;

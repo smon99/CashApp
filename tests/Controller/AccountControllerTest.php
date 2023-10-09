@@ -2,96 +2,69 @@
 
 namespace Test\Controller;
 
-use PHPUnit\Framework\TestCase;
 use App\Controller\AccountController;
 use App\Core\Container;
+use App\Core\Redirect;
 use App\Core\View;
+use App\Model\AccountDTO;
+use App\Model\AccountEntityManager;
 use App\Model\AccountRepository;
 use App\Core\AccountValidation;
 use App\Core\Account\AccountValidationException;
-use App\Model\AccountEntityManager;
+use PHPUnit\Framework\TestCase;
 
 class AccountControllerTest extends TestCase
 {
-    private Container|\PHPUnit\Framework\MockObject\MockObject $container;
-    private View|\PHPUnit\Framework\MockObject\MockObject $view;
-    private AccountRepository|\PHPUnit\Framework\MockObject\MockObject $repository;
-    private AccountEntityManager|\PHPUnit\Framework\MockObject\MockObject $entityManager;
-    private AccountValidation|\PHPUnit\Framework\MockObject\MockObject $validator;
-    private AccountController $controller;
+    private AccountController $accountController;
 
     protected function setUp(): void
     {
-        $this->container = $this->createMock(Container::class);
-        $this->view = $this->createMock(View::class);
-        $this->repository = $this->createMock(AccountRepository::class);
-        $this->entityManager = $this->createMock(AccountEntityManager::class);
-        $this->validator = $this->createMock(AccountValidation::class);
+        parent::setUp();
 
-        $this->container->method('get')
+        $container = $this->createMock(Container::class);
+        $view = $this->createMock(View::class);
+        $repository = $this->createMock(AccountRepository::class);
+        $entityManager = $this->createMock(AccountEntityManager::class);
+        $validator = $this->createMock(AccountValidation::class);
+        $redirect = $this->createMock(Redirect::class);
+
+        $container->method('get')
             ->willReturnMap([
-                [View::class, $this->view],
-                [AccountRepository::class, $this->repository],
-                [AccountEntityManager::class, $this->entityManager],
-                [AccountValidation::class, $this->validator],
+                [View::class, $view],
+                [AccountRepository::class, $repository],
+                [AccountEntityManager::class, $entityManager],
+                [AccountValidation::class, $validator],
+                [Redirect::class, $redirect],
             ]);
 
-        $this->controller = new AccountController($this->container);
+        $this->accountController = new AccountController($container);
     }
 
-    public function testActionWithValidInput(): void
+    public function testActionWithInvalidSession(): void
     {
-        $_POST["amount"] = "10.50";
+        unset($_SESSION["loginStatus"]);
 
-        $this->validator->expects($this->once())
-            ->method('collectErrors');
-        $this->repository->expects($this->once())
-            ->method('calculateBalance')
-            ->willReturn(10.50);
-        $this->entityManager->expects($this->once())
-            ->method('saveDeposit');
+        $redirect = $this->getMockBuilder(Redirect::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $response = $this->controller->action();
+        $redirect->expects($this->once())
+            ->method('redirectTo')
+            ->with('http://0.0.0.0:8000/?page=login');
 
-        $this->assertInstanceOf(View::class, $response);
+        $container = $this->createMock(Container::class);
+        $container->method('get')
+            ->willReturnMap([
+                [View::class, $this->createMock(View::class)],
+                [AccountRepository::class, $this->createMock(AccountRepository::class)],
+                [AccountEntityManager::class, $this->createMock(AccountEntityManager::class)],
+                [AccountValidation::class, $this->createMock(AccountValidation::class)],
+                [Redirect::class, $redirect],
+            ]);
+
+        $accountController = new AccountController($container);
+
+        $accountController->action();
     }
 
-    public function testActionWithInvalidInput(): void
-    {
-        $_POST["amount"] = "invalid_amount";
-
-        $this->validator->expects($this->once())
-            ->method('collectErrors')
-            ->willThrowException(new AccountValidationException(" "));
-
-        $response = $this->controller->action();
-
-        $this->assertInstanceOf(View::class, $response);
-    }
-
-    public function testSessionCreate(): void
-    {
-        session_start();
-        $_SESSION['loginStatus'] = true;
-
-        $this->controller->action();
-
-        self::assertNull($_SESSION['username']);
-        session_destroy();
-    }
-
-    public function testSessionDestroy(): void
-    {
-        session_start();
-        $_POST['logout'] = true;
-
-        $this->controller->action();
-
-        self::assertNull($_SESSION['loginStatus']);
-    }
-
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-    }
 }

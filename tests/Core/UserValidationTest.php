@@ -7,10 +7,12 @@ use App\Core\User\EmptyFieldValidator;
 use App\Core\User\EMailValidator;
 use App\Core\User\PasswordValidator;
 use App\Core\User\UserDuplicationValidator;
-use App\Core\User\UserValidationInterface;
 use App\Core\User\UserValidationException;
+use App\Model\SqlConnector;
 use App\Model\UserDTO;
+use App\Model\UserMapper;
 use PHPUnit\Framework\TestCase;
+use App\Model\UserEntityManager;
 
 class UserValidationTest extends TestCase
 {
@@ -66,7 +68,7 @@ class UserValidationTest extends TestCase
         $userDTO = new UserDTO();
 
         $user = 'Benutzer';
-        $eMail = 'Test@Test.de';
+        $eMail = 'Simon@Simon.de';
         $password = 'Passwort123#';
 
         $userDTO->username = $user;
@@ -89,7 +91,7 @@ class UserValidationTest extends TestCase
     {
         $userDTO = new UserDTO();
 
-        $user = 'Test';
+        $user = 'Simon';
         $eMail = 'Email@Email.de';
         $password = 'Passwort123#';
 

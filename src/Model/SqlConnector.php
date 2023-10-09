@@ -3,7 +3,6 @@
 namespace App\Model;
 
 use PDO;
-use PDOException;
 
 class SqlConnector
 {
@@ -13,87 +12,37 @@ class SqlConnector
     {
     }
 
-    private function connect(): void
+    private function connect(): PDO
     {
         $name = $_ENV['DATABASE'] ?? 'cash';
 
-        try {
-            $host = 'localhost:3336';
-            $user = 'root';
-            $password = 'nexus123';
+        $host = 'localhost:3336';
+        $user = 'root';
+        $password = 'nexus123';
 
-            $this->pdo = new PDO("mysql:host=$host;dbname=$name", $user, $password);
-            $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-        } catch (PDOException $exception) {
-            echo 'Error in SQL connector! ' . $exception->getMessage();
-        }
+        $connection = $this->pdo = new PDO("mysql:host=$host;dbname=$name", $user, $password);
+        $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        return $connection;
     }
 
-    public function executeSelectAllQuery($query): bool|array|null
+    public function executeSelectAllQuery($query): array
     {
-        try {
-            $this->connect();
+        $this->connect();
 
-            return $this->pdo->query($query)->fetchAll(PDO::FETCH_ASSOC);
-
-        } catch (PDOException $exception) {
-            echo 'Error executing SELECT query: ' . $exception->getMessage();
-            return null;
-        }
+        return $this->pdo->query($query)->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function executeInsertQuery(string $query, array $params): string
     {
         $this->connect();
+        $statement = $this->pdo->prepare($query);
 
-        try {
-            $statement = $this->pdo->prepare($query);
-
-            foreach ($params as $param => $value) {
-                $statement->bindValue($param, $value, PDO::PARAM_STR);
-            }
-
-            $statement->execute();
-
-            return $this->pdo->lastInsertId();
-        } catch (PDOException $exception) {
-            die("Query failed: " . $exception->getMessage());
+        foreach ($params as $param => $value) {
+            $statement->bindValue($param, $value, PDO::PARAM_STR);
         }
+
+        $statement->execute();
+
+        return $this->pdo->lastInsertId();
     }
-
-    public function executeUpdateQuery(string $query, array $params): void
-    {
-        $this->connect();
-
-        try {
-            $statement = $this->pdo->prepare($query);
-
-            foreach ($params as $param => $value) {
-                $statement->bindValue($param, $value, PDO::PARAM_STR);
-            }
-
-            $statement->execute();
-        } catch (PDOException $exception) {
-            die("Query failed: " . $exception->getMessage());
-        }
-    }
-
-    public function executeDeleteQuery(string $query, array $params): void
-    {
-        $this->connect();
-
-        try {
-            $statement = $this->pdo->prepare($query);
-
-            foreach ($params as $param => $value) {
-                $statement->bindValue($param, $value, PDO::PARAM_STR);
-            }
-
-            $statement->execute();
-        } catch (PDOException $exception) {
-            die("Query failed: " . $exception->getMessage());
-        }
-    }
-
 }

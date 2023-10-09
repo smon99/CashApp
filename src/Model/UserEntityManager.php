@@ -27,16 +27,4 @@ class UserEntityManager
 
         $this->sqlConnector->executeInsertQuery($query, $params);
     }
-
-    public function deleteUser(UserDTO $userDTO): void
-    {
-        $query = "DELETE FROM Users WHERE userID = :userID";
-
-        $params = [
-            ':userID' => $userDTO->userID,
-        ];
-
-        $this->sqlConnector->executeDeleteQuery($query, $params);
-    }
-
 }

@@ -22,18 +22,19 @@ class LoginController implements ControllerInterface
 
     private function formInput(): array
     {
-
         $mailCheck = $_POST["mail"];
         $password = $_POST["password"];
         return ['mail' => $mailCheck, 'password' => $password];
-
     }
 
     public function action(): View
     {
-        $this->view->setTemplate('login.twig');
+        $credentials = null;
 
-        $credentials = $this->formInput();
+        if (isset($_POST['login'])){
+            $credentials = $this->formInput();
+        }
+
         if ($credentials !== null) {
             $mailCheck = $credentials['mail'];
             $password = $credentials['password'];
@@ -53,6 +54,7 @@ class LoginController implements ControllerInterface
 
         $this->view->addParameter('pageTitle', 'Login Page');
 
+        $this->view->setTemplate('login.twig');
         return $this->view;
     }
 }

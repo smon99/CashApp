@@ -30,7 +30,7 @@ class LoginController implements ControllerInterface
         return null;
     }
 
-    public function action(): void
+    public function action(): View
     {
         $this->view->setTemplate('login.twig');
 
@@ -53,5 +53,7 @@ class LoginController implements ControllerInterface
         }
 
         $this->view->addParameter('pageTitle', 'Login Page');
+
+        return $this->view;
     }
 }

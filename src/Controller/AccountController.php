@@ -29,7 +29,7 @@ class AccountController implements ControllerInterface
         $this->redirect = $container->get(Redirect::class);
     }
 
-    public function action(): void
+    public function action(): View
     {
         if (!isset($_SESSION["loginStatus"])) {
             $this->redirect->redirectTo('http://0.0.0.0:8000/?page=login');
@@ -82,6 +82,8 @@ class AccountController implements ControllerInterface
         $this->view->addParameter('success', $this->success);
 
         $this->view->setTemplate('deposit.twig');
+
+        return $this->view;
     }
 
     private function getCorrectAmount(string $input): float

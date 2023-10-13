@@ -31,7 +31,9 @@ foreach ($controllerProvider->getList() as $key => $controllerClass) {
     }
 }
 
-$controller->action();
-
+$data = $controller->action();
+$data->display();
+/*
 $view = $container->get(View::class);
 $view->display();
+*/

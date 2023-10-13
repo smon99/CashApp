@@ -5,6 +5,7 @@ namespace Test\Core;
 use App\Controller\AccountController;
 use App\Controller\LoginController;
 use App\Controller\ErrorController;
+use App\Controller\TransactionController;
 use App\Controller\UserController;
 use App\Core\ControllerProvider;
 use PHPUnit\Framework\TestCase;
@@ -17,16 +18,18 @@ class ControllerProviderTest extends TestCase
         $controllerList = $provider->getList();
 
         $this->assertIsArray($controllerList);
-        $this->assertCount(4, $controllerList);
+        $this->assertCount(5, $controllerList);
 
         $this->assertArrayHasKey('account', $controllerList);
         $this->assertArrayHasKey('login', $controllerList);
         $this->assertArrayHasKey('user', $controllerList);
         $this->assertArrayHasKey('unknown', $controllerList);
+        $this->assertArrayHasKey('transaction', $controllerList);
 
         $this->assertSame(AccountController::class, $controllerList['account']);
         $this->assertSame(LoginController::class, $controllerList['login']);
         $this->assertSame(UserController::class, $controllerList['user']);
         $this->assertSame(ErrorController::class, $controllerList['unknown']);
+        $this->assertSame(TransactionController::class, $controllerList['transaction']);
     }
 }

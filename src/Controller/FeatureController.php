@@ -17,7 +17,7 @@ class FeatureController implements ControllerInterface
         $this->redirect = $container->get(Redirect::class);
     }
 
-    public function action(): void
+    public function action(): View
     {
         if (!isset($_SESSION["loginStatus"])) {
             $this->redirect->redirectTo('http://0.0.0.0:8000/?page=login');
@@ -27,5 +27,7 @@ class FeatureController implements ControllerInterface
 
         $this->view->addParameter('activeUser', $activeUser);
         $this->view->setTemplate('feature.twig');
+
+        return $this->view;
     }
 }

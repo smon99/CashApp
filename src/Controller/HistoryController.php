@@ -20,7 +20,7 @@ class HistoryController implements ControllerInterface
         $this->accountRepository = $container->get(AccountRepository::class);
     }
 
-    public function action(): void
+    public function action(): View
     {
         if (!isset($_SESSION["loginStatus"])) {
             $this->redirect->redirectTo('http://0.0.0.0:8000/?page=login');
@@ -30,5 +30,7 @@ class HistoryController implements ControllerInterface
 
         $this->view->addParameter('transactions', $transactions);
         $this->view->setTemplate('history.twig');
+
+        return $this->view;
     }
 }

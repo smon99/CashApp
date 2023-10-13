@@ -27,7 +27,7 @@ class TransactionController implements ControllerInterface
         $this->userRepository = $container->get(UserRepository::class);
     }
 
-    public function action(): void
+    public function action(): View
     {
         if (!isset($_SESSION["loginStatus"])) {
             $this->redirect->redirectTo('http://0.0.0.0:8000/?page=login');
@@ -81,6 +81,8 @@ class TransactionController implements ControllerInterface
         $this->view->addParameter('loginStatus', $loginStatus);
 
         $this->view->setTemplate('transaction.twig');
+
+        return $this->view;
     }
 
     private function getCorrectAmount(string $input): float

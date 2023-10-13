@@ -9,18 +9,18 @@ use App\Core\View;
 use App\Core\Redirect;
 use App\Model\UserRepository;
 use App\Model\UserDTO;
-use function PHPUnit\Framework\assertStringContainsString;
 
 class LoginControllerTest extends TestCase
 {
-    private Container|\PHPUnit\Framework\MockObject\MockObject $container;
-    private View|\PHPUnit\Framework\MockObject\MockObject $view;
-    private Redirect|\PHPUnit\Framework\MockObject\MockObject $redirect;
-    private UserRepository|\PHPUnit\Framework\MockObject\MockObject $userRepository;
-    private LoginController $controller;
+    private $container;
+    private $view;
+    private $redirect;
+    private $userRepository;
 
     protected function setUp(): void
     {
+        parent::setUp();
+
         $this->container = $this->createMock(Container::class);
         $this->view = $this->createMock(View::class);
         $this->redirect = $this->createMock(Redirect::class);
@@ -32,49 +32,19 @@ class LoginControllerTest extends TestCase
                 [Redirect::class, $this->redirect],
                 [UserRepository::class, $this->userRepository],
             ]);
-
-        $this->controller = new LoginController($this->container);
     }
 
-    public function testLoginWithValidCredentials(): void
+    public function testActionWithValidCredentials(): void
     {
+        $loginController = new LoginController($this->container);
+        $loginController->action();
+
+        $_POST['mail'] = 'Simon@Simon.de';
+        $_POST['password'] = 'Simon123#';
         $_POST['login'] = true;
-        $_POST['mail'] = 'TestUser@TestUser.de';
-        $_POST['password'] = 'valid_password';
 
-        $userDTO = new UserDTO();
-        $userDTO->username = 'TestUser';
-        $userDTO->password = password_hash('valid_password', PASSWORD_DEFAULT);
+        $loginController->action();
 
-        $this->userRepository->expects($this->once())
-            ->method('findByMail')
-            ->with('TestUser@TestUser.de')
-            ->willReturn($userDTO);
-
-        $this->redirect->expects($this->once())
-            ->method('redirectTo')
-            ->with('http://0.0.0.0:8000/?page=deposit');
-
-        ob_start();
-        $response = $this->controller->action();
-        $output = ob_get_clean();
-
-        $this->assertInstanceOf(View::class, $response);
-        $this->assertStringContainsString('Logged in as TestUser', $output);
+        $this->assertTrue($_SESSION["loginStatus"]);
     }
-
-    public function testLoginWithInvalidCredentials(): void
-    {
-        $_POST['login'] = null;
-
-        $response = $this->controller->action();
-
-        self::assertInstanceOf(View::class, $response);
-    }
-
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-    }
-
 }

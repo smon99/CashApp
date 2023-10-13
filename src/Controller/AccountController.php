@@ -76,7 +76,6 @@ class AccountController implements ControllerInterface
             $balance = $this->repository->calculateBalance($_SESSION["userID"]);
         }
 
-
         $this->view->addParameter('balance', $balance);
         $this->view->addParameter('loginStatus', $loginStatus);
         $this->view->addParameter('activeUser', $activeUser);

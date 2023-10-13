@@ -5,6 +5,7 @@ namespace App\Core;
 use App\Controller\AccountController;
 use App\Controller\ErrorController;
 use App\Controller\LoginController;
+use App\Controller\TransactionController;
 use App\Controller\UserController;
 
 class ControllerProvider
@@ -18,6 +19,8 @@ class ControllerProvider
             "login" => LoginController::class,
 
             "user" => UserController::class,
+
+            "transaction" => TransactionController::class,
 
             "unknown" => ErrorController::class,
 

@@ -7,9 +7,6 @@
     <form method="post" action="?page=account">
         <button type="submit" name="logout">Abmelden</button>
     </form>
-{% else %}
-    <a href="http://0.0.0.0:8000/?page=login"><button>Anmelden</button></a>
-    <a href="http://0.0.0.0:8000/?page=user"><button>Registrieren</button></a> <br>
 {% endif %}
 
 {% if success is defined %}

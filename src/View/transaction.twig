@@ -2,12 +2,14 @@
 <html lang="en">
 <head><title>CashApp</title></head>
 
-{% if loginStatus is same as(true) %}
-    Angemeldet als: {{ activeUser }}
-    <form method="post" action="?page=transaction">
-        <button type="submit" name="logout">Abmelden</button>
-    </form>
-{% endif %}
+Angemeldet als: {{ activeUser }}
+<form method="post" action="?page=transaction">
+    <button type="submit" name="logout">Abmelden</button>
+</form>
+
+<a href="http://0.0.0.0:8000/?page=feature">
+    <button>features</button>
+</a>
 
 <br>
 

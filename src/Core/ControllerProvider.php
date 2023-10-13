@@ -4,7 +4,9 @@ namespace App\Core;
 
 use App\Controller\AccountController;
 use App\Controller\ErrorController;
+use App\Controller\HistoryController;
 use App\Controller\LoginController;
+use App\Controller\FeatureController;
 use App\Controller\TransactionController;
 use App\Controller\UserController;
 
@@ -21,6 +23,10 @@ class ControllerProvider
             "user" => UserController::class,
 
             "transaction" => TransactionController::class,
+
+            "feature" => FeatureController::class,
+
+            "history" => HistoryController::class,
 
             "unknown" => ErrorController::class,
 

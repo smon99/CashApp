@@ -71,6 +71,11 @@ class TransactionController implements ControllerInterface
             }
         }
 
+        if (isset($_POST["logout"])) {
+            session_destroy();
+            header("Refresh:0");
+        }
+
         $this->view->addParameter('activeUser', $activeUser);
         $this->view->addParameter('balance', $balance);
         $this->view->addParameter('loginStatus', $loginStatus);

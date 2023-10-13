@@ -47,10 +47,8 @@ class LoginController implements ControllerInterface
                     $_SESSION["username"] = $userDTO->username;
                     $_SESSION["loginStatus"] = true;
                     $_SESSION["userID"] = $userDTO->userID;
-                    echo "Logged in as ", $userDTO->username;
-                    $this->redirect->redirectTo('http://0.0.0.0:8000/?page=account');
+                    $this->redirect->redirectTo('http://0.0.0.0:8000/?page=feature');
                 }
-                echo "Nice try";
             }
         }
 

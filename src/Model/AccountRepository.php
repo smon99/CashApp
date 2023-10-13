@@ -59,6 +59,20 @@ class AccountRepository
         return $balancePerDay;
     }
 
+    public function transactionPerUserID(int $userID): array
+    {
+        $accountDTOList = $this->fetchAllTransactions();
+
+        $userTransactions = [];
+
+        foreach ($accountDTOList as $entry) {
+            if ($entry->userID === $userID) {
+                $userTransactions[] = $entry;
+            }
+        }
+        return $userTransactions;
+    }
+
     public function fetchAllTransactions(): array
     {
         $query = "SELECT * FROM Transactions";

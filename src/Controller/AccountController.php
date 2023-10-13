@@ -14,7 +14,7 @@ use App\Model\AccountEntityManager;
 class AccountController implements ControllerInterface
 {
     private View $view;
-    private AccountRepository $repository;
+    private AccountRepository $accountRepository;
     private AccountEntityManager $entityManager;
     private AccountValidation $validator;
     private Redirect $redirect;
@@ -23,7 +23,7 @@ class AccountController implements ControllerInterface
     public function __construct(Container $container)
     {
         $this->view = $container->get(View::class);
-        $this->repository = $container->get(AccountRepository::class);
+        $this->accountRepository = $container->get(AccountRepository::class);
         $this->entityManager = $container->get(AccountEntityManager::class);
         $this->validator = $container->get(AccountValidation::class);
         $this->redirect = $container->get(Redirect::class);
@@ -73,7 +73,7 @@ class AccountController implements ControllerInterface
         if (isset($_SESSION["loginStatus"])) {
             $loginStatus = $_SESSION["loginStatus"];
             $activeUser = $_SESSION["username"];
-            $balance = $this->repository->calculateBalance($_SESSION["userID"]);
+            $balance = $this->accountRepository->calculateBalance($_SESSION["userID"]);
         }
 
         $this->view->addParameter('balance', $balance);

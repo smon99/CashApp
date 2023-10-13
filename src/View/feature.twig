@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><title>CashApp</title></head>
+
+Angemeldet als: {{ activeUser }}
+<form method="post" action="?page=account">
+    <button type="submit" name="logout">Abmelden</button>
+</form>
+
+<br><br>
+
+<a href="http://0.0.0.0:8000/?page=account">
+    <button>Guthaben einzahlen</button>
+</a>
+
+<a href="http://0.0.0.0:8000/?page=transaction">
+    <button>Guthaben versenden</button>
+</a>
+
+<a href="http://0.0.0.0:8000/?page=history">
+    <button>Transaktionen einsehen</button>
+</a>
+
+</html>

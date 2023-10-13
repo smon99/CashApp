@@ -8,43 +8,39 @@ use App\Core\Container;
 use App\Core\View;
 use App\Core\Redirect;
 use App\Model\UserRepository;
-use App\Model\UserDTO;
 
 class LoginControllerTest extends TestCase
 {
-    private $container;
-    private $view;
-    private $redirect;
-    private $userRepository;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->container = $this->createMock(Container::class);
-        $this->view = $this->createMock(View::class);
-        $this->redirect = $this->createMock(Redirect::class);
-        $this->userRepository = $this->createMock(UserRepository::class);
-
-        $this->container->method('get')
-            ->willReturnMap([
-                [View::class, $this->view],
-                [Redirect::class, $this->redirect],
-                [UserRepository::class, $this->userRepository],
-            ]);
-    }
-
     public function testActionWithValidCredentials(): void
     {
-        $loginController = new LoginController($this->container);
-        $loginController->action();
+        $container = $this->createMock(Container::class);
+        $view = $this->createMock(View::class);
+        $redirect = $this->createMock(Redirect::class);
+        $userRepository = $this->createMock(UserRepository::class);
 
-        $_POST['mail'] = 'Simon@Simon.de';
-        $_POST['password'] = 'Simon123#';
+        $container->method('get')
+            ->willReturnOnConsecutiveCalls($view, $userRepository, $redirect);
+
+        $userDTO = new \App\Model\UserDTO();
+        $userDTO->password = password_hash('valid_password', PASSWORD_BCRYPT);
+
+        $userRepository->expects($this->once())
+            ->method('findByMail')
+            ->with('valid_email@example.com')
+            ->willReturn($userDTO);
+
+        $redirect->expects($this->once())
+            ->method('redirectTo')
+            ->with('http://0.0.0.0:8000/?page=feature');
+
+        $loginController = new LoginController($container);
+
         $_POST['login'] = true;
+        $_POST['mail'] = 'valid_email@example.com';
+        $_POST['password'] = 'valid_password';
 
-        $loginController->action();
+        $result = $loginController->action();
 
-        $this->assertTrue($_SESSION["loginStatus"]);
+        $this->assertSame($view, $result);
     }
 }

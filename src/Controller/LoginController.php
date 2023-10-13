@@ -20,14 +20,13 @@ class LoginController implements ControllerInterface
         $this->redirect = $container->get(Redirect::class);
     }
 
-    private function formInput(): ?array
+    private function formInput(): array
     {
-        if (isset($_POST['login'])) {
-            $mailCheck = $_POST["mail"];
-            $password = $_POST["password"];
-            return ['mail' => $mailCheck, 'password' => $password];
-        }
-        return null;
+
+        $mailCheck = $_POST["mail"];
+        $password = $_POST["password"];
+        return ['mail' => $mailCheck, 'password' => $password];
+
     }
 
     public function action(): View

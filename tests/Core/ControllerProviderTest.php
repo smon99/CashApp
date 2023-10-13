@@ -3,6 +3,8 @@
 namespace Test\Core;
 
 use App\Controller\AccountController;
+use App\Controller\FeatureController;
+use App\Controller\HistoryController;
 use App\Controller\LoginController;
 use App\Controller\ErrorController;
 use App\Controller\TransactionController;
@@ -18,7 +20,7 @@ class ControllerProviderTest extends TestCase
         $controllerList = $provider->getList();
 
         $this->assertIsArray($controllerList);
-        $this->assertCount(5, $controllerList);
+        $this->assertCount(7, $controllerList);
 
         $this->assertArrayHasKey('account', $controllerList);
         $this->assertArrayHasKey('login', $controllerList);
@@ -31,5 +33,7 @@ class ControllerProviderTest extends TestCase
         $this->assertSame(UserController::class, $controllerList['user']);
         $this->assertSame(ErrorController::class, $controllerList['unknown']);
         $this->assertSame(TransactionController::class, $controllerList['transaction']);
+        $this->assertSame(FeatureController::class, $controllerList['feature']);
+        $this->assertSame(HistoryController::class, $controllerList['history']);
     }
 }

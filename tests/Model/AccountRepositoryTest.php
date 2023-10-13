@@ -165,4 +165,13 @@ class AccountRepositoryTest extends TestCase
 
         $this->assertEquals($expectedBalancePerHour, $balancePerDay);
     }
+
+    public function testTransactionPerUserID(): void
+    {
+        $accountRepository = new AccountRepository(new AccountMapper(), new SqlConnector());
+
+        $response = $accountRepository->transactionPerUserID(0);
+
+        self::assertIsArray($response);
+    }
 }

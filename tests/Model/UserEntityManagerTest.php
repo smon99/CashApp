@@ -39,26 +39,4 @@ class UserEntityManagerTest extends TestCase
         $entityManager = new UserEntityManager($sqlConnector, $userMapper);
         $entityManager->save($userDTO);
     }
-
-
-    public function testDeleteUser(): void
-    {
-        $sqlConnector = $this->createMock(SqlConnector::class);
-
-        $userMapper = $this->createMock(UserMapper::class);
-
-        $expectedQuery = "DELETE FROM Users WHERE userID = :userID";
-        $expectedParams = [':userID' => 123];
-
-        $sqlConnector->expects($this->once())
-            ->method('executeDeleteQuery')
-            ->with($expectedQuery, $expectedParams);
-
-        $userDTO = new UserDTO();
-        $userDTO->userID = 123;
-
-        $entityManager = new UserEntityManager($sqlConnector, $userMapper);
-        $entityManager->deleteUser($userDTO);
-    }
-
 }

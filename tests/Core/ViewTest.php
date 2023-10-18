@@ -2,12 +2,13 @@
 
 namespace Test\Core;
 
+use FilesystemIterator;
 use PHPUnit\Framework\TestCase;
 use App\Core\View;
 
 class ViewTest extends TestCase
 {
-    public function testDisplay()
+    public function testDisplay(): void
     {
         $templatePath = __DIR__ . '/temp_templates';
         mkdir($templatePath);
@@ -23,11 +24,9 @@ class ViewTest extends TestCase
         $output = ob_get_clean();
 
         $this->assertSame('Hello, John!', $output);
-
-        rmdir($templatePath);
     }
 
-    public function testGetParameters()
+    public function testGetParameters(): void
     {
         $templatePath = __DIR__ . '/temp_templates';
         mkdir($templatePath);
@@ -48,7 +47,7 @@ class ViewTest extends TestCase
         rmdir($templatePath);
     }
 
-    public function testGetTpl()
+    public function testGetTpl(): void
     {
         $templatePath = __DIR__ . '/temp_templates';
         mkdir($templatePath);
@@ -59,5 +58,26 @@ class ViewTest extends TestCase
         $this->assertSame('test_template.twig', $view->getTpl());
 
         rmdir($templatePath);
+    }
+
+    protected function tearDown(): void
+    {
+        $templatePath = __DIR__ . '/temp_templates';
+
+        if (is_dir($templatePath)) {
+            $files = new \RecursiveIteratorIterator(
+                new \RecursiveDirectoryIterator($templatePath, FilesystemIterator::SKIP_DOTS),
+                \RecursiveIteratorIterator::CHILD_FIRST
+            );
+            foreach ($files as $file) {
+                if ($file->isDir()) {
+                    rmdir($file->getRealPath());
+                } else {
+                    unlink($file->getRealPath());
+                }
+            }
+            rmdir($templatePath);
+        }
+        parent::tearDown();
     }
 }

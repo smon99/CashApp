@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Core\Container;
 use App\Core\Redirect;
+use App\Core\Session;
 use App\Core\View;
 use App\Model\AccountDTO;
 use App\Model\AccountRepository;
@@ -18,6 +19,7 @@ class AccountController implements ControllerInterface
     private AccountEntityManager $entityManager;
     private AccountValidation $validator;
     public Redirect $redirect;
+    private Session $session;
     private $success;
 
     public function __construct(Container $container)
@@ -27,11 +29,12 @@ class AccountController implements ControllerInterface
         $this->entityManager = $container->get(AccountEntityManager::class);
         $this->validator = $container->get(AccountValidation::class);
         $this->redirect = $container->get(Redirect::class);
+        $this->session = $container->get(Session::class);
     }
 
     public function action(): View
     {
-        if (!isset($_SESSION["loginStatus"])) {
+        if (!$this->session->loginStatus()) {
             $this->redirect->redirectTo('http://0.0.0.0:8000/?page=login');
         }
 
@@ -44,9 +47,7 @@ class AccountController implements ControllerInterface
         if ($input !== null) {
             try {
                 $validateThis = $this->getCorrectAmount($input);
-
-                $this->validator->collectErrors($validateThis, $_SESSION["userID"]);
-
+                $this->validator->collectErrors($validateThis, $this->session->getUserID());
                 $amount = $validateThis;
 
                 $date = date('Y-m-d');
@@ -54,7 +55,7 @@ class AccountController implements ControllerInterface
 
                 $saveData = new AccountDTO();
                 $saveData->value = $amount;
-                $saveData->userID = $_SESSION["userID"];
+                $saveData->userID = $this->session->getUserID();
                 $saveData->transactionDate = $date;
                 $saveData->transactionTime = $time;
                 $saveData->purpose = 'deposit';
@@ -66,14 +67,14 @@ class AccountController implements ControllerInterface
         }
 
         if (isset($_POST["logout"])) {
-            session_destroy();
+            $this->session->logout();
             $this->redirect->redirectTo('http://0.0.0.0:8000/?page=login');
         }
 
-        if (isset($_SESSION["loginStatus"])) {
-            $loginStatus = $_SESSION["loginStatus"];
-            $activeUser = $_SESSION["username"];
-            $balance = $this->accountRepository->calculateBalance($_SESSION["userID"]);
+        if ($this->session->loginStatus()) {
+            $loginStatus = $this->session->loginStatus();
+            $activeUser = $this->session->getUserName();
+            $balance = $this->accountRepository->calculateBalance($this->session->getUserID());
         }
 
         $this->view->addParameter('balance', $balance);

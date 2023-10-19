@@ -45,4 +45,23 @@ class SqlConnector
 
         return $this->pdo->lastInsertId();
     }
+
+    public function executeDeleteQuery(string $query, array $params): string
+    {
+        $this->connect();
+        $statement = $this->pdo->prepare($query);
+
+        foreach ($params as $param => $value) {
+            $statement->bindValue($param, $value, PDO::PARAM_STR);
+        }
+
+        $statement->execute();
+
+        return $this->pdo->lastInsertId();
+    }
+
+    public function disconnect(): void
+    {
+        $this->pdo = null;
+    }
 }

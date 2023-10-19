@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Core\Container;
 use App\Core\Redirect;
+use App\Core\Session;
 use App\Core\View;
 use App\Model\AccountDTO;
 use App\Model\AccountEntityManager;
@@ -17,6 +18,7 @@ class TransactionController implements ControllerInterface
     private AccountRepository $accountRepository;
     private UserRepository $userRepository;
     private Redirect $redirect;
+    private Session $session;
 
     public function __construct(Container $container)
     {
@@ -25,11 +27,12 @@ class TransactionController implements ControllerInterface
         $this->accountEntityManager = $container->get(AccountEntityManager::class);
         $this->accountRepository = $container->get(AccountRepository::class);
         $this->userRepository = $container->get(UserRepository::class);
+        $this->session = $container->get(Session::class);
     }
 
     public function action(): View
     {
-        if (!isset($_SESSION["loginStatus"])) {
+        if (!$this->session->loginStatus()) {
             $this->redirect->redirectTo('http://0.0.0.0:8000/?page=login');
         }
 
@@ -37,10 +40,10 @@ class TransactionController implements ControllerInterface
         $balance = null;
         $loginStatus = false;
 
-        if (isset($_SESSION["loginStatus"])) {
-            $loginStatus = $_SESSION["loginStatus"];
-            $activeUser = $_SESSION["username"];
-            $balance = $this->accountRepository->calculateBalance($_SESSION["userID"]);
+        if ($this->session->loginStatus()) {
+            $loginStatus = $this->session->loginStatus();
+            $activeUser = $this->session->getUserName();
+            $balance = $this->accountRepository->calculateBalance($this->session->getUserID());
         }
 
         if (isset($_POST["transfer"])) {
@@ -53,7 +56,7 @@ class TransactionController implements ControllerInterface
 
                 $saveSender = new AccountDTO();
                 $saveSender->value = $amount * (-1);
-                $saveSender->userID = $_SESSION["userID"];
+                $saveSender->userID = $this->session->getUserID();
                 $saveSender->transactionDate = $date;
                 $saveSender->transactionTime = $time;
                 $saveSender->purpose = 'Geldtransfer an ' . $receiver->username;
@@ -64,7 +67,7 @@ class TransactionController implements ControllerInterface
                 $saveReceiver->userID = $receiver->userID;
                 $saveReceiver->transactionDate = $date;
                 $saveReceiver->transactionTime = $time;
-                $saveReceiver->purpose = 'Zahlung erhalten von ' . $_SESSION["username"];
+                $saveReceiver->purpose = 'Zahlung erhalten von ' . $this->session->getUserName();
                 $this->accountEntityManager->saveDeposit($saveReceiver);
 
                 header("Refresh:0");

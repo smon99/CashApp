@@ -16,9 +16,9 @@ class Session
         return $_SESSION["username"] ?? '';
     }
 
-    public function getUserID(): string
+    public function getUserID(): ?int
     {
-        return $_SESSION["userID"] ?? '';
+        return $_SESSION["userID"];
     }
 
     public function loginUser(UserDTO $userDTO, string $password): void

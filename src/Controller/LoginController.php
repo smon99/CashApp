@@ -25,8 +25,8 @@ class LoginController implements ControllerInterface
 
     private function formInput(): array
     {
-        $mailCheck = $_POST["mail"];
-        $password = $_POST["password"];
+        $mailCheck = $_POST['mail'];
+        $password = $_POST['password'];
         return ['mail' => $mailCheck, 'password' => $password];
     }
 

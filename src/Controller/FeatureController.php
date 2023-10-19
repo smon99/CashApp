@@ -9,7 +9,7 @@ use App\Core\View;
 class FeatureController implements ControllerInterface
 {
     private View $view;
-    private Redirect $redirect;
+    public Redirect $redirect;
 
     public function __construct(Container $container)
     {

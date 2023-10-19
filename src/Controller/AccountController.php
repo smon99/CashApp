@@ -17,7 +17,7 @@ class AccountController implements ControllerInterface
     private AccountRepository $accountRepository;
     private AccountEntityManager $entityManager;
     private AccountValidation $validator;
-    private Redirect $redirect;
+    public Redirect $redirect;
     private $success;
 
     public function __construct(Container $container)
@@ -67,7 +67,7 @@ class AccountController implements ControllerInterface
 
         if (isset($_POST["logout"])) {
             session_destroy();
-            header("Refresh:0");
+            $this->redirect->redirectTo('http://0.0.0.0:8000/?page=login');
         }
 
         if (isset($_SESSION["loginStatus"])) {

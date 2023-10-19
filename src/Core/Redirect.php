@@ -4,7 +4,7 @@ namespace App\Core;
 
 class Redirect
 {
-    private RedirectRecordings $redirectRecordings;
+    public RedirectRecordings $redirectRecordings;
     public function __construct(RedirectRecordings $redirectRecordings)
     {
         $this->redirectRecordings = $redirectRecordings;

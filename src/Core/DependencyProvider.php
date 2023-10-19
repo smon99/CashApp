@@ -16,6 +16,7 @@ use App\Model\SqlConnector;
 use App\Model\UserEntityManager;
 use App\Model\UserMapper;
 use App\Model\UserRepository;
+use function PHPUnit\Framework\never;
 
 class DependencyProvider
 {
@@ -23,6 +24,7 @@ class DependencyProvider
     {
         $container->set(View::class, new View(__DIR__ . '/../View'));
         $container->set(Redirect::class, new Redirect(new RedirectRecordings()));
+        $container->set(Session::class, new Session());
 
         $container->set(AccountRepository::class, new AccountRepository(new AccountMapper(), new SqlConnector()));
         $container->set(UserRepository::class, new UserRepository(new UserMapper(), new SqlConnector()));

@@ -17,7 +17,7 @@ class TransactionController implements ControllerInterface
     private AccountEntityManager $accountEntityManager;
     private AccountRepository $accountRepository;
     private UserRepository $userRepository;
-    private Redirect $redirect;
+    public Redirect $redirect;
     private Session $session;
 
     public function __construct(Container $container)

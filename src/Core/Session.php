@@ -32,6 +32,6 @@ class Session
 
     public function logout(): void
     {
-        unset($_SESSION["username"], $_SESSION["userID"]);
+        unset($_SESSION["username"], $_SESSION["userID"], $_SESSION["loginStatus"]);
     }
 }

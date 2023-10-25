@@ -56,6 +56,19 @@ class TransactionControllerTest extends TestCase
         self::assertSame($url, 'http://0.0.0.0:8000/?page=login');
     }
 
+
+    public function testActionLogOut(): void
+    {
+        $this->session->loginUser($this->userDTO, 'Simon123#');
+        $_POST["logout"] = true;
+        $this->controller->action();
+
+        self::assertEmpty($_SESSION);
+
+        $this->session->logout();
+    }
+
+
     protected function tearDown(): void
     {
         $connector = new SqlConnector();

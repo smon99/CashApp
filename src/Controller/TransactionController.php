@@ -75,7 +75,7 @@ class TransactionController implements ControllerInterface
         }
 
         if (isset($_POST["logout"])) {
-            session_destroy();
+            $this->session->logout();
             header("Refresh:0");
         }
 

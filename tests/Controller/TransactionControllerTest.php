@@ -129,8 +129,8 @@ class TransactionControllerTest extends TestCase
     protected function tearDown(): void
     {
         $connector = new SqlConnector();
-        $connector->executeDeleteQuery("DELETE FROM Transactions;", []);
-        $connector->executeDeleteQuery("DELETE FROM Users;", []);
+        $connector->execute("DELETE FROM Transactions;", []);
+        $connector->execute("DELETE FROM Users;", []);
         $connector->disconnect();
         $this->session->logout();
 

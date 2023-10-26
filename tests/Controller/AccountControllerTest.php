@@ -85,7 +85,7 @@ class AccountControllerTest extends TestCase
     protected function tearDown(): void
     {
         $connector = new SqlConnector();
-        $connector->executeDeleteQuery("DELETE FROM Transactions;", []);
+        $connector->execute("DELETE FROM Transactions;", []);
         $connector->disconnect();
         $this->session->logout();
         unset($_POST["amount"], $_POST["logout"], $this->userDTO, $this->redirectRecordings, $this->session);

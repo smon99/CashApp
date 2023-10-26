@@ -43,7 +43,7 @@ class AccountEntityManagerTest extends TestCase
     protected function tearDown(): void
     {
         $connector = new SqlConnector();
-        $connector->executeDeleteQuery("DELETE FROM Transactions;", []);
+        $connector->execute("DELETE FROM Transactions;", []);
         $connector->disconnect();
     }
 }

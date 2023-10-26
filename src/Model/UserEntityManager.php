@@ -25,6 +25,6 @@ class UserEntityManager
             ':password' => $data['password'],
         ];
 
-        $this->sqlConnector->executeInsertQuery($query, $params);
+        $this->sqlConnector->execute($query, $params);
     }
 }

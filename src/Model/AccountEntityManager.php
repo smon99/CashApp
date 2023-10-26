@@ -27,6 +27,6 @@ class AccountEntityManager
             ':purpose' => $data['purpose'],
         ];
 
-        $this->sqlConnector->executeInsertQuery($query, $params);
+        $this->sqlConnector->execute($query, $params);
     }
 }

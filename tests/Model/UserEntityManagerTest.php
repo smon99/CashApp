@@ -42,6 +42,6 @@ class UserEntityManagerTest extends TestCase
 
     protected function tearDown(): void
     {
-        $this->sqlConnector->executeDeleteQuery("DELETE FROM Users;", []);
+        $this->sqlConnector->execute("DELETE FROM Users;", []);
     }
 }

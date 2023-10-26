@@ -67,7 +67,7 @@ class UserControllerTest extends TestCase
 
     protected function tearDown(): void
     {
-        $this->sqlConnector->executeDeleteQuery("DELETE FROM Users;", []);
+        $this->sqlConnector->execute("DELETE FROM Users;", []);
         unset($_POST['username'], $_POST['email'], $_POST['password'], $_POST['register']);
     }
 }

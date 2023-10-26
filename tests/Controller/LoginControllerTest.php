@@ -62,7 +62,7 @@ class LoginControllerTest extends TestCase
 
     protected function tearDown(): void
     {
-        $this->sqlConnector->executeDeleteQuery("DELETE FROM Users;", []);
+        $this->sqlConnector->execute("DELETE FROM Users;", []);
         $this->session->logout();
         session_destroy();
     }

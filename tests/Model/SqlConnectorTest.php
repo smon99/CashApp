@@ -38,8 +38,6 @@ class SqlConnectorTest extends TestCase
 
     public function testExecuteInsertQueryValid(): void
     {
-        $_ENV['DATABASE'] = 'cash_test';
-
         $query = "INSERT INTO Transactions (value, userID, transactionDate, transactionTime, purpose) VALUES (:value, :userID, :transactionDate, :transactionTime, :purpose)";
 
         $params = [
@@ -50,15 +48,13 @@ class SqlConnectorTest extends TestCase
             ':purpose' => 'testing',
         ];
 
-        $result = $this->sqlConnector->executeInsertQuery($query, $params);
+        $result = $this->sqlConnector->execute($query, $params);
 
         self::assertIsString($result);
     }
 
     public function testExecuteInsertQueryInvalid(): void
     {
-        $_ENV['DATABASE'] = 'cash_test';
-
         $query = "INSERT INTO TransactionsNoNo (value, userID, transactionDate, transactionTime, purpose) VALUES (:value, :userID, :transactionDate, :transactionTime, :purpose)";
 
         $params = [
@@ -70,14 +66,29 @@ class SqlConnectorTest extends TestCase
         ];
 
         $this->expectException(PDOException::class);
-        $result = $this->sqlConnector->executeInsertQuery($query, $params);
+        $this->sqlConnector->execute($query, $params);
+    }
 
-        self::assertIsObject($result);
+    public function testExecuteDeleteQuery(): void
+    {
+        $query = "DELETE FROM Transactions;";
+        $params = [];
+
+        $result = $this->sqlConnector->execute($query, $params);
+
+        self::assertSame("0", $result);
+    }
+
+    public function testExecuteDeleteQueryError(): void
+    {
+        $this->expectException(PDOException::class);
+        $this->sqlConnector->execute('invalid', []);
     }
 
     protected function tearDown(): void
     {
-        $this->sqlConnector->executeDeleteQuery("DELETE FROM Transactions;", []);
-        $this->sqlConnector->executeDeleteQuery("DELETE FROM Users;", []);
+        $this->sqlConnector->execute("DELETE FROM Transactions;", []);
+        $this->sqlConnector->execute("DELETE FROM Users;", []);
+        $this->sqlConnector->disconnect();
     }
 }

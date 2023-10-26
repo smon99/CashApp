@@ -79,7 +79,6 @@ class AccountControllerTest extends TestCase
         $url = $this->controller->redirect->redirectRecordings->recordedUrl[0];
 
         self::assertSame($url, 'http://0.0.0.0:8000/?page=login');
-        $this->session->logout();
     }
 
     protected function tearDown(): void

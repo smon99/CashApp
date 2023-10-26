@@ -74,4 +74,10 @@ class SqlConnectorTest extends TestCase
 
         self::assertIsObject($result);
     }
+
+    protected function tearDown(): void
+    {
+        $this->sqlConnector->executeDeleteQuery("DELETE FROM Transactions;", []);
+        $this->sqlConnector->executeDeleteQuery("DELETE FROM Users;", []);
+    }
 }

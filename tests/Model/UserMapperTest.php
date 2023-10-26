@@ -8,16 +8,29 @@ use App\Model\UserDTO;
 
 class UserMapperTest extends TestCase
 {
-    public function testSqlToDTO(): void
-    {
-        $userMapper = new UserMapper();
+    private array $data;
+    private UserDTO $userDTO;
+    private UserMapper $userMapper;
 
-        $data = [
+    protected function setUp(): void
+    {
+        $this->data = [
             ['userID' => 1, 'username' => 'user1', 'email' => 'user1@example.com', 'password' => 'password1'],
             ['userID' => 2, 'username' => 'user2', 'email' => 'user2@example.com', 'password' => 'password2'],
         ];
 
-        $resultDTOs = $userMapper->sqlToDTO($data);
+        $this->userDTO = new UserDTO();
+        $this->userDTO->userID = 100;
+        $this->userDTO->username = 'Benutzer';
+        $this->userDTO->email = 'Benutzer@Benutzer.de';
+        $this->userDTO->password = 'Benutzer123#';
+
+        $this->userMapper = new UserMapper();
+    }
+
+    public function testSqlToDTO(): void
+    {
+        $resultDTOs = $this->userMapper->sqlToDTO($this->data);
 
         $this->assertCount(2, $resultDTOs);
         $this->assertInstanceOf(UserDTO::class, $resultDTOs[0]);
@@ -34,21 +47,18 @@ class UserMapperTest extends TestCase
 
     public function testDtoToArray(): void
     {
-        $userMapper = new UserMapper();
-
-        $userDTO = new UserDTO();
-        $userDTO->userID = 100;
-        $userDTO->username = 'user100';
-        $userDTO->email = 'user100@example.com';
-        $userDTO->password = 'Password100#';
-
-        $resultArray = $userMapper->dtoToArray($userDTO);
+        $resultArray = $this->userMapper->dtoToArray($this->userDTO);
 
         $this->assertEquals([
             'userID' => 100,
-            'username' => 'user100',
-            'email' => 'user100@example.com',
-            'password' => 'Password100#',
+            'username' => 'Benutzer',
+            'email' => 'Benutzer@Benutzer.de',
+            'password' => 'Benutzer123#',
         ], $resultArray);
+    }
+
+    protected function tearDown(): void
+    {
+        unset($this->userMapper);
     }
 }

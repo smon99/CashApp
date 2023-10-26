@@ -2,6 +2,7 @@
 
 namespace Test\Model;
 
+use App\Model\UserEntityManager;
 use PHPUnit\Framework\TestCase;
 use App\Model\UserDTO;
 use App\Model\UserRepository;
@@ -10,22 +11,20 @@ use App\Model\SqlConnector;
 
 class UserRepositoryTest extends TestCase
 {
+    private SqlConnector $sqlConnector;
     private UserRepository $userRepository;
 
     protected function setUp(): void
     {
-        $userMapper = $this->createMock(UserMapper::class);
-        $sqlConnector = $this->createMock(SqlConnector::class);
+        $userMapper = new UserMapper();
+        $this->sqlConnector = new SqlConnector();
 
-        $mockedData = [
-            $this->createUserDTO(1, 'user1', 'user1@example.com', 'password1'),
-            $this->createUserDTO(2, 'user2', 'user2@example.com', 'password2'),
-            $this->createUserDTO(3, 'user3', 'user3@example.com', 'password3'),
-        ];
+        $userEntityManager = new UserEntityManager($this->sqlConnector, $userMapper);
+        $this->userRepository = new UserRepository($userMapper, $this->sqlConnector);
 
-        $userMapper->method('sqlToDTO')->willReturn($mockedData);
-
-        $this->userRepository = new UserRepository($userMapper, $sqlConnector);
+        $userEntityManager->save($this->createUserDTO(1, 'user1', 'user1@example.com', 'password1'));
+        $userEntityManager->save($this->createUserDTO(2, 'user2', 'user2@example.com', 'password2'));
+        $userEntityManager->save($this->createUserDTO(3, 'user3', 'user3@example.com', 'password3'));
     }
 
     public function testFetchAllUsers(): void
@@ -68,5 +67,10 @@ class UserRepositoryTest extends TestCase
         $userDTO->email = $email;
         $userDTO->password = $password;
         return $userDTO;
+    }
+
+    protected function tearDown(): void
+    {
+        $this->sqlConnector->executeDeleteQuery("DELETE FROM Users;", []);
     }
 }

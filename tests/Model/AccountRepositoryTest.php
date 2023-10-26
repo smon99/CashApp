@@ -2,8 +2,8 @@
 
 namespace Test\Model;
 
+use App\Model\AccountEntityManager;
 use App\Model\SqlConnector;
-use App\Model\UserDTO;
 use PHPUnit\Framework\TestCase;
 use App\Model\AccountRepository;
 use App\Model\AccountMapper;
@@ -11,13 +11,13 @@ use App\Model\AccountDTO;
 
 class AccountRepositoryTest extends TestCase
 {
+    private AccountRepository $accountRepository;
+    private AccountEntityManager $accountEntityManager;
 
-    public function testCalculateBalance(): void
+    protected function setUp(): void
     {
-        $accountMapper = $this->createMock(AccountMapper::class);
-        $sqlConnector = $this->createMock(SqlConnector::class);
-
-        $accountRepository = new AccountRepository($accountMapper, $sqlConnector);
+        $this->accountRepository = new AccountRepository(new AccountMapper(), new SqlConnector());
+        $this->accountEntityManager = new AccountEntityManager(new SqlConnector(), new AccountMapper());
 
         $accountDTOList = [
             new AccountDTO(),
@@ -26,206 +26,66 @@ class AccountRepositoryTest extends TestCase
         ];
 
         $accountDTOList[0]->transactionID = 1;
-        $accountDTOList[0]->value = 40.0;
-        $accountDTOList[0]->userID = 0;
-        $accountDTOList[0]->transactionDate = '2023-01-01';
-        $accountDTOList[0]->transactionTime = '12:00:00';
+        $accountDTOList[0]->value = 10.0;
+        $accountDTOList[0]->userID = 1;
+        $accountDTOList[0]->transactionDate = date('Y-m-d');
+        $accountDTOList[0]->transactionTime = date('H:i:s');
         $accountDTOList[0]->purpose = 'deposit';
 
         $accountDTOList[1]->transactionID = 2;
-        $accountDTOList[1]->value = 30.0;
-        $accountDTOList[1]->userID = 0;
-        $accountDTOList[1]->transactionDate = '2023-01-02';
-        $accountDTOList[1]->transactionTime = '14:00:00';
-        $accountDTOList[1]->purpose = 'withdraw';
+        $accountDTOList[1]->value = 15.0;
+        $accountDTOList[1]->userID = 1;
+        $accountDTOList[1]->transactionDate = date('Y-m-d');
+        $accountDTOList[1]->transactionTime = date('H:i:s');
+        $accountDTOList[1]->purpose = 'deposit';
 
         $accountDTOList[2]->transactionID = 3;
-        $accountDTOList[2]->value = 20.0;
-        $accountDTOList[2]->userID = 0;
-        $accountDTOList[2]->transactionDate = '2023-01-01';
-        $accountDTOList[2]->transactionTime = '10:30:00';
+        $accountDTOList[2]->value = 5.0;
+        $accountDTOList[2]->userID = 1;
+        $accountDTOList[2]->transactionDate = date('Y-m-d');
+        $accountDTOList[2]->transactionTime = date('H:i:s');
         $accountDTOList[2]->purpose = 'deposit';
 
-        $sqlConnector->expects($this->once())
-            ->method('executeSelectAllQuery')
-            ->willReturn([]);
+        foreach ($accountDTOList as $accountDTO) {
+            $this->accountEntityManager->saveDeposit($accountDTO);
+        }
+    }
 
-        $accountMapper->expects($this->once())
-            ->method('sqlToDTO')
-            ->willReturn($accountDTOList);
+    public function testFetchAllTransactions(): void
+    {
+        $transactions = $this->accountRepository->fetchAllTransactions();
+        $assertion = $transactions[0];
 
-        $balance = $accountRepository->calculateBalance(0);
+        self::assertSame(10.0, $assertion->value);
+    }
 
-        $this->assertEquals(90.0, $balance);
+    public function testCalculateBalance(): void
+    {
+        $balance = $this->accountRepository->calculateBalance(1);
+
+        self::assertSame(30.0, $balance);
     }
 
     public function testCalculateBalancePerHour(): void
     {
-        $accountMapper = $this->createMock(AccountMapper::class);
-        $sqlConnector = $this->createMock(SqlConnector::class);
+        $balancePerHour = $this->accountRepository->calculateBalancePerHour(1);
 
-        $accountRepository = new AccountRepository($accountMapper, $sqlConnector);
-
-        $date = date('Y-m-d');
-        $time = date('H:i:s');
-
-        $accountDTOList = [
-            new AccountDTO(),
-            new AccountDTO(),
-            new AccountDTO(),
-        ];
-
-        $accountDTOList[0]->transactionID = 1;
-        $accountDTOList[0]->value = 40.0;
-        $accountDTOList[0]->userID = 0;
-        $accountDTOList[0]->transactionDate = $date;
-        $accountDTOList[0]->transactionTime = $time;
-        $accountDTOList[0]->purpose = 'deposit';
-
-        $accountDTOList[1]->transactionID = 2;
-        $accountDTOList[1]->value = 30.0;
-        $accountDTOList[1]->userID = 0;
-        $accountDTOList[1]->transactionDate = $date;
-        $accountDTOList[1]->transactionTime = $time;
-        $accountDTOList[1]->purpose = 'deposit';
-
-        $accountDTOList[2]->transactionID = 3;
-        $accountDTOList[2]->value = 20.0;
-        $accountDTOList[2]->userID = 0;
-        $accountDTOList[2]->transactionDate = $date;
-        $accountDTOList[2]->transactionTime = $time;
-        $accountDTOList[2]->purpose = 'deposit';
-
-        $sqlConnector->expects($this->once())
-            ->method('executeSelectAllQuery')
-            ->willReturn($accountDTOList);
-
-        $accountMapper->expects($this->once())
-            ->method('sqlToDTO')
-            ->willReturn($accountDTOList);
-
-        $userID = 0;
-
-        $balancePerHour = $accountRepository->calculateBalancePerHour($userID);
-
-        $expectedBalancePerHour = 90.0;
-
-        $this->assertEquals($expectedBalancePerHour, $balancePerHour);
+        self::assertSame(30.0, $balancePerHour);
     }
 
     public function testCalculateBalancePerDay(): void
     {
-        $accountMapper = $this->createMock(AccountMapper::class);
-        $sqlConnector = $this->createMock(SqlConnector::class);
+        $balancePerDay = $this->accountRepository->calculateBalancePerDay(1);
 
-        $accountRepository = new AccountRepository($accountMapper, $sqlConnector);
-
-        $date = date('Y-m-d');
-        $time = date('H:i:s');
-
-        $accountDTOList = [
-            new AccountDTO(),
-            new AccountDTO(),
-            new AccountDTO(),
-        ];
-
-        $accountDTOList[0]->transactionID = 1;
-        $accountDTOList[0]->value = 40.0;
-        $accountDTOList[0]->userID = 0;
-        $accountDTOList[0]->transactionDate = $date;
-        $accountDTOList[0]->transactionTime = $time;
-        $accountDTOList[0]->purpose = 'deposit';
-
-        $accountDTOList[1]->transactionID = 2;
-        $accountDTOList[1]->value = 30.0;
-        $accountDTOList[1]->userID = 0;
-        $accountDTOList[1]->transactionDate = $date;
-        $accountDTOList[1]->transactionTime = $time;
-        $accountDTOList[1]->purpose = 'deposit';
-
-        $accountDTOList[2]->transactionID = 3;
-        $accountDTOList[2]->value = 20.0;
-        $accountDTOList[2]->userID = 0;
-        $accountDTOList[2]->transactionDate = $date;
-        $accountDTOList[2]->transactionTime = $time;
-        $accountDTOList[2]->purpose = 'deposit';
-
-        $sqlConnector->expects($this->once())
-            ->method('executeSelectAllQuery')
-            ->willReturn($accountDTOList);
-
-        $accountMapper->expects($this->once())
-            ->method('sqlToDTO')
-            ->willReturn($accountDTOList);
-
-        $userID = 0;
-
-        $balancePerDay = $accountRepository->calculateBalancePerDay($userID);
-
-        $expectedBalancePerHour = 90.0;
-
-        $this->assertEquals($expectedBalancePerHour, $balancePerDay);
-    }
-
-    public function testTransactionPerUserID1(): void
-    {
-        $accountRepository = new AccountRepository(new AccountMapper(), new SqlConnector());
-
-        $response = $accountRepository->transactionPerUserID(0);
-
-        self::assertIsArray($response);
+        self::assertSame(30.0, $balancePerDay);
     }
 
     public function testTransactionPerUserID(): void
     {
-        $accountMapper = $this->createMock(AccountMapper::class);
-        $sqlConnector = $this->createMock(SqlConnector::class);
+        $userTransactions = $this->accountRepository->transactionPerUserID(1);
+        $transactionEntity = $userTransactions[0];
 
-        $accountRepository = new AccountRepository($accountMapper, $sqlConnector);
-
-        $date = date('Y-m-d');
-        $time = date('H:i:s');
-
-        $accountDTOList = [
-            new AccountDTO(),
-            new AccountDTO(),
-            new AccountDTO(),
-        ];
-
-        $accountDTOList[0]->transactionID = 1;
-        $accountDTOList[0]->value = 40.0;
-        $accountDTOList[0]->userID = 0;
-        $accountDTOList[0]->transactionDate = $date;
-        $accountDTOList[0]->transactionTime = $time;
-        $accountDTOList[0]->purpose = 'deposit';
-
-        $accountDTOList[1]->transactionID = 2;
-        $accountDTOList[1]->value = 30.0;
-        $accountDTOList[1]->userID = 0;
-        $accountDTOList[1]->transactionDate = $date;
-        $accountDTOList[1]->transactionTime = $time;
-        $accountDTOList[1]->purpose = 'deposit';
-
-        $accountDTOList[2]->transactionID = 3;
-        $accountDTOList[2]->value = 20.0;
-        $accountDTOList[2]->userID = 0;
-        $accountDTOList[2]->transactionDate = $date;
-        $accountDTOList[2]->transactionTime = $time;
-        $accountDTOList[2]->purpose = 'deposit';
-
-        $sqlConnector->expects($this->once())
-            ->method('executeSelectAllQuery')
-            ->willReturn($accountDTOList);
-
-        $accountMapper->expects($this->once())
-            ->method('sqlToDTO')
-            ->willReturn($accountDTOList);
-
-        $userID = 0;
-
-        $transactions = $accountRepository->transactionPerUserID($userID);
-
-        self::assertEquals('deposit', $transactions[0]->purpose);
+        self::assertSame(10.0, $transactionEntity->value);
     }
 
     protected function tearDown(): void
@@ -233,7 +93,5 @@ class AccountRepositoryTest extends TestCase
         $connector = new SqlConnector();
         $connector->executeDeleteQuery("DELETE FROM Transactions;", []);
         $connector->disconnect();
-
-        parent::tearDown(); // TODO: Change the autogenerated stub
     }
 }

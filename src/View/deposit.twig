@@ -11,6 +11,7 @@ Angemeldet als: {{ activeUser }}
     <button>features</button>
 </a>
 
+<br><br>
 {% if success is defined %}
     {{ success }}
 {% endif %}
@@ -19,6 +20,7 @@ Angemeldet als: {{ activeUser }}
     Fehler! Die Transaktion wurde nicht gespeichert!<br>
 {% endif %}
 <br>
+
 Kontostand: {{ balance }} €
 
 <h1>

@@ -112,6 +112,20 @@ class TransactionControllerTest extends TestCase
         $this->session->logout();
     }
 
+    public function testActionException(): void
+    {
+        unset($_POST["amount"]);
+        $this->session->loginUser($this->userDTO, 'Simon123#');
+        $_POST["amount"] = '500';
+        $_POST["receiver"] = 'Nico@Nico.de';
+        $_POST["transfer"] = true;
+
+        $viewParams = $this->controller->action()->getParameters();
+
+        self::assertContains("Bitte einen Betrag von mindestens 0.01€ und maximal 50€ eingeben!", $viewParams);
+        $this->session->logout();
+    }
+
     protected function tearDown(): void
     {
         $connector = new SqlConnector();

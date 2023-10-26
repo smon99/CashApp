@@ -3,6 +3,7 @@
 namespace Test\Model;
 
 use App\Model\AccountMapper;
+use App\Model\AccountRepository;
 use App\Model\SqlConnector;
 use PHPUnit\Framework\TestCase;
 use App\Model\AccountEntityManager;
@@ -12,43 +13,31 @@ class AccountEntityManagerTest extends TestCase
 {
     private SqlConnector $sqlConnector;
     private AccountMapper $accountMapper;
+    private AccountRepository $accountRepository;
 
     protected function setUp(): void
     {
-        $this->sqlConnector = $this->createMock(SqlConnector::class);
-        $this->accountMapper = $this->createMock(AccountMapper::class);
+        $this->sqlConnector = new SqlConnector();
+        $this->accountMapper = new AccountMapper();
+
+        $this->accountRepository = new AccountRepository($this->accountMapper, $this->sqlConnector,);
     }
 
     public function testSaveDeposit(): void
     {
         $entityManager = new AccountEntityManager($this->sqlConnector, $this->accountMapper);
+
         $deposit = new AccountDTO();
-
-        $this->accountMapper->expects($this->once())
-            ->method('dtoToArray')
-            ->with($deposit)
-            ->willReturn([
-                'value' => 100.0,
-                'userID' => 1,
-                'transactionDate' => '2023-10-07',
-                'transactionTime' => '12:34:56',
-                'purpose' => 'Deposit',
-            ]);
-
-        $this->sqlConnector->expects($this->once())
-            ->method('executeInsertQuery')
-            ->with(
-                $this->equalTo('INSERT INTO Transactions (value, userID, transactionDate, transactionTime, purpose) VALUES (:value, :userID, :transactionDate, :transactionTime, :purpose)'),
-                $this->callback(function ($params) {
-                    return $params[':value'] === 100.0
-                        && $params[':userID'] === 1
-                        && $params[':transactionDate'] === '2023-10-07'
-                        && $params[':transactionTime'] === '12:34:56'
-                        && $params[':purpose'] === 'Deposit';
-                })
-            );
+        $deposit->userID = 1;
+        $deposit->value = 10.0;
+        $deposit->transactionTime = date('H:i:s');
+        $deposit->transactionDate = date('Y-m-d');
 
         $entityManager->saveDeposit($deposit);
+        $transaction[] = $this->accountRepository->transactionPerUserID(1);
+        $result = $transaction[0][0];
+
+        self::assertSame(10.0, $result->value);
     }
 
     protected function tearDown(): void

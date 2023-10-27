@@ -34,6 +34,11 @@ class UserValidationTest extends TestCase
         $this->userEntityManager = new UserEntityManager($this->sqlConnector, $userMapper);
     }
 
+    protected function tearDown(): void
+    {
+        $this->sqlConnector->execute("DELETE FROM Users;", []);
+    }
+
     public function testUserValidationTrue(): void
     {
         $userDTO = new UserDTO();
@@ -175,10 +180,5 @@ class UserValidationTest extends TestCase
         $this->expectExceptionMessage('Alle Felder müssen ausgefüllt sein!');
 
         $validation->collectErrors($userDTO);
-    }
-
-    protected function tearDown(): void
-    {
-        $this->sqlConnector->execute("DELETE FROM Users;", []);
     }
 }

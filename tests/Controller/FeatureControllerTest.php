@@ -25,6 +25,12 @@ class FeatureControllerTest extends TestCase
         $this->controller = new FeatureController($this->container);
     }
 
+    protected function tearDown(): void
+    {
+        unset($_SESSION["username"]);
+        session_destroy();
+    }
+
     public function testAction(): void
     {
         session_start();
@@ -35,11 +41,5 @@ class FeatureControllerTest extends TestCase
 
         self::assertInstanceOf(View::class, $feature);
         self::assertEmpty($header);
-    }
-
-    protected function tearDown(): void
-    {
-        unset($_SESSION["username"]);
-        session_destroy();
     }
 }

@@ -51,6 +51,13 @@ class AccountRepositoryTest extends TestCase
         }
     }
 
+    protected function tearDown(): void
+    {
+        $connector = new SqlConnector();
+        $connector->execute("DELETE FROM Transactions;", []);
+        $connector->disconnect();
+    }
+
     public function testFetchAllTransactions(): void
     {
         $transactions = $this->accountRepository->fetchAllTransactions();
@@ -86,12 +93,5 @@ class AccountRepositoryTest extends TestCase
         $transactionEntity = $userTransactions[0];
 
         self::assertSame(10.0, $transactionEntity->value);
-    }
-
-    protected function tearDown(): void
-    {
-        $connector = new SqlConnector();
-        $connector->execute("DELETE FROM Transactions;", []);
-        $connector->disconnect();
     }
 }

@@ -42,6 +42,17 @@ class AccountControllerTest extends TestCase
         session_start();
     }
 
+    protected function tearDown(): void
+    {
+        $connector = new SqlConnector();
+        $connector->execute("DELETE FROM Transactions;", []);
+        $connector->execute("DELETE FROM Users;", []);
+        $connector->disconnect();
+        $this->session->logout();
+        unset($_POST["amount"], $_POST["logout"], $this->userDTO, $this->redirectRecordings, $this->session);
+        session_destroy();
+    }
+
     public function testAction(): void
     {
         $this->session->loginUser($this->userDTO, 'Simon123#');
@@ -91,16 +102,5 @@ class AccountControllerTest extends TestCase
 
         self::assertFalse($loginStatus);
         self::assertSame($url, 'http://0.0.0.0:8000/?page=login');
-    }
-
-    protected function tearDown(): void
-    {
-        $connector = new SqlConnector();
-        $connector->execute("DELETE FROM Transactions;", []);
-        $connector->execute("DELETE FROM Users;", []);
-        $connector->disconnect();
-        $this->session->logout();
-        unset($_POST["amount"], $_POST["logout"], $this->userDTO, $this->redirectRecordings, $this->session);
-        session_destroy();
     }
 }

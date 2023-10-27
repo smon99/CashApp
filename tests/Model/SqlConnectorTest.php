@@ -17,6 +17,13 @@ class SqlConnectorTest extends TestCase
         $this->sqlConnector = new SqlConnector();
     }
 
+    protected function tearDown(): void
+    {
+        $this->sqlConnector->execute("DELETE FROM Transactions;", []);
+        $this->sqlConnector->execute("DELETE FROM Users;", []);
+        $this->sqlConnector->disconnect();
+    }
+
     public function testExecuteSelectAllQueryValid(): void
     {
         $query = "SELECT * FROM Users";
@@ -83,12 +90,5 @@ class SqlConnectorTest extends TestCase
     {
         $this->expectException(PDOException::class);
         $this->sqlConnector->execute('invalid', []);
-    }
-
-    protected function tearDown(): void
-    {
-        $this->sqlConnector->execute("DELETE FROM Transactions;", []);
-        $this->sqlConnector->execute("DELETE FROM Users;", []);
-        $this->sqlConnector->disconnect();
     }
 }

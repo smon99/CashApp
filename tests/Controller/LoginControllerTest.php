@@ -49,6 +49,13 @@ class LoginControllerTest extends TestCase
         session_start();
     }
 
+    protected function tearDown(): void
+    {
+        $this->sqlConnector->execute("DELETE FROM Users;", []);
+        $this->session->logout();
+        session_destroy();
+    }
+
     public function testAction(): void
     {
         $_POST['mail'] = 'Simon@Simon.de';
@@ -58,12 +65,5 @@ class LoginControllerTest extends TestCase
         $this->controller->action();
 
         self::assertSame('Simon', $this->session->getUserName());
-    }
-
-    protected function tearDown(): void
-    {
-        $this->sqlConnector->execute("DELETE FROM Users;", []);
-        $this->session->logout();
-        session_destroy();
     }
 }

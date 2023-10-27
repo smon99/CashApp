@@ -27,6 +27,11 @@ class UserRepositoryTest extends TestCase
         $userEntityManager->save($this->createUserDTO(3, 'user3', 'user3@example.com', 'password3'));
     }
 
+    protected function tearDown(): void
+    {
+        $this->sqlConnector->execute("DELETE FROM Users;", []);
+    }
+
     public function testFetchAllUsers(): void
     {
         $users = $this->userRepository->fetchAllUsers();
@@ -67,10 +72,5 @@ class UserRepositoryTest extends TestCase
         $userDTO->email = $email;
         $userDTO->password = $password;
         return $userDTO;
-    }
-
-    protected function tearDown(): void
-    {
-        $this->sqlConnector->execute("DELETE FROM Users;", []);
     }
 }

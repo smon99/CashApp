@@ -8,6 +8,27 @@ use App\Core\View;
 
 class ViewTest extends TestCase
 {
+    protected function tearDown(): void
+    {
+        $templatePath = __DIR__ . '/temp_templates';
+
+        if (is_dir($templatePath)) {
+            $files = new \RecursiveIteratorIterator(
+                new \RecursiveDirectoryIterator($templatePath, FilesystemIterator::SKIP_DOTS),
+                \RecursiveIteratorIterator::CHILD_FIRST
+            );
+            foreach ($files as $file) {
+                if ($file->isDir()) {
+                    rmdir($file->getRealPath());
+                } else {
+                    unlink($file->getRealPath());
+                }
+            }
+            rmdir($templatePath);
+        }
+        parent::tearDown();
+    }
+
     public function testDisplay(): void
     {
         $templatePath = __DIR__ . '/temp_templates';
@@ -58,26 +79,5 @@ class ViewTest extends TestCase
         $this->assertSame('test_template.twig', $view->getTpl());
 
         rmdir($templatePath);
-    }
-
-    protected function tearDown(): void
-    {
-        $templatePath = __DIR__ . '/temp_templates';
-
-        if (is_dir($templatePath)) {
-            $files = new \RecursiveIteratorIterator(
-                new \RecursiveDirectoryIterator($templatePath, FilesystemIterator::SKIP_DOTS),
-                \RecursiveIteratorIterator::CHILD_FIRST
-            );
-            foreach ($files as $file) {
-                if ($file->isDir()) {
-                    rmdir($file->getRealPath());
-                } else {
-                    unlink($file->getRealPath());
-                }
-            }
-            rmdir($templatePath);
-        }
-        parent::tearDown();
     }
 }

@@ -34,6 +34,12 @@ class UserControllerTest extends TestCase
         $this->controller = new UserController($this->container);
     }
 
+    protected function tearDown(): void
+    {
+        $this->sqlConnector->execute("DELETE FROM Users;", []);
+        unset($_POST['username'], $_POST['email'], $_POST['password'], $_POST['register']);
+    }
+
     public function testActionInstance(): void
     {
         self::assertInstanceOf(View::class, $this->controller->action());
@@ -63,11 +69,5 @@ class UserControllerTest extends TestCase
         $_POST['register'] = true;
 
         self::assertContains('Bitte gültige eMail eingeben! ', $this->controller->action()->getParameters());
-    }
-
-    protected function tearDown(): void
-    {
-        $this->sqlConnector->execute("DELETE FROM Users;", []);
-        unset($_POST['username'], $_POST['email'], $_POST['password'], $_POST['register']);
     }
 }

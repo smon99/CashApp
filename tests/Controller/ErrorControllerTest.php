@@ -9,7 +9,7 @@ use App\Core\View;
 
 class ErrorControllerTest extends TestCase
 {
-    public function testAction()
+    public function testAction(): void
     {
         $container = $this->createMock(Container::class);
         $view = $this->createMock(View::class);

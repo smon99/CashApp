@@ -23,6 +23,11 @@ class UserEntityManagerTest extends TestCase
         $this->userRepository = new UserRepository($this->userMapper, $this->sqlConnector);
     }
 
+    protected function tearDown(): void
+    {
+        $this->sqlConnector->execute("DELETE FROM Users;", []);
+    }
+
     public function testSaveUser(): void
     {
         $entityManager = new UserEntityManager($this->sqlConnector, $this->userMapper);
@@ -38,10 +43,5 @@ class UserEntityManagerTest extends TestCase
         $userEntity = $users[0][0];
 
         self::assertSame('Tester', $userEntity->username);
-    }
-
-    protected function tearDown(): void
-    {
-        $this->sqlConnector->execute("DELETE FROM Users;", []);
     }
 }

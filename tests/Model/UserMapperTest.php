@@ -28,6 +28,11 @@ class UserMapperTest extends TestCase
         $this->userMapper = new UserMapper();
     }
 
+    protected function tearDown(): void
+    {
+        unset($this->userMapper);
+    }
+
     public function testSqlToDTO(): void
     {
         $resultDTOs = $this->userMapper->sqlToDTO($this->data);
@@ -55,10 +60,5 @@ class UserMapperTest extends TestCase
             'email' => 'Benutzer@Benutzer.de',
             'password' => 'Benutzer123#',
         ], $resultArray);
-    }
-
-    protected function tearDown(): void
-    {
-        unset($this->userMapper);
     }
 }

@@ -64,6 +64,18 @@ class TransactionControllerTest extends TestCase
         session_start();
     }
 
+    protected function tearDown(): void
+    {
+        $connector = new SqlConnector();
+        $connector->execute("DELETE FROM Transactions;", []);
+        $connector->execute("DELETE FROM Users;", []);
+        $connector->disconnect();
+        $this->session->logout();
+
+        unset($_POST["logout"], $_POST["receiver"], $_POST["amount"], $_POST["transfer"], $this->userDTO, $this->redirectRecordings, $this->session);
+        session_destroy();
+    }
+
     public function testAction(): void
     {
         $this->session->loginUser($this->userDTO, 'Simon123#');
@@ -124,17 +136,5 @@ class TransactionControllerTest extends TestCase
 
         self::assertContains("Bitte einen Betrag von mindestens 0.01€ und maximal 50€ eingeben!", $viewParams);
         $this->session->logout();
-    }
-
-    protected function tearDown(): void
-    {
-        $connector = new SqlConnector();
-        $connector->execute("DELETE FROM Transactions;", []);
-        $connector->execute("DELETE FROM Users;", []);
-        $connector->disconnect();
-        $this->session->logout();
-
-        unset($_POST["logout"], $_POST["receiver"], $_POST["amount"], $_POST["transfer"], $this->userDTO, $this->redirectRecordings, $this->session);
-        session_destroy();
     }
 }

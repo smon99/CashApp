@@ -24,6 +24,12 @@ class HistoryControllerTest extends TestCase
         $this->controller = new HistoryController($container);
     }
 
+    protected function tearDown(): void
+    {
+        unset($_SESSION["loginStatus"], $_SESSION["userID"]);
+        session_destroy();
+    }
+
     public function testAction(): void
     {
         session_start();
@@ -49,10 +55,4 @@ class HistoryControllerTest extends TestCase
 
         self::assertEmpty($header);
     }
-
-    protected function tearDown(): void
-    {
-        session_destroy();
-    }
-
 }

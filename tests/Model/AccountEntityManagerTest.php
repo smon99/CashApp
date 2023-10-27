@@ -23,6 +23,13 @@ class AccountEntityManagerTest extends TestCase
         $this->accountRepository = new AccountRepository($this->accountMapper, $this->sqlConnector,);
     }
 
+    protected function tearDown(): void
+    {
+        $connector = new SqlConnector();
+        $connector->execute("DELETE FROM Transactions;", []);
+        $connector->disconnect();
+    }
+
     public function testSaveDeposit(): void
     {
         $entityManager = new AccountEntityManager($this->sqlConnector, $this->accountMapper);
@@ -38,12 +45,5 @@ class AccountEntityManagerTest extends TestCase
         $result = $transaction[0][0];
 
         self::assertSame(10.0, $result->value);
-    }
-
-    protected function tearDown(): void
-    {
-        $connector = new SqlConnector();
-        $connector->execute("DELETE FROM Transactions;", []);
-        $connector->disconnect();
     }
 }

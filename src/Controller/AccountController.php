@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Core\Container;
+use App\Core\InputTransformer;
 use App\Core\Redirect;
 use App\Core\Session;
 use App\Core\View;
@@ -20,6 +21,7 @@ class AccountController implements ControllerInterface
     private AccountValidation $validator;
     public Redirect $redirect;
     private Session $session;
+    private InputTransformer $inputTransformer;
     private $success;
 
     public function __construct(Container $container)
@@ -30,6 +32,7 @@ class AccountController implements ControllerInterface
         $this->validator = $container->get(AccountValidation::class);
         $this->redirect = $container->get(Redirect::class);
         $this->session = $container->get(Session::class);
+        $this->inputTransformer = $container->get(InputTransformer::class);
     }
 
     public function action(): View
@@ -39,14 +42,13 @@ class AccountController implements ControllerInterface
         }
 
         $activeUser = null;
-        $loginStatus = false;
         $balance = null;
 
         $input = $_POST["amount"] ?? null;
 
         if ($input !== null) {
             try {
-                $validateThis = $this->getCorrectAmount($input);
+                $validateThis = $this->inputTransformer->transformInput($input);
                 $this->validator->collectErrors($validateThis, $this->session->getUserID());
                 $amount = $validateThis;
 
@@ -72,24 +74,17 @@ class AccountController implements ControllerInterface
         }
 
         if ($this->session->loginStatus()) {
-            $loginStatus = $this->session->loginStatus();
             $activeUser = $this->session->getUserName();
             $balance = $this->accountRepository->calculateBalance($this->session->getUserID());
         }
 
         $this->view->addParameter('balance', $balance);
-        $this->view->addParameter('loginStatus', $loginStatus);
+        $this->view->addParameter('loginStatus', $this->session->loginStatus());
         $this->view->addParameter('activeUser', $activeUser);
         $this->view->addParameter('success', $this->success);
 
         $this->view->setTemplate('deposit.twig');
 
         return $this->view;
-    }
-
-    private function getCorrectAmount(string $input): float
-    {
-        $amount = str_replace(['.', ','], ['', '.'], $input);
-        return (float)$amount;
     }
 }

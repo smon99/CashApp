@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Core\Account\AccountValidationException;
 use App\Core\AccountValidation;
 use App\Core\Container;
+use App\Core\InputTransformer;
 use App\Core\Redirect;
 use App\Core\Session;
 use App\Core\View;
@@ -22,6 +23,7 @@ class TransactionController implements ControllerInterface
     public Redirect $redirect;
     private Session $session;
     private AccountValidation $accountValidation;
+    private InputTransformer $inputTransformer;
     private $success;
 
     public function __construct(Container $container)
@@ -33,6 +35,7 @@ class TransactionController implements ControllerInterface
         $this->accountValidation = $container->get(AccountValidation::class);
         $this->userRepository = $container->get(UserRepository::class);
         $this->session = $container->get(Session::class);
+        $this->inputTransformer = $container->get(InputTransformer::class);
     }
 
     public function action(): View
@@ -54,7 +57,7 @@ class TransactionController implements ControllerInterface
         if (isset($_POST["transfer"])) {
             try {
                 $receiver = $this->userRepository->findByMail($_POST["receiver"]);
-                $validateThis = $this->getCorrectAmount($_POST["amount"]);
+                $validateThis = $this->inputTransformer->transformInput($_POST["amount"]);
                 $this->accountValidation->collectErrors($validateThis, $this->session->getUserID());
                 $amount = $validateThis;
 
@@ -98,12 +101,5 @@ class TransactionController implements ControllerInterface
         $this->view->setTemplate('transaction.twig');
 
         return $this->view;
-    }
-
-    private
-    function getCorrectAmount(string $input): float
-    {
-        $amount = str_replace(['.', ','], ['', '.'], $input);
-        return (float)$amount;
     }
 }

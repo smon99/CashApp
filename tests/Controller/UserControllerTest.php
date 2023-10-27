@@ -53,11 +53,16 @@ class UserControllerTest extends TestCase
 
         $_POST['register'] = true;
 
-        $this->controller->action();
+        $parameters = $key['parameters'] = $this->controller->action()->getParameters();
+        $url = $this->controller->redirect->redirectRecordings->recordedUrl[0];
 
         $registeredUser = $this->userRepository->findByMail('Tester@Tester.de');
 
+        self::assertContains('Tester', $parameters);
+        self::assertContains('Tester@Tester.de', $parameters);
+        self::assertContains('Tester123#', $parameters);
         self::assertSame('Tester', $registeredUser->username);
+        self::assertSame('http://0.0.0.0:8000/?page=login', $url);
     }
 
     public function testActionValidationException(): void
@@ -69,5 +74,10 @@ class UserControllerTest extends TestCase
         $_POST['register'] = true;
 
         self::assertContains('Bitte gültige eMail eingeben! ', $this->controller->action()->getParameters());
+    }
+
+    public function testActionTemplatePath(): void
+    {
+        self::assertSame('user.twig', $this->controller->action()->getTpl());
     }
 }

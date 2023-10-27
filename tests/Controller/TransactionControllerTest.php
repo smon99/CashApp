@@ -15,6 +15,7 @@ use App\Model\SqlConnector;
 use App\Model\UserDTO;
 use App\Model\UserEntityManager;
 use App\Model\UserMapper;
+use App\Model\UserRepository;
 use PHPUnit\Framework\TestCase;
 
 class TransactionControllerTest extends TestCase
@@ -25,6 +26,7 @@ class TransactionControllerTest extends TestCase
     private AccountDTO $accountDTO;
     private AccountRepository $accountRepository;
     private AccountEntityManager $accountEntityManager;
+    private UserRepository $userRepository;
 
     protected function setUp(): void
     {
@@ -40,6 +42,7 @@ class TransactionControllerTest extends TestCase
         $this->accountRepository = new AccountRepository(new AccountMapper(), new SqlConnector());
         $userEntityManager = new UserEntityManager(new SqlConnector(), new UserMapper());
         $this->accountEntityManager = new AccountEntityManager(new SqlConnector(), new AccountMapper());
+        $this->userRepository = new UserRepository(new UserMapper(), new SqlConnector());
 
         $this->userDTO = new UserDTO();
         $this->userDTO->password = '$2y$10$rqTcf57sIEVAZsertDU7P.8O3kObwxc17jL6Cec.6oMcX/VWdFX0i';
@@ -79,8 +82,35 @@ class TransactionControllerTest extends TestCase
     public function testAction(): void
     {
         $this->session->loginUser($this->userDTO, 'Simon123#');
-        self::assertContains("Simon", $this->controller->action()->getParameters());
-        $this->session->logout();
+        $this->accountEntityManager->saveDeposit($this->accountDTO);
+
+        $_POST["amount"] = "1";
+        $_POST["receiver"] = 'Nico@Nico.de';
+        $_POST["transfer"] = true;
+
+        $this->controller->action();
+
+        $transactionsPerSender = $this->accountRepository->transactionPerUserID($this->session->getUserID());
+        $transactionsPerReceiver = $this->accountRepository->transactionPerUserID($this->userRepository->findByMail('Nico@Nico.de')->userID);
+
+        $resultSender = null;
+        foreach ($transactionsPerSender as $transaction) {
+            if ($transaction->purpose === 'Geldtransfer an Nico') {
+                $resultSender = $transaction;
+                break;
+            }
+        }
+
+        $resultReceiver = null;
+        foreach ($transactionsPerReceiver as $transaction) {
+            if ($transaction->purpose === 'Zahlung erhalten von Simon') {
+                $resultReceiver = $transaction;
+                break;
+            }
+        }
+
+        self::assertSame('Zahlung erhalten von Simon', $resultReceiver->purpose);
+        self::assertSame('Geldtransfer an Nico', $resultSender->purpose);
     }
 
     public function testActionNoSession(): void
@@ -97,11 +127,13 @@ class TransactionControllerTest extends TestCase
     {
         $this->session->loginUser($this->userDTO, 'Simon123#');
         $_POST["logout"] = true;
+
         $this->controller->action();
+        $url = $this->controller->redirect->redirectRecordings->recordedUrl[0];
+        $loginStatus = $this->session->loginStatus();
 
-        self::assertEmpty($_SESSION);
-
-        $this->session->logout();
+        self::assertFalse($loginStatus);
+        self::assertSame($url, 'http://0.0.0.0:8000/?page=login');
     }
 
     public function testActionTransaction(): void
@@ -126,7 +158,6 @@ class TransactionControllerTest extends TestCase
 
     public function testActionException(): void
     {
-        unset($_POST["amount"]);
         $this->session->loginUser($this->userDTO, 'Simon123#');
         $_POST["amount"] = '500';
         $_POST["receiver"] = 'Nico@Nico.de';
@@ -136,5 +167,55 @@ class TransactionControllerTest extends TestCase
 
         self::assertContains("Bitte einen Betrag von mindestens 0.01€ und maximal 50€ eingeben!", $viewParams);
         $this->session->logout();
+    }
+
+    public function testActionReceiverInvalid(): void
+    {
+        $this->accountEntityManager->saveDeposit($this->accountDTO);
+        $this->session->loginUser($this->userDTO, 'Simon123#');
+
+        $_POST["amount"] = "1";
+        $_POST["receiver"] = 'InvalidUser';
+        $_POST["transfer"] = true;
+
+        $viewParams = $this->controller->action()->getParameters();
+
+        self::assertContains("Empfänger existiert nicht! ", $viewParams);
+    }
+
+    public function testActionBalanceInvalid(): void
+    {
+        $this->accountEntityManager->saveDeposit($this->accountDTO);
+        $this->session->loginUser($this->userDTO, 'Simon123#');
+
+        $_POST["amount"] = "11";
+        $_POST["receiver"] = 'Nico@Nico.de';
+        $_POST["transfer"] = true;
+
+        $viewParams = $this->controller->action()->getParameters();
+
+        self::assertContains("Guthaben zu gering! ", $viewParams);
+    }
+
+    public function testActionViewParameters(): void
+    {
+        $this->accountEntityManager->saveDeposit($this->accountDTO);
+
+        $_POST["amount"] = "10";
+        $_POST["receiver"] = 'Nico@Nico.de';
+        $_POST["transfer"] = true;
+
+        $this->session->loginUser($this->userDTO, 'Simon123#');
+        $params = $this->controller->action()->getParameters();
+
+        self::assertContains("Simon", $params);
+        self::assertContains($this->session->loginStatus(), $params);
+        self::assertContains(($this->accountRepository->calculateBalance($this->session->getUserID())) + 10.00, $params);
+        self::assertContains("Die Transaktion wurde erfolgreich durchgeführt!", $params);
+    }
+
+    public function testActionTemplatePath(): void
+    {
+        self::assertSame('transaction.twig', $this->controller->action()->getTpl());
     }
 }

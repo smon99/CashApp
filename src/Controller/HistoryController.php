@@ -11,7 +11,7 @@ use App\Model\AccountRepository;
 class HistoryController implements ControllerInterface
 {
     private View $view;
-    private Redirect $redirect;
+    public Redirect $redirect;
     private AccountRepository $accountRepository;
     private Session $session;
 
@@ -27,11 +27,11 @@ class HistoryController implements ControllerInterface
     {
         if (!$this->session->loginStatus()) {
             $this->redirect->redirectTo('http://0.0.0.0:8000/?page=login');
+        } else {
+            $transactions = $this->accountRepository->transactionPerUserID($this->session->getUserID());
+            $this->view->addParameter('transactions', $transactions);
         }
 
-        $transactions = $this->accountRepository->transactionPerUserID($this->session->getUserID());
-
-        $this->view->addParameter('transactions', $transactions);
         $this->view->setTemplate('history.twig');
 
         return $this->view;

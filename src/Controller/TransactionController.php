@@ -46,7 +46,7 @@ class TransactionController implements ControllerInterface
 
         $activeUser = null;
         $balance = null;
-        $loginStatus = false;
+        $error = null;
 
         if ($this->session->loginStatus()) {
             $loginStatus = $this->session->loginStatus();
@@ -61,7 +61,17 @@ class TransactionController implements ControllerInterface
                 $this->accountValidation->collectErrors($validateThis, $this->session->getUserID());
                 $amount = $validateThis;
 
-                if ($receiver !== null && $amount <= $balance) {
+                if ($receiver === null) {
+                    $error = 'Empfänger existiert nicht! ';
+                    $this->view->addParameter('error', $error);
+                }
+
+                if ($amount > $balance) {
+                    $error = 'Guthaben zu gering! ';
+                    $this->view->addParameter('error', $error);
+                }
+
+                if ($error === null) {
                     $date = date('Y-m-d');
                     $time = date('H:i:s');
 
@@ -83,6 +93,7 @@ class TransactionController implements ControllerInterface
 
                     $this->success = "Die Transaktion wurde erfolgreich durchgeführt!";
                 }
+
             } catch (AccountValidationException $e) {
                 $this->view->addParameter('error', $e->getMessage());
             }
@@ -90,12 +101,12 @@ class TransactionController implements ControllerInterface
 
         if (isset($_POST["logout"])) {
             $this->session->logout();
-            header("Refresh:0");
+            $this->redirect->redirectTo('http://0.0.0.0:8000/?page=login');
         }
 
         $this->view->addParameter('activeUser', $activeUser);
         $this->view->addParameter('balance', $balance);
-        $this->view->addParameter('loginStatus', $loginStatus);
+        $this->view->addParameter('loginStatus', $this->session->loginStatus());
         $this->view->addParameter('success', $this->success);
 
         $this->view->setTemplate('transaction.twig');

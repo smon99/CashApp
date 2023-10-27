@@ -17,7 +17,7 @@ use App\Core\User\UserValidationException;
 class UserController implements ControllerInterface
 {
     private View $view;
-    private Redirect $redirect;
+    public Redirect $redirect;
     private UserEntityManager $userEntityManager;
 
     public function __construct(Container $container)
@@ -30,9 +30,9 @@ class UserController implements ControllerInterface
     public function action(): View
     {
         $errors = [];
-        $userCheck = null;
-        $mailCheck = null;
-        $passwordCheck = null;
+        $userCheck = '';
+        $mailCheck = '';
+        $passwordCheck = '';
 
         if (isset($_POST['register'])) {
             $userCheck = $_POST['username'];
@@ -43,7 +43,6 @@ class UserController implements ControllerInterface
             $validatorDTO->username = $userCheck;
             $validatorDTO->email = $mailCheck;
             $validatorDTO->password = $passwordCheck;
-            $validatorDTO->userID = 0;
 
             try {
                 $validation = new UserValidation(
@@ -68,19 +67,13 @@ class UserController implements ControllerInterface
             }
         }
 
-        $viewParameters = [];
-
         if (!empty($errors)) {
             $this->view->addParameter('error', implode(' ', $errors));
         }
 
-        if ($userCheck !== null && $mailCheck !== null && $passwordCheck !== null) {
-            $viewParameters['tempUserName'] = $userCheck;
-            $viewParameters['tempMail'] = $mailCheck;
-            $viewParameters['tempPassword'] = $passwordCheck;
-        }
-
-        $this->view->addParameter('parameters', $viewParameters);
+        $this->view->addParameter('tempUserName', $userCheck);
+        $this->view->addParameter('tempMail', $mailCheck);
+        $this->view->addParameter('tempPassword', $passwordCheck);
 
         $this->view->setTemplate('user.twig');
 

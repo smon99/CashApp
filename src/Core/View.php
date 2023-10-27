@@ -21,12 +21,12 @@ class View implements ViewInterface
         $this->parameters[$key] = $value;
     }
 
-    public function display()
+    public function display(): void
     {
         echo $this->twig->render($this->tpl, $this->parameters);
     }
 
-    public function setTemplate(string $tpl)
+    public function setTemplate(string $tpl): void
     {
         $this->tpl = $tpl;
     }

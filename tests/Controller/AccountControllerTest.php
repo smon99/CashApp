@@ -103,4 +103,9 @@ class AccountControllerTest extends TestCase
         self::assertFalse($loginStatus);
         self::assertSame($url, 'http://0.0.0.0:8000/?page=login');
     }
+
+    public function testActionTemplatePath(): void
+    {
+        self::assertSame('deposit.twig', $this->controller->action()->getTpl());
+    }
 }

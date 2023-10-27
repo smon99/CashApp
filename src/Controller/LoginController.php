@@ -11,7 +11,7 @@ use App\Model\UserRepository;
 class LoginController implements ControllerInterface
 {
     private View $view;
-    private Redirect $redirect;
+    public Redirect $redirect;
     private UserRepository $userRepository;
     private Session $session;
 

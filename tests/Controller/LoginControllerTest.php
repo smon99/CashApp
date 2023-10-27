@@ -51,6 +51,7 @@ class LoginControllerTest extends TestCase
 
     protected function tearDown(): void
     {
+        unset($_POST['mail'], $_POST['password'], $_POST['login']);
         $this->sqlConnector->execute("DELETE FROM Users;", []);
         $this->session->logout();
         session_destroy();
@@ -63,7 +64,26 @@ class LoginControllerTest extends TestCase
         $_POST['login'] = true;
 
         $this->controller->action();
+        $viewParams[] = $this->controller->action()->getParameters();
 
+        self::assertContains('Login Page', $viewParams[0]);
         self::assertSame('Simon', $this->session->getUserName());
+    }
+
+    public function testActionViewRedirect(): void
+    {
+        $_POST['mail'] = 'Simon@Simon.de';
+        $_POST['password'] = 'Simon123#';
+        $_POST['login'] = true;
+
+        $this->controller->action();
+        $url[] = $this->controller->redirect->redirectRecordings->recordedUrl[0];
+
+        self::assertSame('http://0.0.0.0:8000/?page=feature', $url[0]);
+    }
+
+    public function testActionViewPath(): void
+    {
+        self::assertSame('login.twig', $this->controller->action()->getTpl());
     }
 }

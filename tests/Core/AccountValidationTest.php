@@ -41,6 +41,62 @@ class AccountValidationTest extends TestCase
         }
     }
 
+    public function testCollectErrorsEqual500(): void
+    {
+        $userID = 0;
+        $validator = new AccountValidation(new DayValidator(), new HourValidator(), new SingleValidator());
+        $amount = 500;
+
+        try {
+            $validator->collectErrors($amount, $userID);
+            self::assertTrue(true);
+        } catch (AccountValidationException $e) {
+            self::assertSame("Stündliches Einzahlungslimit von 100€ überschritten!", $e->getMessage());
+        }
+    }
+
+    public function testCollectErrorsEqual100(): void
+    {
+        $userID = 0;
+        $validator = new AccountValidation(new DayValidator(), new HourValidator(), new SingleValidator());
+        $amount = 100;
+
+        try {
+            $validator->collectErrors($amount, $userID);
+            self::assertTrue(true);
+        } catch (AccountValidationException $e) {
+            self::assertSame("Bitte einen Betrag von mindestens 0.01€ und maximal 50€ eingeben!", $e->getMessage());
+        }
+    }
+
+    public function testCollectErrorsEqual50(): void
+    {
+        $userID = 0;
+        $validator = new AccountValidation(new DayValidator(), new HourValidator(), new SingleValidator());
+        $amount = 50;
+
+        try {
+            $validator->collectErrors($amount, $userID);
+            self::assertTrue(true);
+        } catch (AccountValidationException $e) {
+            self::assertSame("", $e->getMessage());
+        }
+    }
+
+    public function testCollectErrorsEqual001(): void
+    {
+        $userID = 0;
+        $validator = new AccountValidation(new DayValidator(), new HourValidator(), new SingleValidator());
+        $amount = 0.01;
+
+        try {
+            $validator->collectErrors($amount, $userID);
+            self::assertTrue(true);
+        } catch (AccountValidationException $e) {
+            self::assertSame("", $e->getMessage());
+        }
+    }
+
     public function testCollectErrorsTrue(): void
     {
         $userID = 0;

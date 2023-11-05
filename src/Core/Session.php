@@ -26,7 +26,6 @@ class Session
         if (password_verify($password, $userDTO->password)) {
             $_SESSION["username"] = $userDTO->username;
             $_SESSION["userID"] = $userDTO->userID;
-            $_SESSION["loginStatus"] = true;
         }
     }
 

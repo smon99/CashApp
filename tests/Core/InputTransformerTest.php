@@ -16,9 +16,19 @@ class InputTransformerTest extends TestCase
 
     public function testTransformInput(): void
     {
-        $input = '1';
+        $input = '1000';
         $output = $this->inputTransformer->transformInput($input);
 
-        self::assertSame(1.00, $output);
+        self::assertSame(1000.00, $output);
+
+        $input = '1.000,00';
+        $output = $this->inputTransformer->transformInput($input);
+
+        self::assertSame(1000.00, $output);
+
+        $input = '1.000';
+        $output = $this->inputTransformer->transformInput($input);
+
+        self::assertSame(1000.00, $output);
     }
 }

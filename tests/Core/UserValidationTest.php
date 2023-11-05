@@ -45,7 +45,7 @@ class UserValidationTest extends TestCase
 
         $user = 'Benutzer';
         $eMail = 'eMail@eMail.de';
-        $password = 'Passwort123#';
+        $password = 'Pa123#';
 
         $userDTO->username = $user;
         $userDTO->email = $eMail;
@@ -136,13 +136,37 @@ class UserValidationTest extends TestCase
         $validation->collectErrors($userTestDTO);
     }
 
-    public function testValidationPasswordFalse(): void
+    public function testValidationPasswordFalseShort(): void
     {
         $userDTO = new UserDTO();
 
         $user = 'Benutzer';
         $eMail = 'eMail@eMail.de';
-        $password = 'assword'; // Invalid password
+        $password = 'Pa12#'; // Invalid password
+
+        $userDTO->username = $user;
+        $userDTO->email = $eMail;
+        $userDTO->password = $password;
+
+        $validation = new UserValidation(
+            new UserDuplicationValidator(),
+            new PasswordValidator(),
+            new EMailValidator()
+        );
+
+        $this->expectException(UserValidationException::class);
+        $this->expectExceptionMessage('Passwort Anforderungen nicht erfüllt');
+
+        $validation->collectErrors($userDTO);
+    }
+
+    public function testValidationPasswordFalseNoUppercase(): void
+    {
+        $userDTO = new UserDTO();
+
+        $user = 'Benutzer';
+        $eMail = 'eMail@eMail.de';
+        $password = 'pa123#'; // Invalid password
 
         $userDTO->username = $user;
         $userDTO->email = $eMail;
@@ -165,8 +189,8 @@ class UserValidationTest extends TestCase
         $userDTO = new UserDTO();
 
         $user = '';
-        $eMail = '';
-        $password = '';
+        $eMail = 'Simon@Simon.de';
+        $password = 'Simon123#';
 
         $userDTO->username = $user;
         $userDTO->email = $eMail;

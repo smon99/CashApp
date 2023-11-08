@@ -24,8 +24,5 @@
         <include>
             <directory suffix=".php">src/</directory>
         </include>
-        <exclude>
-            <file>src/Core/Redirect.php</file>
-        </exclude>
     </source>
 </phpunit>

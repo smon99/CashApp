@@ -28,16 +28,29 @@ class DependencyProvider
         $container->set(InputTransformer::class, new InputTransformer());
         $container->set(SqlConnector::class, new SqlConnector());
 
+        //Mapper
         $container->set(UserMapper::class, new UserMapper());
         $container->set(AccountMapper::class, new AccountMapper());
 
+        //Repository
         $container->set(AccountRepository::class, new AccountRepository($container->get(SqlConnector::class), $container->get(AccountMapper::class)));
         $container->set(UserRepository::class, new UserRepository($container->get(SqlConnector::class), $container->get(UserMapper::class)));
 
+        //Entity
         $container->set(AccountEntityManager::class, new AccountEntityManager($container->get(SqlConnector::class), $container->get(AccountMapper::class)));
         $container->set(UserEntityManager::class, new UserEntityManager($container->get(SqlConnector::class), $container->get(UserMapper::class)));
 
-        $container->set(AccountValidation::class, new AccountValidation(new SingleValidator(), new DayValidator(), new HourValidator()));
-        $container->set(UserValidation::class, new UserValidation(new EmptyFieldValidator(), new EMailValidator(), new PasswordValidator(), new UserDuplicationValidator()));
+        //Account Validation
+        $container->set(SingleValidator::class, new SingleValidator());
+        $container->set(DayValidator::class, new DayValidator());
+        $container->set(HourValidator::class, new HourValidator());
+        $container->set(AccountValidation::class, new AccountValidation($container->get(SingleValidator::class), $container->get(DayValidator::class), $container->get(HourValidator::class)));
+
+        //User Validation
+        $container->set(EmptyFieldValidator::class, new EmptyFieldValidator());
+        $container->set(EMailValidator::class, new EMailValidator());
+        $container->set(PasswordValidator::class, new PasswordValidator());
+        $container->set(UserDuplicationValidator::class, new UserDuplicationValidator());
+        $container->set(UserValidation::class, new UserValidation($container->get(EmptyFieldValidator::class), $container->get(EMailValidator::class), $container->get(PasswordValidator::class), $container->get(UserDuplicationValidator::class)));
     }
 }

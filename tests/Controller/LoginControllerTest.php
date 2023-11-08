@@ -54,7 +54,6 @@ class LoginControllerTest extends TestCase
         unset($_POST['mail'], $_POST['password'], $_POST['login']);
         $this->sqlConnector->execute("DELETE FROM Users;", []);
         $this->session->logout();
-        session_destroy();
     }
 
     public function testAction(): void

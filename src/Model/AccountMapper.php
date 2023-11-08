@@ -10,12 +10,12 @@ class AccountMapper
 
         foreach ($data as $ENTRY) {
             $accountDTO = new AccountDTO();
-            $accountDTO->transactionID = (int)$ENTRY["transactionID"];
-            $accountDTO->value = (float)$ENTRY["value"];
-            $accountDTO->userID = (int)$ENTRY["userID"];
-            $accountDTO->transactionDate = (string)$ENTRY["transactionDate"];
-            $accountDTO->transactionTime = (string)$ENTRY["transactionTime"];
-            $accountDTO->purpose = (string)$ENTRY["purpose"];
+            $accountDTO->transactionID = $ENTRY["transactionID"];
+            $accountDTO->value = $ENTRY["value"];
+            $accountDTO->userID = $ENTRY["userID"];
+            $accountDTO->transactionDate = $ENTRY["transactionDate"];
+            $accountDTO->transactionTime = $ENTRY["transactionTime"];
+            $accountDTO->purpose = $ENTRY["purpose"];
 
             $collection[] = $accountDTO;
         }

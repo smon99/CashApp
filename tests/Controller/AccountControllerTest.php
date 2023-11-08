@@ -28,7 +28,7 @@ class AccountControllerTest extends TestCase
 
         $this->redirectRecordings = new RedirectRecordings();
         $this->session = new Session();
-        $this->accountRepository = new AccountRepository(new AccountMapper(), new SqlConnector());
+        $this->accountRepository = new AccountRepository(new SqlConnector(), new AccountMapper());
 
         $this->container = $container;
         $this->controller = new AccountController($this->container);
@@ -47,10 +47,8 @@ class AccountControllerTest extends TestCase
         $connector = new SqlConnector();
         $connector->execute("DELETE FROM Transactions;", []);
         $connector->execute("DELETE FROM Users;", []);
-        $connector->disconnect();
         $this->session->logout();
         unset($_POST["amount"], $_POST["logout"], $this->userDTO, $this->redirectRecordings, $this->session);
-        session_destroy();
     }
 
     public function testAction(): void

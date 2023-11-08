@@ -10,7 +10,7 @@ class HourValidator implements AccountValidationInterface
 {
     public function validate(float $amount, int $userID): void
     {
-        $repository = new AccountRepository(new AccountMapper(), new SqlConnector());
+        $repository = new AccountRepository(new SqlConnector(), new AccountMapper());
         $hourBalance = $repository->calculateBalancePerHour($userID);
 
         $limit = $hourBalance + $amount;

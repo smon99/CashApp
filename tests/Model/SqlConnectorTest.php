@@ -21,7 +21,6 @@ class SqlConnectorTest extends TestCase
     {
         $this->sqlConnector->execute("DELETE FROM Transactions;", []);
         $this->sqlConnector->execute("DELETE FROM Users;", []);
-        $this->sqlConnector->disconnect();
     }
 
     public function testExecuteSelectAllQueryValid(): void
@@ -91,4 +90,10 @@ class SqlConnectorTest extends TestCase
         $this->expectException(PDOException::class);
         $this->sqlConnector->execute('invalid', []);
     }
+
+    public function testPDO(): void
+    {
+        self::assertSame('cash_test', $this->sqlConnector->getDbName());
+    }
+
 }

@@ -20,14 +20,13 @@ class AccountEntityManagerTest extends TestCase
         $this->sqlConnector = new SqlConnector();
         $this->accountMapper = new AccountMapper();
 
-        $this->accountRepository = new AccountRepository($this->accountMapper, $this->sqlConnector,);
+        $this->accountRepository = new AccountRepository($this->sqlConnector, $this->accountMapper);
     }
 
     protected function tearDown(): void
     {
         $connector = new SqlConnector();
         $connector->execute("DELETE FROM Transactions;", []);
-        $connector->disconnect();
     }
 
     public function testSaveDeposit(): void

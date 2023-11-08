@@ -28,7 +28,7 @@ class UserControllerTest extends TestCase
         $userMapper = new UserMapper();
 
         $this->redirectRecordings = new RedirectRecordings();
-        $this->userRepository = new UserRepository($userMapper, $this->sqlConnector);
+        $this->userRepository = new UserRepository($this->sqlConnector, $userMapper);
 
         $this->container = $container;
         $this->controller = new UserController($this->container);

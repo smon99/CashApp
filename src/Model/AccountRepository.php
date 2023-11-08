@@ -2,15 +2,12 @@
 
 namespace App\Model;
 
+use App\Core\Container;
+
 class AccountRepository
 {
-    private AccountMapper $accountMapper;
-    private SqlConnector $sqlConnector;
-
-    public function __construct(AccountMapper $accountMapper, SqlConnector $sqlConnector)
+    public function __construct(private SqlConnector $sqlConnector, private AccountMapper $accountMapper)
     {
-        $this->sqlConnector = $sqlConnector;
-        $this->accountMapper = $accountMapper;
     }
 
     public function calculateBalance(int $userID): float
@@ -34,10 +31,12 @@ class AccountRepository
         $balancePerHour = 0.0;
 
         $date = strtotime(date('Y-m-d'));
-        $time = strtotime(date('H:i:s'));
+
+        $currentTime = new \DateTime();
+        $oneHourAgo = $currentTime->sub(new \DateInterval('PT1H'));
 
         foreach ($accountDTOList as $entry) {
-            if (($entry->userID === $userID) && strtotime($entry->transactionTime) > $time - (60 * 60) && strtotime($entry->transactionDate) === $date) {
+            if (($entry->userID === $userID) && strtotime($entry->transactionTime) > strtotime($oneHourAgo->format('H:i:s')) && strtotime($entry->transactionDate) === $date) {
                 $balancePerHour += $entry->value;
             }
         }

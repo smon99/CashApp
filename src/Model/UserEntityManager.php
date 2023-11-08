@@ -2,15 +2,12 @@
 
 namespace App\Model;
 
+use App\Core\Container;
+
 class UserEntityManager
 {
-    private UserMapper $userMapper;
-    private SqlConnector $sqlConnector;
-
-    public function __construct(SqlConnector $sqlConnector, UserMapper $userMapper)
+    public function __construct(private SqlConnector $sqlConnector, private UserMapper $userMapper)
     {
-        $this->sqlConnector = $sqlConnector;
-        $this->userMapper = $userMapper;
     }
 
     public function save(UserDTO $userDTO): void

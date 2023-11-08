@@ -2,12 +2,39 @@
 
 namespace Test\Model;
 
+use App\Model\AccountEntityManager;
+use App\Model\AccountRepository;
+use App\Model\SqlConnector;
 use PHPUnit\Framework\TestCase;
 use App\Model\AccountMapper;
 use App\Model\AccountDTO;
 
 class AccountMapperTest extends TestCase
 {
+    private AccountEntityManager $accountEntityManager;
+    private AccountRepository $accountRepository;
+
+    protected function setUp(): void
+    {
+        $accountDTO = new AccountDTO();
+        $accountDTO->userID = 1;
+        $accountDTO->value = 1.00;
+        $accountDTO->purpose = 'testing';
+        $accountDTO->transactionTime = date('H:i:s');
+        $accountDTO->transactionDate = date('Y-m-d');
+
+        $this->accountEntityManager = new AccountEntityManager(new SqlConnector(), new AccountMapper());
+        $this->accountEntityManager->saveDeposit($accountDTO);
+
+        $this->accountRepository = new AccountRepository(new SqlConnector(), new AccountMapper());
+    }
+
+    protected function tearDown(): void
+    {
+        $connector = new SqlConnector();
+        $connector->execute("DELETE FROM Transactions;", []);
+    }
+
     public function testSqlToDTO(): void
     {
         $mapper = new AccountMapper();
@@ -75,5 +102,16 @@ class AccountMapperTest extends TestCase
         ];
 
         $this->assertEquals($expected, $result);
+    }
+
+    public function testTypeCast(): void
+    {
+        $result = $this->accountRepository->transactionPerUserID(1);
+
+        self::assertIsInt($result[0]->userID);
+        self::assertIsFloat($result[0]->value);
+        self::assertIsString($result[0]->transactionTime);
+        self::assertIsString($result[0]->transactionDate);
+        self::assertIsString($result[0]->purpose);
     }
 }

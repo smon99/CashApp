@@ -26,12 +26,16 @@ class DependencyProvider
         $container->set(Redirect::class, new Redirect(new RedirectRecordings()));
         $container->set(Session::class, new Session());
         $container->set(InputTransformer::class, new InputTransformer());
+        $container->set(SqlConnector::class, new SqlConnector());
 
-        $container->set(AccountRepository::class, new AccountRepository(new AccountMapper(), new SqlConnector()));
-        $container->set(UserRepository::class, new UserRepository(new UserMapper(), new SqlConnector()));
+        $container->set(UserMapper::class, new UserMapper());
+        $container->set(AccountMapper::class, new AccountMapper());
 
-        $container->set(AccountEntityManager::class, new AccountEntityManager(new SqlConnector(), new AccountMapper()));
-        $container->set(UserEntityManager::class, new UserEntityManager(new SqlConnector(), new UserMapper()));
+        $container->set(AccountRepository::class, new AccountRepository($container->get(SqlConnector::class), $container->get(AccountMapper::class)));
+        $container->set(UserRepository::class, new UserRepository($container->get(SqlConnector::class), $container->get(UserMapper::class)));
+
+        $container->set(AccountEntityManager::class, new AccountEntityManager($container->get(SqlConnector::class), $container->get(AccountMapper::class)));
+        $container->set(UserEntityManager::class, new UserEntityManager($container->get(SqlConnector::class), $container->get(UserMapper::class)));
 
         $container->set(AccountValidation::class, new AccountValidation(new SingleValidator(), new DayValidator(), new HourValidator()));
         $container->set(UserValidation::class, new UserValidation(new EmptyFieldValidator(), new EMailValidator(), new PasswordValidator(), new UserDuplicationValidator()));

@@ -10,7 +10,7 @@ class DayValidator implements AccountValidationInterface
 {
     public function validate(float $amount, int $userID): void
     {
-        $repository = new AccountRepository(new AccountMapper(), new SqlConnector());
+        $repository = new AccountRepository(new SqlConnector(), new AccountMapper());
         $dayBalance = $repository->calculateBalancePerDay($userID);
 
         $limit = $dayBalance + $amount;

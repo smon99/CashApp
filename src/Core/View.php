@@ -9,9 +9,11 @@ class View implements ViewInterface
 {
     private Environment $twig;
     private string $tpl;
+    public string $templatePath;
 
     public function __construct(string $templatePath)
     {
+        $this->templatePath = $templatePath;
         $loader = new FilesystemLoader($templatePath);
         $this->twig = new Environment($loader);
     }

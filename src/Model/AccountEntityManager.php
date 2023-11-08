@@ -2,15 +2,12 @@
 
 namespace App\Model;
 
+use App\Core\Container;
+
 class AccountEntityManager
 {
-    private SqlConnector $sqlConnector;
-    private AccountMapper $accountMapper;
-
-    public function __construct(SqlConnector $sqlConnector, AccountMapper $accountMapper)
+    public function __construct(private SqlConnector $sqlConnector, private AccountMapper $accountMapper)
     {
-        $this->sqlConnector = $sqlConnector;
-        $this->accountMapper = $accountMapper;
     }
 
     public function saveDeposit(AccountDTO $deposit): void

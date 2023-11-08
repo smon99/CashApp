@@ -30,6 +30,9 @@ class TransactionControllerTest extends TestCase
 
     protected function setUp(): void
     {
+        $sqlConnector = new SqlConnector();
+        $accountMapper = new AccountMapper();
+        $userMapper = new UserMapper();
         $container = new Container();
         $provider = new DependencyProvider();
         $provider->provide($container);
@@ -39,10 +42,10 @@ class TransactionControllerTest extends TestCase
 
         $this->container = $container;
         $this->controller = new TransactionController($this->container);
-        $this->accountRepository = new AccountRepository(new AccountMapper(), new SqlConnector());
-        $userEntityManager = new UserEntityManager(new SqlConnector(), new UserMapper());
-        $this->accountEntityManager = new AccountEntityManager(new SqlConnector(), new AccountMapper());
-        $this->userRepository = new UserRepository(new UserMapper(), new SqlConnector());
+        $this->accountRepository = new AccountRepository($sqlConnector, $accountMapper);
+        $userEntityManager = new UserEntityManager($sqlConnector, $userMapper);
+        $this->accountEntityManager = new AccountEntityManager($sqlConnector, $accountMapper);
+        $this->userRepository = new UserRepository($sqlConnector, $userMapper);
 
         $this->userDTO = new UserDTO();
         $this->userDTO->password = '$2y$10$rqTcf57sIEVAZsertDU7P.8O3kObwxc17jL6Cec.6oMcX/VWdFX0i';
@@ -72,11 +75,9 @@ class TransactionControllerTest extends TestCase
         $connector = new SqlConnector();
         $connector->execute("DELETE FROM Transactions;", []);
         $connector->execute("DELETE FROM Users;", []);
-        $connector->disconnect();
         $this->session->logout();
 
         unset($_POST["logout"], $_POST["receiver"], $_POST["amount"], $_POST["transfer"], $this->userDTO, $this->redirectRecordings, $this->session);
-        session_destroy();
     }
 
     public function testAction(): void

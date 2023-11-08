@@ -11,9 +11,7 @@ class UserDuplicationValidator implements UserValidationInterface
 {
     public function validate(UserDTO $userDTO): void
     {
-        $mapper = new UserMapper();
-        $connector = new SqlConnector();
-        $repository = new UserRepository($mapper, $connector);
+        $repository = new UserRepository(new SqlConnector(), new UserMapper());
 
         if ($repository->findByMail($userDTO->email) !== null) {
             throw new UserValidationException('Fehler eMail bereits vergeben! ');

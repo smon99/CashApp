@@ -12,10 +12,10 @@ class UserMapper
 
         foreach ($data as $ENTRY) {
             $userDTO = new UserDTO();
-            $userDTO->userID = (int)$ENTRY["userID"];
-            $userDTO->username = (string)$ENTRY["username"];
-            $userDTO->email = (string)$ENTRY["email"];
-            $userDTO->password = (string)$ENTRY["password"];
+            $userDTO->userID = $ENTRY["userID"];
+            $userDTO->username = $ENTRY["username"];
+            $userDTO->email = $ENTRY["email"];
+            $userDTO->password = $ENTRY["password"];
 
             $collection[] = $userDTO;
         }

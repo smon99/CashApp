@@ -2,18 +2,15 @@
 
 namespace App\Model;
 
+use App\Core\Container;
+
 class UserRepository
 {
-    private UserMapper $userMapper;
-    private SqlConnector $sqlConnector;
-
-    public function __construct(UserMapper $userMapper, SqlConnector $sqlConnector)
+    public function __construct(private SqlConnector $sqlConnector, private UserMapper $userMapper)
     {
-        $this->userMapper = $userMapper;
-        $this->sqlConnector = $sqlConnector;
     }
 
-    public function fetchAllUsers(): array     //dammit i love sql <3
+    public function fetchAllUsers(): array
     {
         $query = "SELECT * FROM Users";
         $data = $this->sqlConnector->executeSelectAllQuery($query);

@@ -6,35 +6,23 @@ use PDO;
 
 class SqlConnector
 {
-    private ?PDO $pdo = null;
+    public ?PDO $pdo = null;
+    public string $dbName;
 
     public function __construct()
     {
-    }
-
-    private function connect(): PDO
-    {
-        $name = $_ENV['DATABASE'] ?? 'cash';
+        $this->dbName = $_ENV['DATABASE'] ?? 'cash';
 
         $host = 'localhost:3336';
         $user = 'root';
         $password = 'nexus123';
 
-        $connection = $this->pdo = new PDO("mysql:host=$host;dbname=$name", $user, $password);
-        $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        return $connection;
+        $connection = $this->pdo = new PDO("mysql:host=$host;dbname=$this->dbName", $user, $password);
     }
 
     public function executeSelectAllQuery($query): array
     {
-        $this->connect();
-
         return $this->pdo->query($query)->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public function disconnect(): void
-    {
-        $this->pdo = null;
     }
 
     /**
@@ -44,7 +32,6 @@ class SqlConnector
      */
     public function execute(string $query, array $params): string|false
     {
-        $this->connect();
         $statement = $this->pdo->prepare($query);
 
         foreach ($params as $param => $value) {
@@ -54,5 +41,10 @@ class SqlConnector
         $statement->execute();
 
         return $this->pdo->lastInsertId();
+    }
+
+    public function getDbName(): string
+    {
+        return $this->dbName;
     }
 }

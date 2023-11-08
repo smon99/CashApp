@@ -2,25 +2,27 @@
 
 namespace Test\Model;
 
+use App\Core\Container;
 use App\Model\SqlConnector;
+use App\Model\UserMapper;
 use App\Model\UserRepository;
 use PHPUnit\Framework\TestCase;
 use App\Model\UserEntityManager;
 use App\Model\UserDTO;
-use App\Model\UserMapper;
 
 class UserEntityManagerTest extends TestCase
 {
     private SqlConnector $sqlConnector;
-    private UserMapper $userMapper;
     private UserRepository $userRepository;
+    private UserEntityManager $userEntityManager;
 
     protected function setUp(): void
     {
         $this->sqlConnector = new SqlConnector();
-        $this->userMapper = new UserMapper();
+        $userMapper = new UserMapper();
 
-        $this->userRepository = new UserRepository($this->userMapper, $this->sqlConnector);
+        $this->userRepository = new UserRepository($this->sqlConnector, $userMapper);
+        $this->userEntityManager = new UserEntityManager($this->sqlConnector, $userMapper);
     }
 
     protected function tearDown(): void
@@ -30,14 +32,12 @@ class UserEntityManagerTest extends TestCase
 
     public function testSaveUser(): void
     {
-        $entityManager = new UserEntityManager($this->sqlConnector, $this->userMapper);
-
         $user = new UserDTO();
         $user->username = 'Tester';
         $user->email = 'Tester@Tester.de';
         $user->password = 'Tester123#';
 
-        $entityManager->save($user);
+        $this->userEntityManager->save($user);
 
         $users[] = $this->userRepository->fetchAllUsers();
         $userEntity = $users[0][0];

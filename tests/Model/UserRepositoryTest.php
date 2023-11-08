@@ -11,16 +11,16 @@ use App\Model\SqlConnector;
 
 class UserRepositoryTest extends TestCase
 {
-    private SqlConnector $sqlConnector;
     private UserRepository $userRepository;
 
     protected function setUp(): void
     {
         $userMapper = new UserMapper();
+        $sqlConnector = new SqlConnector();
         $this->sqlConnector = new SqlConnector();
 
-        $userEntityManager = new UserEntityManager($this->sqlConnector, $userMapper);
-        $this->userRepository = new UserRepository($userMapper, $this->sqlConnector);
+        $userEntityManager = new UserEntityManager($sqlConnector, $userMapper);
+        $this->userRepository = new UserRepository($sqlConnector, $userMapper);
 
         $userEntityManager->save($this->createUserDTO(1, 'user1', 'user1@example.com', 'password1'));
         $userEntityManager->save($this->createUserDTO(2, 'user2', 'user2@example.com', 'password2'));

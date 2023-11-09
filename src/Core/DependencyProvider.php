@@ -16,7 +16,6 @@ use App\Model\SqlConnector;
 use App\Model\UserEntityManager;
 use App\Model\UserMapper;
 use App\Model\UserRepository;
-use function PHPUnit\Framework\never;
 
 class DependencyProvider
 {
